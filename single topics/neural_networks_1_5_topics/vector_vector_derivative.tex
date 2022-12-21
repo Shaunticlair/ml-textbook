@@ -1,0 +1,466 @@
+    \subsection*{7.X.10 \quad Vectors and vectors: vector input, vector output}  
+    
+        We'll be combining our two previous derivatives: 
+        
+        \begin{equation}
+            \pderiv{ \text{(Vector)} } { \text{(Vector) } }
+            =
+            \pderiv{ \pur{w} }{ \org{v} } 
+        \end{equation}
+        
+        $\org{v}$ and $\pur{w}$ are both \textbf{vectors}: thus, input and output are both \textbf{vectors}.
+        
+        \begin{equation}
+            \Delta \org{v}
+            \longrightarrow
+            \boxed{f}
+            \longrightarrow
+            \Delta \pur{w}
+        \end{equation}
+        
+        Written out, we get:
+        
+        \begin{equation}
+            \overbrace{
+                \begin{bmatrix}
+                    \Delta \org{v_1}\\ \Delta \org{v_2}\\ \vdots \\ \Delta \org{v_m}
+                \end{bmatrix}
+            }^{\Delta \org{v}}
+            \longrightarrow 
+            \overbrace{
+                \begin{bmatrix}
+                    \Delta \pur{w_1}\\ \Delta \pur{w_2}\\ \vdots \\ \Delta \pur{w_n}
+                \end{bmatrix}
+            }^{\Delta \pur{w}}
+        \end{equation}
+        
+        Something pretty complicated! We have $m$ inputs and $n$ outputs. Every input can interact with every output.
+        
+        So, our derivative needs to have $mn$ different elements. That's a lot!
+    
+    \secdiv
+    
+    \subsection*{7.X.11 \quad The vector/vector derivative}  
+    
+        We return to our rule from before. We'll skip the star notation, and jump right to the equation we've gotten for both of our two previous derivatives:
+            \note{Hopefully, since we're combining two different derivatives, we should be able to use the same rule here.}
+        
+        \begin{equation}
+            \Delta \pur{w}
+            =
+            \bigg(
+                \pderiv{ \pur{w} }{ \org{v} } 
+            \bigg)^T
+            \Delta \org{v}
+        \end{equation}
+        
+        With $mn$ different elements, this could get messy very fast. Let's see if we can focus on only \textbf{part} of our problem:
+        
+        \begin{equation}
+            \begin{bmatrix}
+                \Delta \pur{w_1}\\ \Delta \pur{w_2}\\ \vdots \\ \Delta \pur{w_n}
+            \end{bmatrix}
+            =
+            \bigg(
+                \pderiv{ \pur{w} }{ \org{v} } 
+            \bigg)^T
+            \begin{bmatrix}
+                \Delta \org{v_1}\\ \Delta \org{v_2}\\ \vdots \\ \Delta \org{v_m}
+            \end{bmatrix}
+        \end{equation}
+    
+        \subsubsection*{One input}
+        
+            We could try focusing on just a single \textbf{input} or a single \textbf{output}, to simplify things. Let's start with a single $\org{v_i}$.
+            
+            \begin{equation}
+                \overbrace{
+                    \begin{bmatrix}
+                        \Delta \pur{w_1}\\ \Delta \pur{w_2}\\ \vdots \\ \Delta \pur{w_n}
+                    \end{bmatrix}
+                }^{\Delta w \text{ from } v_i}
+                =
+                \bigg(
+                    \pderiv{ \pur{w} }{ \org{v_i} } 
+                \bigg)^T
+                \Delta \org{v_i}
+            \end{equation}
+            
+            We now have a simpler case: $\pderivslash{ \text{Vector} }{ \text{Scalar} }$. We're familiar with this case!
+            
+            \begin{equation}
+                \pderiv{ \pur{w} }{ \org{v_i} } 
+                =
+                \begin{bmatrix}
+                    \bigpderiv{ \pur{w_1} }{ \org{v_i} }, &
+                    \bigpderiv{ \pur{w_2} }{ \org{v_i} }, &
+                    \cdots &
+                    \bigpderiv{ \pur{w_n} }{ \org{v_i} } 
+                \end{bmatrix}
+            \end{equation}
+        
+            We get a vector. What if the \textbf{output} is a scalar instead?
+        
+        \subsubsection*{One output}
+        
+            \begin{equation}
+                \Delta \pur{w_j}
+                =
+                \bigg(
+                    \pderiv{ \pur{w_j} }{ \org{v} } 
+                \bigg)^T
+                \begin{bmatrix}
+                    \Delta \org{v_1}\\ \Delta \org{v_2}\\ \vdots \\ \Delta \org{v_m}
+                \end{bmatrix}
+            \end{equation}
+            
+            We have $\pderivslash{ \text{Scalar} }{ \text{Vector} }$:
+            
+            \begin{equation}
+                \pderiv{ \pur{w_j} }{ \org{v} } 
+                =
+                \begin{bmatrix}
+                    \pderivslash{ \pur{w_j} }   { \org{v_1} }\\\\
+                    \pderivslash{ \pur{w_j} }   { \org{v_2} }\\\\
+                    \vdots \\\\
+                    \pderivslash{ \pur{w_j} }   { \org{v_m} }
+                \end{bmatrix}
+            \end{equation}
+            
+            So, our vector-vector derivative is a \textbf{generalization} of the two derivatives we did before! 
+            
+            It seems that extending along the \textbf{vertical} axis changes our $\org{v_i}$ value, while moving along the \textbf{horizontal} axis changes our $\pur{w_j}$ value.
+         
+    \secdiv
+    
+    \subsection*{7.X.12 \quad General derivative}  
+        
+        You might have a hint of what we get: one derivative stretches us along \textbf{one} axis, the other along the \textbf{second}.
+        
+        To prove it to ourselves, we can \textbf{combine} these concepts. We'll handle solve as if we have one vector, and then \textbf{substitute} in the second one.\\
+        
+        \begin{concept}
+            One way to \vocab{simplify} our work is to treat \purp{vectors} as \gren{scalars}, and then convert them back into \purp{vectors} after applying some math.
+            
+            We have to be careful - any operation we apply to the \gren{scalar}, has to match how the \purp{vector} would behave.
+            
+            This is \purp{equivalent} to if we just focused on one scalar inside our vector, and then stacked all those scalars back into the vector.
+        \end{concept}
+        
+        This isn't just a cute trick: it relies on an understanding that, at its \textbf{basic} level, we're treating \textbf{scalars} and \textbf{vectors} and \textbf{matrices} as the same type of object: a structured array of numbers.
+            \note{We'll get into "arrays" later.}
+        
+        As always, our goal is to \textbf{simplify} our work, so we can handle each piece of it.
+        
+        \begin{itemize}
+            \item We treat $\Delta v$ as a scalar so we can get the simplified derivative.
+        \end{itemize}
+            
+        \begin{equation}
+            \Delta \pur{w}
+            =
+            \bigg(
+                \pderiv{ \pur{w} }{ \org{v} } 
+            \bigg)^T
+            \Delta \org{v}
+        \end{equation}
+        
+        We'll only expand \textbf{one} of our vectors, since we know how to manage \textbf{one} of them.
+        
+        \begin{equation}
+            \begin{bmatrix}
+                \Delta \pur{w_1}\\ \Delta \pur{w_2}\\ \vdots \\ \Delta \pur{w_n}
+            \end{bmatrix}
+            =
+            \bigg(
+                \pderiv{ \pur{w} }{ \org{v} } 
+            \bigg)^T
+            \Delta \org{v}
+        \end{equation}
+        
+        This time, notice that we \textbf{didn't} simplify $\org{v}$ to $\org{v_i}$. We didn't \textbf{remove} the other elements - we still have a full \textbf{vector}. But, let's treat it as if it \textit{were} a scalar. 
+        
+        This comes out to:
+        
+        \begin{equation}
+            \pderiv{ \pur{w} }{ \org{v} } 
+            =
+            \overbrace{
+                \begin{bmatrix}
+                    \bigpderiv{ \pur{w_1} }{ \org{v} }, &
+                    \bigpderiv{ \pur{w_2} }{ \org{v} }, &
+                    \cdots &
+                    \bigpderiv{ \pur{w_n} }{ \org{v} } 
+                \end{bmatrix}
+            }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+        \end{equation}
+        
+        \begin{itemize}
+            \item Our "answer" is a row vector. But, each of those derivatives is a \textbf{column} vector!
+        \end{itemize}
+        
+        Now that we've taken care of $\partial w_j$ (one for each column), we can expand our derivatives in terms of $\partial v_i$.
+        
+        First, for $\pur{w_1}$:
+        
+        \begin{equation}
+            \pderiv{ \pur{w} }{ \org{v} } 
+            =
+            \overbrace{
+                \begin{bmatrix}
+                    \begin{bmatrix}
+                        \bigpderiv{ \pur{w_1} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_m} }
+                    \end{bmatrix}, &
+                    \bigpderiv{ \pur{w_2} }{ \org{v} }, &
+                    \cdots &
+                    \bigpderiv{ \pur{w_n} }{ \org{v} } 
+                \end{bmatrix}
+            }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+            \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
+        \end{equation}
+        
+        And again, for $\pur{w_2}$:
+        
+        \begin{equation}
+            \pderiv{ \pur{w} }{ \org{v} } 
+            =
+            \overbrace{
+                \begin{bmatrix}
+                    \begin{bmatrix}
+                        \bigpderiv{ \pur{w_1} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_m} }
+                    \end{bmatrix}, &
+                    \begin{bmatrix}
+                        \bigpderiv{ \pur{w_2} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_2} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_2} }   { \org{v_m} }
+                    \end{bmatrix}, &
+                    \cdots &
+                    \bigpderiv{ \pur{w_n} }{ \org{v} } 
+                \end{bmatrix}
+            }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+            \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
+        \end{equation}
+        
+        And again, for $\pur{w_n}$:
+        
+        \begin{equation}
+            \pderiv{ \pur{w} }{ \org{v} } 
+            =
+            \overbrace{
+                \begin{bmatrix}
+                    \begin{bmatrix}
+                        \bigpderiv{ \pur{w_1} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_m} }
+                    \end{bmatrix}, &
+                    \begin{bmatrix}
+                        \bigpderiv{ \pur{w_2} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_2} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_2} }   { \org{v_m} }
+                    \end{bmatrix}, &
+                    \cdots &
+                    \begin{bmatrix}
+                        \bigpderiv{ \pur{w_n} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_n} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_n} }   { \org{v_m} }
+                    \end{bmatrix}
+                \end{bmatrix}
+            }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+            \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
+        \end{equation}
+        
+        We have column vectors in our row vector... let's just combine them into a \textbf{matrix}.\\
+        
+        \begin{definition}
+            If 
+            \begin{itemize}
+                \item $\org{v}$ is an $(m \times 1)$ \purp{vector} 
+                \item $\pur{w}$ is an $(n \times 1)$ \purp{vector}
+            \end{itemize}
+            
+            Then we define the \vocab{vector derivative} $\pderivslash{ \pur{w} }{ \org{v} }$ as fulfilling:
+            
+            \begin{equation*}
+                \Delta \pur{w}
+                =
+                \bigg(
+                    \pderiv{ \pur{w} }{ \red{s} } 
+                \bigg)^T
+                \Delta \red{s}
+            \end{equation*}
+            
+            \boxdiv
+            
+            Thus, our derivative must be a \blu{$(1 \times n)$} vector
+            
+                \begin{equation*}
+                    \pderiv{ \pur{w} }{ \org{v} } 
+                    =
+                    \overbrace{
+                        \begin{bmatrix}
+                            \begin{matrix}
+                                \bigpderiv{ \pur{w_1} }   { \org{v_1} }\\ 
+                                \\
+                                \bigpderiv{ \pur{w_1} }   { \org{v_2} }\\ 
+                                \\
+                                \vdots \\ 
+                                \\
+                                \bigpderiv{ \pur{w_1} }   { \org{v_m} }
+                            \end{matrix} &
+                            \begin{matrix}
+                                \bigpderiv{ \pur{w_2} }   { \org{v_1} }\\ 
+                                \\
+                                \bigpderiv{ \pur{w_2} }   { \org{v_2} }\\ 
+                                \\
+                                \vdots \\ 
+                                \\
+                                \bigpderiv{ \pur{w_2} }   { \org{v_m} }
+                            \end{matrix} &
+                            \begin{matrix}
+                                \cdots\\\\ \cdots \\\\ \ddots \\\\ \cdots
+                            \end{matrix} &
+                            \begin{matrix}
+                                \bigpderiv{ \pur{w_n} }   { \org{v_1} }\\ 
+                                \\
+                                \bigpderiv{ \pur{w_n} }   { \org{v_2} }\\ 
+                                \\
+                                \vdots \\ 
+                                \\
+                                \bigpderiv{ \pur{w_n} }   { \org{v_m} }
+                            \end{matrix}
+                        \end{bmatrix}
+                    }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+                    \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
+                \end{equation*}
+            
+            This general form can be used for \purp{any} of our matrix derivatives.
+        \end{definition}
+        
+        So, our matrix can represent any \textbf{combination} of two elements! We just assign each \textbf{row} to a $v_i$ component, and each \textbf{column} with a $w_j$ component.
+    
+    \secdiv
+    
+    \subsection*{7.X.13 \quad More about the vector/vector derivative}
+        
+        Let's show a specific example: $\pur{w}$ is $(\pur{3} \times 1)$, $\org{v}$ is $(\org{2} \times 1)$.
+        
+        \begin{equation}
+            \pderiv{ \pur{w} }{ \org{v} }
+            =
+            \begin{matrix}
+                \begin{bmatrix}
+                    \bovermat{\small $\pur{w_1}$}{
+                                                \bigpderiv {\pur{w_1}} { \org{v_1} } } &&  
+                    \bovermat{\small $\pur{w_2}$}{
+                                                \bigpderiv {\pur{w_2}} { \org{v_1} } } &&
+                    \bovermat{\small $\pur{w_3}$}{
+                                                \bigpderiv {\pur{w_3}} { \org{v_1} } } &\\
+                    &&&&&\\
+                    \bigpderiv {\pur{w_1}} { \org{v_2} }  &&  
+                    \bigpderiv {\pur{w_2}} { \org{v_2} }  &&
+                    \bigpderiv {\pur{w_3}} { \org{v_2} } &\\
+                \end{bmatrix}
+                \begin{matrix}
+                    \bigggrB{15pt} \org{v_1}\\
+                    \\
+                    \bigggrB{15pt} \org{v_2}
+                \end{matrix}
+            \end{matrix}
+        \end{equation}
+        
+        Another way to describe the general case:\\
+        
+        \begin{notation}
+            Our matrix $\pderivslash{ \pur{w} }{ \org{v} }$ is entirely filled with \textbf{scalar derivatives}
+            
+            \begin{equation}
+                \pderiv {\pur{w_j}} { \org{v_i} }
+            \end{equation}
+            
+            Where any one \textbf{derivative} is stored in
+            
+            \begin{itemize}
+                \item \org{Row $i$}
+                
+                    \begin{itemize}
+                        \item $m$ rows total
+                    \end{itemize}
+                    
+                \item \pur{Column $j$}
+                
+                    \begin{itemize}
+                        \item $n$ columns total
+                    \end{itemize}
+            \end{itemize}
+        \end{notation}
+        
+        We can also compress it along either axis (just like how we did to derive this result):\\
+        
+        \begin{notation}
+            Our matrix $\pderivslash{ \pur{w} }{ \org{v} }$ can be written as
+            
+            \begin{equation*}
+                \pderiv{ \pur{w} }{ \org{v} } 
+                =
+                \overbrace{
+                    \begin{bmatrix}
+                        \bigpderiv{ \pur{w_1} }{ \org{v} }, &
+                        \bigpderiv{ \pur{w_2} }{ \org{v} }, &
+                        \cdots &
+                        \bigpderiv{ \pur{w_n} }{ \org{v} } 
+                    \end{bmatrix}
+                }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+            \end{equation*}
+            
+            \phantom{}
+            
+            \centerline{or \phantom{xxxxxxxxxx}}
+            
+            \phantom{}
+            
+            \begin{equation*}
+                \pderiv{ \pur{w} }{ \org{v} } 
+                =
+                \begin{bmatrix}
+                    \bigpderiv{ \pur{w} }   { \org{v_1} }\\ 
+                    \\
+                    \bigpderiv{ \pur{w} }   { \org{v_2} }\\ 
+                    \\
+                    \vdots \\ 
+                    \\
+                    \bigpderiv{ \pur{w} }   { \org{v_m} }
+                \end{bmatrix}
+                \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
+            \end{equation*}
+        \end{notation}
+        
+        These compressed forms will be useful for deriving our new and final derivatives, \textbf{matrix}-\textbf{scalar} pairs.
+            

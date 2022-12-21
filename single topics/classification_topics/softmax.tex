@@ -1,0 +1,262 @@
+    \subsection*{Probabilities in multi-class}
+    
+        So, we now know our \textbf{problem}: we're taking in a data point $x \in \RR^d$, and \textbf{outputting} one of the classes as a \textbf{one-hot vector}.
+        
+        So, now that we know what sorts of data we're \textbf{expecting}, we need to decide on the formats of our \textbf{answer}.
+        
+        We'll be returning a vector of length-$k$: \textbf{one} for each \textbf{class}. When we were doing \textbf{binary} classification, we estimated the \textbf{probability} of the positive class.
+        
+        So, it should make sense to do the same \textbf{here}: for each class, we'll return the estimated \textbf{probability} of our data point being in that class.
+        
+        \begin{equation}
+            g
+            =
+            \begin{bmatrix}
+              \p{x \text{ in } C_1} \\ 
+              \p{x \text{ in } C_2} \\ 
+              \vdots \\ 
+              \p{x \text{ in } C_k} 
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+              g_1\\g_2\\\vdots\\g_k
+            \end{bmatrix}
+        \end{equation}
+        
+        We can add an \textbf{additional} rule: the probabilities need to add up to \textbf{one}: we should assume our point ends up in some class or \textbf{another}.
+        
+        \begin{equation}
+            g_1+g_2+...+g_k=1
+        \end{equation}
+        
+        \begin{concept}
+            The different terms of our \vocab{multi-class} guess $g_i$ represent the \purp{probability} of our data point being in class $C_i$.
+            
+            Because we should assume our data point is in \purp{some} class, all of these probabilities have to \gren{add} to 1.
+        \end{concept}
+        
+        \textbf{Scaling} values to add up to 1 is called \textbf{normalization}. How do we do that?
+        
+        Well, let's say each class gets a \textbf{value} of $r_i$, before being \textbf{normalized}: we have done some other math we won't worry about.
+        
+        To make the total 1, we'll \textbf{scale} our terms by a factor $C$:
+        
+        \begin{equation}
+            C(r_1+r_2+...r_k) 
+            = 
+            C \left(\sum_{i=1}^k r_i \right)
+            =
+            1  
+        \end{equation}
+        
+        We can get our factor $C$ just by dividing:
+        
+        \begin{equation}
+            C 
+            =
+            \frac{1}{\sum r_i}
+        \end{equation}
+        
+        We've got $g_i$ now!
+        
+        \begin{equation}
+            g = 
+            \begin{bmatrix}
+                r_1/\sum r_i  \\
+                r_2/\sum r_i  \\
+                \vdots  \\
+                r_k/\sum r_i  \\
+            \end{bmatrix}
+        \end{equation}
+        
+    \subsection*{Turning sigmoid multi-class}
+    
+        Now, we just need to compute $r_i$ terms to plug in. To do that, we'll see how we did it using sigmoid:
+        
+        \begin{equation}
+            g= \sigma(u) = \frac{1}{1+e^{-u}}
+        \end{equation}
+        
+        This function is 0 to 1, which is good for being a probability. 
+        
+        Just for our convenience, we'll switch to positive exponents: all we have to do is multiply by $e^u/e^u$.
+            \note{Negative numbers are easy to mess up in algebra.}
+        
+        \begin{equation}
+            g = \frac{e^u}{1+e^u}
+        \end{equation}
+        
+        We'll think of \textbf{binary} classification as a special case of \textbf{multi-class} classification. The above probability could be thought of as $g_1$: the chance of our first class.\\
+        
+        \begin{concept}
+            \vocab{Binary classification} is a \purp{special} case of \vocab{multi-class} classification with only \gren{two} classes. 
+            
+            So, we can use it to figure out the \purp{general} case.
+        \end{concept}
+        
+        So, what was our \textbf{second} probability, $1-g$? This will be our second class, $g_2$.
+        
+        \begin{equation}
+            g_2 = 1-g= \frac{1}{1+e^{u}}
+        \end{equation}
+        
+        This follows an $r_i/(\sum r_i)$ format: the numerators (1 and $e^u$) add to \textbf{equal} the denominator ($1+e^u$).
+        
+        \begin{equation}
+            g = 
+            \begin{bmatrix}
+                1/(1+e^u)  \\
+                e^u/(1+e^u)  \\
+            \end{bmatrix}
+        \end{equation}
+        
+        How do we \textbf{extend} this to \textbf{more} classes? Well, 1 and $e^u$ are \textbf{different} functions: this a problem. We want to be able to \textbf{generalize} to many $r_i$. 
+        
+        How do they make them \textbf{equivalent}? We could say $1=e^0$. So, we could treat both terms as \textbf{exponentials}!
+        
+        \begin{equation}
+            g_1 = \frac{e^u}{e^0+e^u}
+        \end{equation}
+        
+        We can do this for an \textbf{arbitrary} number of terms. We'll treat them as \textbf{exponentials}, just like for $e^u$ and $e^0$
+        
+        \begin{equation}
+             g_i 
+            =             \frac{r_i}{\sum r_j} 
+            = 
+            \frac{e^{u_i}}{\sum e^{u_j}}
+        \end{equation}
+        
+    \subsection*{Our Linear Classifiers}
+    
+        What are each of those $u_i$ terms? When we were doing \textbf{binary}, it was a \textbf{linear regression} function:
+        
+        \begin{equation}
+            u(x) = \theta^Tx+\theta_0
+        \end{equation}
+        
+        We can do this for multiple different $u_i$ by just creating a different linear classifier $(\theta,\theta_0)$ for each one. We'll represent each vector as $\theta_{(i)}$.
+        
+        \begin{equation}
+            \theta_{(1)} = 
+            \begin{bmatrix}
+                \theta_{1(1)} \\ \theta_{2(1)} \\ \vdots \\ \theta_{d(1)}
+            \end{bmatrix}
+            \qquad\qquad
+            \theta_{(2)} = 
+            \begin{bmatrix}
+                \theta_{1(2)} \\ \theta_{2(2)} \\ \vdots \\ \theta_{d(2)}
+            \end{bmatrix}
+            \qquad\qquad
+            \theta_{(k)} = 
+            \begin{bmatrix}
+                \theta_{1(k)} \\ \theta_{2(k)} \\ \vdots \\ \theta_{d(k)}
+            \end{bmatrix}
+        \end{equation}
+        
+        And each can be used on our input:
+        
+        \begin{equation}
+            u_1(x) = \theta_{(1)}^T x + \theta_{0(1)}
+            \qquad\qquad
+            u_2(x) = \theta_{(2)}^T x + \theta_{0(2)}
+            \dots
+        \end{equation}
+        
+        But this is tedious. Instead, we can combine them all into a $(d \times k)$
+        \textbf{matrix}.
+            \note{$k$ classes, so we need $k$ classifiers. We'll stack them side-by-side like how we stacked multiple data points to create $X$.}
+        
+        \begin{equation}
+            \theta = 
+            \begin{bmatrix}
+                \theta_{(1)} & \theta_{(2)} & \cdots & \theta_{(k)}
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+                \theta_{1(1)} & \theta_{1(2)} & \cdots      & \theta_{1(k)}\\ 
+                \theta_{2(1)} & \theta_{2(2)} & \cdots      & \theta_{2(k)}\\ 
+                \vdots      & \vdots      & \ddots      & \vdots     \\ 
+                \theta_{d(1)} & \theta_{d(2)} & \cdots      & \theta_{d(k)}
+            \end{bmatrix}
+        \end{equation}
+        
+        And our constants, $\theta_0$, in a $(k \times 1)$ matrix:
+        
+        \begin{equation}
+            \theta_0 =
+            \begin{bmatrix}
+                \theta_{0(1)} \\ \theta_{0(2)} \\ \vdots \\ \theta_{0(k)}
+            \end{bmatrix}
+        \end{equation}\\
+        
+        \begin{concept}
+            We can combine \vocab{multiple classifiers} $\Theta_{(i)}=\Big(\theta_{(i)}, \theta_{0(i)} \Big)$ into large \textbf{matrices} $\theta$ and $\theta_0$ to compute \purp{multiple} outputs $u_i$ at the \gren{same} time.
+        \end{concept}
+        
+        This will put all of our terms into a $(1 \times k)$ vector $u$.
+        
+        \begin{equation}
+            u(x) = 
+            \theta^T x + \theta_0
+            =
+            \begin{bmatrix}
+                u_1 \\ u_2 \\ \vdots \\ u_k
+            \end{bmatrix}
+        \end{equation}
+    
+    \subsection*{Softmax}
+        
+        We now have all the pieces we need. Our \textbf{linear regression} for each class:
+        
+        \begin{equation}
+            \begin{bmatrix}
+                u_1 \\ u_2 \\ \vdots \\ u_k
+            \end{bmatrix}
+            = 
+            \theta^T x + \theta_0
+        \end{equation}
+        
+        The \textbf{exponential} terms, to get \textbf{logistic} behavior:
+        
+        \begin{equation}
+            r_i = e^{u_i}
+        \end{equation}
+        
+        The \textbf{averaging} to get probability = 1:
+        
+        \begin{equation}
+            g = 
+            \begin{bmatrix}
+                r_1/\sum r_i  \\
+                r_2/\sum r_i  \\
+                \vdots  \\
+                r_k/\sum r_i  \\
+            \end{bmatrix}
+        \end{equation}
+        
+        And so, our multiclass function is...\\
+        
+        \begin{definition}
+            The \vocab{softmax function} allows us to calculate the probability of a point being in each class:
+            
+            \begin{equation*}
+                g = 
+                \begin{bmatrix}
+                    e^{u_1}/\sum e^{u_i}  \\
+                    e^{u_2}/\sum e^{u_i}  \\
+                    \vdots  \\
+                    e^{u_k}/\sum e^{u_i}  \\
+                \end{bmatrix}
+            \end{equation*}
+            
+            Where
+            
+            \begin{equation}
+                u_i(x) = \theta_{(i)}^T x + \theta_{0(i)}
+            \end{equation}
+        \end{definition}
+        
+        
+        If we are forced to make a \textbf{choice}, we choose the class with the \textbf{highest probability}: we return a \textbf{one-hot encoding}.
+    

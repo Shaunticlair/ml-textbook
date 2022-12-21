@@ -1,0 +1,320 @@
+    \subsection*{Learning LLCs: Loss Functions}
+    
+        Now that we have fully \textbf{built up} LLCs, we can start trying to \textbf{train} our own. 
+        
+        In order to do that, we need a way to \textbf{evaluate} our hypotheses: a \textbf{loss function}.
+        
+        Earlier in the chapter, we tried \textbf{0-1 Loss}:
+
+        \begin{equation*}
+            \loss_{01}
+            \Big(  
+                \red{h(x; \Theta)} ,\quad  y 
+            \Big) 
+            =
+            \begin{cases}
+                0 & \text{ if } y = h(x; \Theta)\\
+                1 & \text{ otherwise}
+            \end{cases}   
+        \end{equation*}
+        
+        But, this \textbf{loss} function the same problem our \textbf{sign} function did: it isn't \textbf{smooth}! 
+        
+        It's a \textbf{discrete} function based on our \textbf{discrete classes}: so, it won't have a smooth \textbf{gradient} we can do \textbf{descent} on.
+        
+        For our \textbf{sign} function, we switched to the \textbf{sigmoid} function, which measures in terms of \textbf{probabilities}: this gave us some \textbf{smoothness} to our classification.
+        
+        Could we do the same here?
+        
+    \subsection*{Building our new loss function}
+    
+        So, the \textbf{output} of our sigmoid $\sigma(u)$ is a \textbf{probability}: how \textbf{likely} do we think a point is to be in class $+1$?
+        
+        We want a loss function
+        
+        \begin{equation}
+            \loss(g,y)
+        \end{equation}
+        
+        That considers two facts: the \textbf{correct} answer $y$, and how likely we \textbf{expected} $+1$ to be, $g=\sigma(u)$.\\
+        
+        \begin{notation}
+            For our \vocab{loss function}, rather than using $y \in \{-1,+1\}$, we'll use $ y \in \{0,1\}$.
+            
+            That way, $\sigma(u)$ and $y$ \purp{match}:
+            
+            \begin{equation*}
+                y \in \{0,1\} \qquad \qquad g \in (0,1)
+            \end{equation*}
+        \end{notation}
+        
+        So, if the correct is $1$, then we want $\sigma(u)$ to be \textbf{high}. If the correct answer is $0$, we want $\sigma(u)$ to be \textbf{low}.
+        
+        For \textbf{one} data point, then, we can consider, "how likely did we think the right answer was?"
+        
+        \begin{equation}
+            G(g,y) = 
+            \begin{cases}
+                g & \text{if } y=1 \\
+                1-g & \text{else } (y=0)
+            \end{cases}
+        \end{equation}
+        
+        If we to choose 1 with probability $g$, this could also mean, "how likely were we to be \textbf{right}?"
+        
+        This $G$ is how "\textbf{good}" our function is, so the \textbf{loss} would need for us to take the \textbf{negative}: we'll do that later.
+        
+    \subsection*{Loss Function for Multiple Data Points}
+    
+        Now, how do we consider \textbf{multiple} data points? Well, let's think in terms of \textbf{probability}: guessing each point is a separate \textbf{event}.
+        
+        We \textit{could} add or \textbf{average} our guesses. But, since we're working with \textbf{probabilities}, there's a natural way to \textbf{combine} them: multiple events \textbf{occurring} at the same time.
+        
+        Before, we asked, "how likely were we to be \textbf{right}?" for \textbf{one} data point. We could \textbf{extend} this question to, "how likely are we to get \textbf{every} question right?"
+        
+        Well, each question we get right is an \textbf{independent} event $C_i$. If we want two independent events to \textbf{both} happen, we have to \textbf{multiply} their probabilities.\\
+        
+        \begin{kequation}
+            The probability of two independent events $A$ and $B$ happening at the same time is
+            
+            \begin{equation*}
+                \p{A \text{ and } B} = \p{A} * \p{B}
+            \end{equation*}
+        \end{kequation}
+
+        
+        So if we want \textbf{all} of them, we just multiply:
+        
+        \begin{equation}
+            \p{E_{all}} = \p{E_1} * \p{E_2} * ...
+            * \p{E_n}
+        \end{equation}
+        
+        Written using pi notation, and also $\ex{g}{i}$ for multiple data points:
+            \note{This notation is described in the prerequisites chapter! The short version: instead of adding terms with $\sum$, you multiply with $\prod$.}
+            
+        \begin{equation}
+            \p{E_{all}} = \prod_{i = 1}^n \p{E_i} = \prod_{i = 1}^n \begin{cases}
+                \rgi & 
+                \text{if } \byi=1 \\
+                1-\rgi & 
+                \text{if } \byi=0
+            \end{cases}
+        \end{equation}
+        
+    \subsection*{Simplifying our expression - Piecewise}
+        
+        Our piecewise function is a bit \textbf{annoying}, though: is there a way to \textbf{simplify} it so that it doesn't have to be \textbf{piecewise}?
+        
+        Our goal is to \textbf{combine} our two piecewise cases into a \textbf{single} equation. That means one of them needs to \textbf{cancel out} whenever the other is true.
+        
+        Well, let's see what we have to \textbf{work} with.
+        
+        Our \textbf{two} cases happen when $y=0$ or $y=1$: these are \textbf{nice} numbers! Why? Because of the \textbf{exponent} rules for these two:
+        
+        \begin{itemize}
+            \item $c^0=1$: an exponent of 0 outputs 1: a factor of 1 in a product might as well \textbf{not be there}. It has been effectively \textbf{cancelled} out.
+            
+            \item $c^1=c$: an \textbf{exponent} of 1 leaves the factor \textbf{unaffected}.
+        \end{itemize}
+        
+        So, let's consider the \textbf{first} case, $g$. we can use $\red{g}^{ \blu{y} }$: if $y=1$, it's \textbf{unaffected}. If $y=0$, the term is \textbf{removed}.
+        
+        We want the \textbf{opposite} for $1-g$. We can \textbf{swap} 1 and 0 by doing $1-y$. This gives us $(1-\red{g})^{ 1-\blu{y} }$.
+        
+        For one data point:
+        
+        \begin{equation}
+            \p{E} = 
+            \overbrace{
+                \red{g} ^ { \blu{y} } 
+            }^{y=1}
+            \overbrace{
+                \left( 
+                    1-\red{g} 
+                \right) 
+                ^ { 1-\blu{y} }
+            }^{y=0}
+        \end{equation}
+        
+        We've gotten rid of the piecewise function! Let's add back in the product:
+        
+        \begin{equation}
+            \p{E_{all}} = 
+            \prod_{i = 1}^n
+            \p{E_i}
+            =
+            \prod_{i = 1}^n
+            \rgi ^ {\byi}
+            \left( 
+                1-\rgi 
+            \right) 
+            ^ { 1 - \byi }
+        \end{equation}
+        
+        Looks pretty ugly, but we'll work on that.
+        
+    \subsection*{Getting rid of the product}
+    
+        Our exponents look pretty \textbf{ugly}. Can we do something about that?
+        
+        More importantly, \textbf{products} are also pretty unpleasant: we can't use \textbf{linearity}! 
+            \note{Linearity makes lots of problems easy to work with, so we try to keep it.}
+        
+        Linearity uses \textbf{addition} between variables. What sort of \textbf{function} could change a \textbf{product} into a \textbf{sum}?
+        
+        Well, we could \textbf{list} out different basic functions, to see which ones connect sums and products. It turns out, one \textbf{interesting} function is
+        
+        \begin{equation}
+            \overbrace{
+                \log{ab}}
+            ^{product}
+            =
+            \overbrace{
+                \log{a} + \log{b}
+            }^{sum}
+        \end{equation}
+        
+        Aha! If we take the \textbf{log} of our function, we can turn a \textbf{product} into the \textbf{sum}!
+            \note{The below equation looks complicated, but all we've done is swap the product for a sum!}
+
+        \begin{equation}
+            \overbrace{
+                \pur{\log}
+                \left(
+                    \pur{\prod_{i = 1}^n}
+                    \p{E_i}
+                \right)
+            }^{product}
+            =
+            \overbrace{
+                \pur{\sum_{i = 1}^n
+                \log}
+                \left(
+                    \p{E_i}
+                \right)
+            }^{sum}
+        \end{equation}
+        
+        We can also separate our two \textbf{factors}:
+        \begin{equation}
+            \sum_{i = 1}^n
+            \Bigg(
+                \log\left(
+                        \rgi ^{\byi}
+                \right)
+                \pur{+}
+                \log\left( 
+                    \left(  1 - \rgi  \right)
+                    ^ { 1 - \byi }
+                \right) 
+            \Bigg)
+        \end{equation}
+        
+        And \textbf{finally}, we can remove the \textbf{exponents}:
+        
+        \begin{equation}
+            \sum_{i = 1}^n
+            \Bigg(
+                \byi\log{\rgi}
+                +
+                \left( 1 - \byi \right)
+                \log
+                    \left( 1 - \rgi \right) 
+            \Bigg)
+        \end{equation}
+    
+        \begin{concept}
+            Our \vocab{negative log likelihood} (NLL) comes from a couple steps:
+            
+            \begin{itemize}
+                \item \purp{Use} $y \in \{0, 1\}$ instead of $y \in \{-1,+1\}$ so that $y$ and $g$ have \gren{matching} outcomes.
+            
+                \item Get the \purp{chance} the model is right on every \gren{guess}: a \gren{product}.
+                
+                \item Use \purp{exponents} to convert the \gren{piecewise} expression into a single \gren{equation}.
+                
+                \item Take the \purp{log} of our expression to switch from a \gren{product} to a \gren{sum}.
+                
+                \item Take the \purp{negative} to get the \gren{loss} rather than the "\gren{goodness}" of our function.
+            \end{itemize}
+        \end{concept}    
+        
+    \subsection*{Negative Log Likelihood}
+    
+        Remember, at the \textbf{beginning}, we said that we need to take the \textbf{negative}: our function represents how \textbf{good} our function is, but we want the \textbf{loss}.
+        
+        With this, our function is in its final form:\\
+        
+        \begin{kequation}
+            We can get the loss of our \vocab{linear logistic classifier (LLC)} using the \vocab{negative log likelihood (NLL)} loss function
+            
+            \begin{equation*}
+                \loss_{nll}
+                (\rgi ,\quad \byi)
+                =
+                -
+                \Bigg(
+                    \byi \log{\rgi}
+                    +
+                    \left( 1 - \byi \right)
+                    \log
+                    \left( 1-\rgi \right) 
+                \Bigg)
+            \end{equation*}
+            
+            Or,
+            
+            \begin{equation*}
+                -
+                \Big(
+                    (\blu{answer}) \log(\red{guess})
+                    +
+                    \left( 1 - \blu{answer} \right)
+                    \log
+                    \left( 1-\red{guess} \right) 
+                \Big)
+            \end{equation*}
+        \end{kequation}
+        
+        Our total loss is
+        
+        \begin{equation}
+            \sum_{i=1}^n 
+            \loss_{nll}(\rgi ,\quad \byi)
+        \end{equation}
+        
+        Finally, we add our \textbf{regularizer}:
+        
+        \begin{equation}
+            J_{lr}(\theta,\theta_0;\data)
+            =
+            \frac{1}{n} \sum_{i=1}^n 
+            \Big(
+                \loss_{nll}(\rgi ,\quad \quad \byi)
+            \Big)
+            +
+            \pur{ \lambda \norm{\theta}^2 }
+        \end{equation}
+        
+        \begin{kequation}
+            The full \vocab{objective function} for \vocab{LLC} is given as
+            
+            \begin{equation*}
+                J_{lr}(\theta,\theta_0;\data)
+                =
+                \frac{1}{n}
+                \sum_{i=1}^n 
+                \Bigg(
+                    \loss_{nll}
+                    \left(
+                        \red{\sigma(\theta^T x + \theta_0)} ,\quad \byi
+                    \right)
+                \Bigg)
+                +
+                \pur{ \lambda \norm{\theta}^2 }
+            \end{equation*}
+            
+            Using our \purp{loss} function $\loss_{nll}$, and our \purp{logistic} function $\sigma(u)$.
+            
+        \end{kequation}

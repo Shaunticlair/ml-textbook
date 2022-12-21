@@ -1,0 +1,128 @@
+
+\section*{How to evaluate clustering algorithms}
+
+    The biggest problem with clustering algorithms is that they're \textbf{unsupervised}: this makes it much harder to know if we've gotten a \textbf{good} result.
+    
+    This is partly because our \textbf{loss} function doesn't necessarily tell us if clustering is \textbf{useful}, or represents the data \textbf{accurately}.
+    
+    It just tells us if our points are \textbf{close} to their cluster \textbf{mean}. That doesn't always mean the clustering is \textbf{good}.
+    
+    \miniex Imagine \textbf{every} single point in the dataset gets its \textbf{own} cluster mean. The \textbf{distance} to the cluster mean would be 0 (low loss), but this isn't very \textbf{useful}!
+        \note{This isn't useful because nothing has changed: we've gone from having $n$ separate data points, to having... $n$ separate clusters.}\\
+    
+    \begin{clarification}
+        The \vocab{$k$-means loss function} does \purp{not} tell us if we have a good and \gren{useful} clustering or not.
+        
+        It only tells us if the points in our clusters are \purp{close} to their \gren{cluster mean}.
+        
+        This can help us make \purp{better} clusters, but that does not mean they are \gren{good} or what we \gren{want}.
+    \end{clarification}
+    
+    Without having "true" labels, we have to find other ways to \textbf{verify} our approach.
+    
+    We'll do two things to \textbf{approach} this problem:
+    
+    \begin{itemize}
+        \item We'll look at some of the ways our \textbf{algorithm} can go wrong (or right).
+        
+        \item Then, we'll find \textbf{better} ways to evaluate our clusterings than just looking at the \textbf{loss}.
+    \end{itemize}
+    
+    But, always remember that a "good" clustering is partly \textbf{subjective}, and depends on what you \textbf{want} to accomplish.
+
+    \subsection*{Initialization}
+    
+        The first problem we have is related to something we mentioned at the end of the last section: $k$-means is not \textbf{convex}. 
+        
+        That means we can find \textbf{local} minima that are not the \textbf{global} minimum: our \textbf{initialization} (our \textbf{starting} clusters) can affect whether we end up in a useful minimum.
+            \note{The reason why is, mathematically, the same as when we first introduced the idea of a local minimum.}
+            
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=100mm,scale=0.4]{images/clustering_images/unlucky_init.png}
+            \caption*{In this example, notice that we ended up with convergence on some very \textbf{bad} clusters: the bottom cluster is split in \textbf{half}!}
+        \end{figure}
+        
+        The easiest way to resolve this is to run $k$-means multiple times with different initializations.
+            \note{Other techniques exist, but this is the simplest one.}\\
+        
+        \begin{concept}
+            Getting an \vocab{unlucky initialization} can result in \purp{clusters} that aren't \gren{useful}.
+            
+            We try to \gren{solve} this by running our algorithm \purp{multiple times}.
+        \end{concept}
+        
+        
+    \subsection*{Choice of $k$}
+    
+        One important question we decided to \textbf{ignore} earlier was: \textbf{how many} clusters should we pick in advance?
+        
+        Especially for \textbf{complex} data, we \textbf{don't know} how many natural clusters there will be. 
+        
+        But our number of clusters matter: because it's a parameter determines \textbf{how} our learning algorithm runs (rather than being chosen \textit{by} the algorithm), it's a \textbf{hyperparameter}:\\
+        
+        \begin{concept}
+            Our \vocab{number of clusters} $k$ is a \vocab{hyperparameter}.
+        \end{concept}
+        
+        And, choosing too high \textit{or} too low can both be \textbf{problematic}:
+        
+        \begin{itemize}
+            \item If we set $k$ too \textbf{high}, then we have more clusters than actually \textbf{exist}.
+                \begin{itemize}
+                    \item This can cause us to \textbf{split} real clusters in half, or find \textbf{patterns} that don't exist.
+                    
+                    \item In a way, this resembles a kind of \textbf{overfitting}: we try to \textbf{closely} match the data, but end up fitting \textbf{too closely} and not \textbf{generalizing} well: \textbf{estimation error}.
+                    
+                    \item \miniex The \textbf{extreme} case looks like the example we mentioned \textbf{before}: when labeling animals, we could make... a different \textbf{species} for every single instance of \textbf{any} animal we find. 
+                        \note{That doesn't sound very helpful.}
+                \end{itemize}
+            \item If we set $k$ too \textbf{low}, we don't have \textbf{enough} clusters to represent our data.
+                \begin{itemize}
+                    \item This means some clusters will be \textbf{lumped together} as a single thing: we \textbf{lose} some information.
+                    
+                    \item In this case, it's \textbf{impossible} to cluster everything in the way that would make the most \textbf{sense}: we have \textbf{structural error}.
+                    
+                    \item \miniex Let's say we wanted to \textbf{sort} fish, birds, and mammals into \textbf{two} categories: we might just \textbf{divide} them into "flies" and "doesn't fly".
+                        \note{That's some information, but often not enough!}\\
+                \end{itemize}
+        \end{itemize}
+        
+        \begin{concept}
+            When choosing $k$ (our \vocab{number of clusters}), we can cause \purp{problems} by picking an inappropriate \gren{value}:
+            
+            \begin{itemize}
+                \item \vocab{Too many} clusters (large $k$) can cause \gren{overfitting} and \purp{estimation error}: we find patterns we don't want.
+                
+                \item \vocab{Not enough} clusters (small $k$) causes \purp{structural error}: it prevents us from correctly \gren{separating} data.
+            \end{itemize}
+        \end{concept}
+        
+    \subsection*{Subjectivity of $k$}
+    
+        Not only is it hard to choose a "good" value of $k$, what a good value of $k$ is can really depend on your opinion, and what you know about reality.
+        
+        For example, consider the following example:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=100mm,scale=0.4]{images/clustering_images/subjective_k_value.png}
+            \caption*{Which of these two clusterings is more accurate?}
+        \end{figure}
+        
+        Should the top left be \textbf{one} cluster, or \textbf{two}? It's hard to say!
+        
+        Even if you're \textbf{sure}, you might \textbf{disagree} with others, or find that the best one depends on your \textbf{needs}.
+        
+        So not only can $k$ values be too high or too low, they can also be \textbf{debatably} better or worse!
+        
+        \begin{concept}
+            The \vocab{best} choice of \vocab{clustering} is not entirely objective: it can depend on your \gren{opinion}, or how you plan to \purp{use} the clustering.
+        \end{concept}
+        
+        What do we mean by, what we're "\textbf{using}" the clustering for? We'll get into that later, but in short: we might use \textbf{clusters} to make sense of \textbf{information}, or to make better \textbf{decisions}. 
+        
+        Different clusterings might be good when you want a different kind of understanding.
+        
+        \miniex The understanding you get from high-level comparisons (plants vs animals vs bacteria) is different from low-level comparison (cats vs dogs).
+    

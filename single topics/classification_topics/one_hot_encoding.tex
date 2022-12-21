@@ -1,0 +1,107 @@
+
+\section*{Handling Multiple Classes}
+
+    Now, we have developed a \textbf{binary} classifier, using logistic regression. But, many (almost all) problems have more than two classes! 
+    
+    \miniex Different animals, genres of movies, sub-types of disease, etc.
+    
+    \subsection{Approaches to multi-class classification}
+        
+        So, we need to a way to do \textbf{multi-classing}. Consider two main approaches:
+        
+        \begin{itemize}
+            \item \textbf{Train} many binary classifiers on different \textbf{classes} and \textbf{combine} them into a single model.
+                \begin{itemize}
+                    \item There are several ways to \textbf{combine} these \textbf{classifiers}. We won't go over them here, but some \textbf{names}: OVO (one-versus-one), OVA (one-versus-all).
+                \end{itemize}
+                
+            \item \textbf Make \textbf{one} classifier that handles the multi-class problem by itself. 
+                \begin{itemize}
+                    \item This model will be A \textbf{modified} version of logistic regression, using a variant of NLL.
+                \end{itemize}
+    \end{itemize}
+    
+    The \textbf{latter} approach is what we will use in this \textbf{next} section.
+    
+    \subsection*{Extending our Approach: One-Hot Encoding}
+    
+        Rather than being \textbf{restricted} to classes 0 and 1, we'll have $k$ \textbf{distinct} classes. Our \textbf{hypothesis} will be
+        
+        \begin{equation*}
+            h: \RR^d \rightarrow \{C_1, C_2, C_3, \dots C_k\}
+        \end{equation*}
+        
+        Where $C_i$ is the $\nth{i}$ class. Meaning, we want to \textbf{output} one of those $k$ \textbf{classes}.
+        
+        Because we'll be using our computer to do \textbf{math} to get the \textbf{answer}, we need to represent this with \textbf{numbers}. Before, we would simply \textbf{label} with 0 or 1. 
+        
+        We could return $\{1,2,3,4,5...k\}$ for each \textbf{label}. But this is \textbf{not} a good idea: it implies that there's a natural \textbf{order} to the classes, which isn't necessarily true.
+        
+        If we don't \textbf{actually} think $C_1$ is closer to $C_2$ than to $C_5$, we probably shouldn't represent them with numbers that are \textbf{closer} to each other.
+        
+        Instead, each class needs to be a \textbf{separate} variable. We can store them in a vector:
+        
+        \begin{equation}
+            \begin{bmatrix}
+              C_1\\C_2\\ \vdots \\ C_k
+            \end{bmatrix}
+        \end{equation}
+        
+        So, our \textbf{label} will be
+        
+        \begin{equation}
+            y=
+            \begin{bmatrix}
+              y_1\\y_2\\ \vdots \\ y_k
+            \end{bmatrix}
+        \end{equation}
+        
+        In binary classification, we used 0 or 1 to indicate whether we fit into one \textbf{class}. So, that's how we'll do each class: 0 if our data point is \textbf{not} in this class, 1 if it \textbf{is}.
+        
+        This approach is called \textbf{one-hot encoding}.\\
+        
+        \begin{definition}
+            \vocab{One-hot encoding} is a way to represent \vocab{discrete} information about a data point.
+            
+            Our $k$ classes are stored in a length-$k$ column \gren{vector}. For \purp{each} variable in the vector, 
+            
+            \begin{itemize}
+                \item The value is \gren{0} if our data point is \purp{not in that class}.
+                \item The value is \gren{1} if our data point is \purp{in that class}.
+            \end{itemize}
+            
+            In one-hot encoding, items are \purp{never} labelled as being in \purp{two} classes at the \gren{same time}.
+        \end{definition}
+        
+        \miniex Suppose that we want to classify \textbf{furniture} as table, bed, couch, or chair.
+        
+        \begin{equation}
+            \begin{bmatrix}
+              \text{table} \\ \text{bed} \\ \text{couch} \\ \text{chair} 
+            \end{bmatrix}
+        \end{equation}
+        
+        For each class:
+        
+        \begin{equation}
+            y_{chair} = 
+            \begin{bmatrix}
+              0\\0\\0\\1
+            \end{bmatrix}
+            \qquad
+            y_{table} = 
+            \begin{bmatrix}
+              1\\0\\0\\0
+            \end{bmatrix}
+            \qquad
+            y_{couch} = 
+            \begin{bmatrix}
+              0\\0\\1\\0
+            \end{bmatrix}
+            \qquad
+            y_{bed} = 
+            \begin{bmatrix}
+              0\\1\\0\\0
+            \end{bmatrix}
+        \end{equation}
+        

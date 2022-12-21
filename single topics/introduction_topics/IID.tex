@@ -1,0 +1,120 @@
+\section*{IID: Independent and Identically Distributed}
+
+Let's look at our underlying assumptions: the rest of this class relies on these assumptions.
+    
+    \subsection*{1. An assumption about data}
+        
+        Let's return back to our original goal: we want to use \textbf{data} to teach our machine to give us \textbf{results} we want. Just like how a person might learn from their \textbf{experience} and use it to make \textbf{judgments}.
+        
+        However, there's an \textbf{assumption} built in to this statement, one we need to look at more closely: we are assuming that \textbf{past} data allows us to predict \textbf{future} data. 
+        
+        This may seem obvious, but it isn't always: past data may not be \textbf{representative} of the future, for example.
+        
+        \begin{itemize}
+            \item \miniex We can't use the weather over the month of July to predict the weather in the month of December.
+        \end{itemize}
+        
+        This often called the problem of \textbf{induction}: using the past to predict the future.
+        
+        
+    \subsection*{2. Is our data representative?}
+    
+        First, let's solve the problem presented above:
+        
+        \begin{itemize}
+            \item \miniex We got our weather from a \textbf{different} month than we're trying to predict.
+        \end{itemize} 
+        
+        So, it seems our problem is that our \textbf{data} and what we're trying to \textbf{predict} are from \textbf{two different sources}.
+        
+        We want them to come from the \textbf{same source}, then. In this case, we could say we want them to be from the \textbf{same} month. Great. But how do we say this in general?
+        
+    \subsection*{3. How do we compare data?}
+        
+        We got down to the real problem: we want our new data to be from a similar source to the old data. One month couldn't \textbf{represent} another, because they \textbf{behave} differently.
+        
+        \begin{itemize}
+            \item \miniex For different months, we get different rainy days, different temperature ranges, so on: they can't be compared.
+        \end{itemize} 
+        
+        In general, we need a way to describe what we mean by "different": what describes one of these months?
+        
+        \begin{itemize}
+            \item \miniex To us, all that matters is the weather: how \textbf{likely} are we have a rainy day, for example? In fact, we'd like to know how \textbf{likely} every outcome is.
+        \end{itemize}
+        
+        We represent this with something called a \textbf{distribution}. A distribution gives us exactly what we just described: \textbf{how likely} different events are to occur. 
+        \note{This is how our system "behaves", in a way.}\\
+        
+        \begin{definition}
+            A \vocab{distribution} is a \gren{function} that gives us the \purp{probability} of different \purp{outcomes}.
+        \end{definition}
+        
+        \note{Why is it called a distribution? Well, we're taking the \textbf{odds}, and spreading them out (or \textbf{distributing} them) over multiple different outcomes!}
+        
+        \miniex The \textbf{distribution} of outcomes on a coin is 50\% chance of heads, 50\% chance of tails.
+        
+        Notice that distributions are \textbf{probabilistic}: outcomes have a certain \textbf{chance} of occurring. Otherwise, these problems would be simple.
+
+\pagebreak
+
+    \subsection*{4. Identically Distributed Data}
+        
+        We can think of this distribution as a \textbf{simplified} view of the \textbf{source} of our data. Each "outcome" is a data point; one we can use to \textbf{learn}.
+        
+        We want our \textbf{past} data we \textbf{learn} from, and our \textbf{future} data with \textbf{test} with, to have the \textbf{same} distribution.
+        
+        We also want different points in the \textbf{same} dataset (past \textit{or} future) to be from the same \textbf{distribution}: if they aren't, then why are we lumping them together? 
+        \note{We want to focus on one problem at a time - one distribution.}
+        
+        We want them to be the "same", or \textbf{identical}: they have \textbf{exactly} the same chances for each outcome.
+        
+        In other words: we want our sets of data to be \textbf{identically distributed}.\\
+        
+        \begin{definition}
+            If two \purp{data points}(or datasets) are \vocab{identically distributed}, then they have the \gren{same} underlying \purp{distributions}.
+            
+            In other words, they have the \gren{same} \purp{probabilities} for each possible \purp{outcome}.
+        \end{definition}
+        
+        \miniex Two fair coins will behave the same as each other: they both have 50-50 odds. Thus, they're \textbf{identically distributed}.
+        
+        
+    \subsection*{5. Independence (Review)}
+        
+        There's a second assumption that is just as important: when we draw two different data points, we are also \textbf{assuming} that the results of one do not \textbf{affect} the other. 
+        
+        If one point \textbf{depended} on another, then there's no \textbf{new} information: you could have used the last point to guess this one.
+        
+        This means you're \textbf{not learning}, which is a problem: you need many experiences to come to a good \textbf{conclusion}, that will apply well in the future.
+        
+        Because we don't want the result of one data point to \textbf{depend} on another, we call this assumption \textbf{independence}.\\
+        
+        \begin{definition}
+            Two \gren{data points} are \vocab{independent} if \purp{knowledge} of the outcome for one data point does not affect the \purp{probabilities} for the other.
+        \end{definition}
+        
+        \note{This definition is a bit informal: the proper definition is to say that, for two events A and B, $P(A)P(B) = P(A \text{ and } B)$} 
+        
+        \miniex If you flip two coins, knowing that one coins comes up heads does not tell you anything about the other coin: the two coin tosses are \textbf{independent}.
+        
+\pagebreak
+        
+    \subsection*{6. Independent and Identically Distributed}
+    
+        We combine both of these assumptions into our final result: we want our data points and data sets to be both \textbf{independent and identically distributed.}\\
+        
+        \begin{definition}
+            \vocab{IID}, or \vocab{Independent and Identically Distributed}, means that if you draw two data points, they
+            
+            \begin{itemize}
+                \item Come from the \gren{same} \purp{distribution}: they have the same \purp{probabilities} for each outcome,
+                \item They \gren{aren't related} in any other way: they are \purp{independent}, meaning the \purp{outcome} of one \gren{does not} affect the other.
+            \end{itemize}
+        \end{definition}
+        
+        \miniex Based on the two examples above, flipping two coins (or rolling a die twice) is IID.
+            
+        We shorten this to one acronym, which tells you how important it is: it is the base assumption in many different statistics, inference, and machine learning settings.
+        
+        We will assume this to be true, and use that assumption throughout the class. We expect our data to be IID in most cases.

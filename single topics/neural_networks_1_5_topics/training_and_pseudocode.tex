@@ -1,0 +1,167 @@
+    \subsection*{Comments}
+    
+        A few important side notes on training. First, on derivatives:\\
+        
+        \begin{concept}
+            Sometimes, depending on your \purp{loss} and \purp{activation} function, it may be easier to directly compute
+            
+            \begin{equation*}
+                \pderiv{ \pur{\loss} }{ \red{Z}^{L} }
+            \end{equation*}
+            
+            Than it is to find 
+            
+            \begin{equation*}
+                \pderivslash{ \pur{\loss} }{ \org{A}^L } 
+                \;\;
+                \text{and}
+                \;\;
+                \pderivslash{ \org{A}^L } { \red{Z}^{L} }
+            \end{equation*}
+            
+            So, our algorithm may change slightly.
+        \end{concept}
+        
+        Another thought: intialization.\\
+        
+        \begin{concept}
+            We typically try to pick a \vocab{random initalization}. This does two things:
+            
+            \begin{itemize}
+                \item Allows us to avoid weird \gren{numerical} and \gren{symmetry} issues that happen when we start with $\blu{W}_{ij}=0$.
+                
+                \item We can hopefully find different \gren{local minima} if we run our algorithm multiple times.
+                    \begin{itemize}
+                        \item This is also helped by picking \purp{random data points} in \vocab{SGD} (our typical algorithm).
+                    \end{itemize}
+            \end{itemize}
+            
+            Here, we choose our \purp{initialization} from a \gren{Gaussian} distribution, if you know what that is.
+        \end{concept}
+        
+            \note{If you do not know a gaussian distribution, that shouldn't be a problem. It is also known as a "normal" distribution.}
+
+        
+    
+    \subsection*{Pseudocode}
+    
+        Our training algorithm for backprop can follow smoothly from what we've laid out.
+     
+        \begin{codebox}
+            \Procname{$\proc{SGD-Neural-Net}(\dataTrain, T, L, (m^1, \ldots,
+                        m^L), (f^1, \ldots, f^L), \text{Loss})$}
+            
+            \li \For every \textbf{layer}:
+                \Do
+                \li \textit{Randomly} initialize
+                    \Do
+                    \li the \gren{weights} in every layer
+                    \li the \gren{biases} in every layer
+                    \End
+                \End
+                \li
+            
+            \li While \gren{termination condition} not met:
+                \Do
+                    \li Get random data point \org{$i$}
+                    \li Kepp track of time $t$
+                    \li
+                    \li Do forward pass
+                        \Do
+                            \li \For every \textbf{layer}:
+                                \Do
+                                    \li Use previous \textbf{layer}'s \orgg{output}: get \redd{pre-activation}
+                                    \li Use \redd{pre-activation}: get new output, \orgg{activation}
+                                \End
+                                \li
+                            
+                            \li Get \purp{loss}: forward pass complete
+                        \End
+                        \li
+                    
+                    \li Do back-propagation
+                        \Do
+                            \li \For every \textbf{layer} in \underline{reversed order}:
+                            
+                            \Do
+                                \li If \textbf{final} layer:
+                                \gre{\#Loss function}
+                                    \Do
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \org{A}^L }$
+                                    \End
+                                    \li
+                                
+                                \li Else: 
+                                    \Do
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \org{A^\ell} }$:
+                                        \gre{\#Link two layers}
+                                            \Do
+                                                \li 
+                                                $( \pderivslash{ \red{Z}^{\ell+1} }{ \org{A}^\ell } )$ 
+                                                \;*\; 
+                                                $( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell+1} } )$ 
+                                            \End
+                                            \li 
+                                             
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \red{Z}^{\ell} }$:
+                                        \gre{\#Within layer}
+                                            \Do
+                                                \li
+                                                $( \pderivslash{ \org{A}^\ell }{ \red{Z}^{\ell} } )$ 
+                                                \;*\;
+                                                $( \pderivslash{ \pur{\loss} }{ \org{A}^\ell } )$ 
+                                            \End
+                                            \li
+                                    \End
+                                    
+                                    
+                                \li Compute weight gradients:
+                                    \Do
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \blu{W}^{\ell} }$:
+                                        \gre{\#Weights}
+                                            \Do
+                                                \li $\pderivslash{\red{Z}^{\ell}}{ \blu{W}^\ell }
+                                                = \red{A}^{\ell-1}$
+                                                \li
+                                                $( \pderivslash{\red{Z}^{\ell}}{ \blu{W}^\ell } )$ 
+                                                \;*\;
+                                                $( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell}} )$ 
+                                            \End
+                                            \li
+                                        
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \blu{W_0}^{\ell} }$:
+                                        \gre{\#Biases}
+                                            \Do
+                                                \li
+                                                $\pderivslash{ \pur{\loss} }{ \blu{W_0}^{\ell} }
+                                                =
+                                                ( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell}} )$ 
+                                            \End
+                                            \li
+                                    \End
+                                    
+                                \li Follow Stochastic Gradient Descend (SGD): \gre{\#Take step}
+                                    \Do   
+                                        \li Update \gren{weights}:
+                                        \Do
+                                            \li $\blu{W}^\ell = \blu{W}^\ell - 
+                                            \Big( \eta(t) * (\pderivslash{ \pur{\loss} }{ \blu{W}^{\ell} }) \Big)$
+                                        \End
+                                        \li
+                                        
+                                        \li Update \gren{biases}:
+                                        \Do
+                                            \li $\blu{W_0}^{\ell} = \blu{W_0}^{\ell} - 
+                                            \Big( \eta(t) * (\pderivslash{ \pur{\loss} }{ \blu{W_0}^{\ell} }) \Big)$
+                                        \End
+                                        
+                                        \li
+                                        
+                                    \End
+                            \End
+                        \End
+
+                \End
+            \li Return final neural network with weights and biases
+    
+        \end{codebox}

@@ -1,0 +1,44 @@
+\subsection*{Input Space vs. Parameter Space}
+
+    One more thing to note: we have two similar situations.
+    
+    \begin{itemize}
+        \item $J$ is a \textbf{function} with $\theta$ as an \textbf{input}: $J(\theta)$.
+        
+        \item $h$ is a \textbf{function} with $x$ as an \textbf{input}: $h(x)$. 
+    \end{itemize}
+    
+    In both cases, we can imagine the \textbf{output} as the "\textbf{height}" of our function: the \textbf{hill} we mentioned before. This \textbf{physical} intuition is useful to \textbf{gradient descent}.
+    
+    But, what about \textbf{input} to our function? That's the x-axis our hill is floating above:
+    
+    \begin{itemize}
+        \item With $h(x)$, our x-axis was our \textbf{input space}, all possible $x_1$ values: the "space" containing all of our possible inputs.
+        
+        \item With $J(\theta)$, our x-axis is the \textbf{parameter space}, all possible $\theta$ values. We also called this our "\textbf{hypothesis space}".
+            \note{We're assuming 1-D right now for simplicity. If we were 2-D, we'd have an entire 2D grid under our hill!}\\
+    \end{itemize}
+    
+    \begin{definition}
+        The \vocab{parameter space} is our set of all \gren{possible} parameter combinations.
+        
+        This is the same as the \vocab{hypothesis space}, because our parameters \gren{define} our hypothesis.
+        
+        When we \gren{optimize} our hypothesis, we are "\purp{exploring}" the hypothesis space. 
+    \end{definition}
+    
+    This also gives us an idea of which hypotheses are "\textbf{similar}": those which are \textbf{closer} in parameter space (which we used, when we were doing regularization $\norm{\theta-\theta_{old}}$).
+    
+    This is the \textbf{space} we're exploring, as we try to move \textbf{downhill}. \\
+    
+    \begin{clarification}
+        Pay attention to your \purp{axes}! 
+        
+        Sometimes, we're doing a 2-D or 3-D plot of $J$, and our inputs are $\theta_k$. Other times, we're plotting hypothesis $h$, with our axes $x_i$.
+        
+        These two plots could have the same surface, but they \gren{represent} completely different things.
+    \end{clarification}
+
+
+        
+        

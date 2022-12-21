@@ -1,0 +1,140 @@
+\section*{Application to Regression}
+    
+    One nice thing about \textbf{gradient descent} is that it is \textbf{easy} to switch the kind of problem you're applying it to: all you need is your \textbf{parameters}(s) $\theta$, and a function to optimize, $J$.
+    
+    From there, you can just \textbf{compute} the gradient.
+
+    \subsection*{Ordinary Least Squares}
+        
+        Our \textbf{loss} function is
+        
+        \begin{equation}
+            J(\theta,\theta_0) = 
+            \frac{1}{n}  \sum_{i=1}^n 
+            \left( \red{ (\theta^T} \blu{\ex{x}{i}} \red{ + \theta_0) } 
+            - \blu{\ex{y}{i}} \right)^2 
+        \end{equation}
+            
+        Or, in \textbf{matrix} terms,
+            \note{Including the appended row of 1's from before.}
+        
+        \begin{equation*}
+            J = \frac{1}{n}
+                \left( \red{ \Xt \theta  - \Yt } \right)^T
+                \left( \red{ \Xt \theta  - \Yt } \right) 
+        \end{equation*}
+        
+        Our gradient, according to \textbf{matrix derivative} rules, is
+        
+        \begin{equation}
+            \nabla_\theta J(\theta) = 
+                \frac{2}{n} \Xt^T
+                \left( \red{ \Xt \theta  - \Yt } \right) 
+        \end{equation}
+        
+        Before, we set it equal to \textbf{zero}. But here, we can instead take \textbf{steps} towards the solution, using \textbf{gradient descent}.
+        
+        We could use the \textbf{matrix} form, but sometimes it's easier to use a \textbf{sum}. Fortunately, derivatives are easy with a sum. If so, here's \textbf{another} way to write it:
+        
+        \begin{equation}
+            \nabla_\theta J(\theta) 
+            = 
+            \frac{2}{n} \sum_{i=1}^n
+            \left(
+                \red{\theta^T} \blu{\ex{x}{i}} - \blu{\ex{y}{i}}
+            \right)
+            \blu{\ex{x}{i}}
+        \end{equation}
+        
+        Either way, we use gradient descent \textbf{normally}:
+            \note{Remember that $\blu{ \theta_{old} }$ is an \textbf{input} to the gradient, not multiplied by it!}
+        
+        \begin{equation*}
+            \red{ \theta_{new} } 
+            =  
+            \blu{ \theta_{old} } 
+            - \grn{ \eta } 
+            \nabla_\theta J ( \blu{ \theta_{old} } )
+        \end{equation*}
+        
+        Using $\ex{\theta}{t}$ notation:
+        
+        \begin{equation*}
+            \red{ \ex{\theta}{t} } = 
+            \blu{ \ex{\theta}{t-1} } -
+            \grn{\eta} \nabla_\theta J ( \blu{ \ex{\theta}{t-1} })
+        \end{equation*}
+        
+    \subsection*{Ridge Regression}
+    
+        Ridge regression is similar. 
+        
+        \begin{equation*}
+                J(\theta) 
+                = 
+                \frac{1}{n}  \sum_{i=1}^n 
+                \left( 
+                    \underbrace{
+                        \red{(\theta^T \ex{x}{i}  
+                        + \theta_0)}
+                    }_{guess}
+                    - \underbrace{
+                        \blu{\ex{y}{i}} 
+                    }_{answer}
+                \right)^2 
+                + 
+                \underbrace{
+                    \pur{ \lambda \norm{\theta}^2 }
+                }_{Regularizer}
+            \end{equation*}
+        
+        However, we have to treat $\theta_0$ as \textbf{separate} from our other data points, because of \textbf{regularization}: remember that it \textbf{doesn't} apply to $\theta_0$.
+        
+        For $\theta$:
+        
+        \begin{equation}
+            \nabla_\theta J_\text{ridge}(\theta, \theta_0)
+            =
+            \frac{2}{n}\sum_{i=1}^n
+            \left(
+                \red{(\theta^T} \blu{\ex{x}{i}} + \red{\theta_0)}
+                - 
+                \blu{\ex{y}{i}}
+            \right)
+            \blu{\ex{x}{i}}
+            +
+            \pur{2 \lambda \theta}
+        \end{equation}
+        
+        For $\theta_0$:
+        
+        \begin{equation}
+            \pderiv{J_\text{ridge}(\theta, \theta_0)}{\theta_0} 
+            =
+            \frac{2}{n}\sum_{i=1}^n
+            \left(
+                \red{(\theta^T} \blu{\ex{x}{i}} + \red{\theta_0)}
+                - 
+                \blu{\ex{y}{i}}
+            \right)
+        \end{equation}
+        
+        Notice that we used a \textbf{gradient} for our vector $\theta$, but since $\theta_0$ is a single variable, we just used a \textbf{simple derivative}!\\
+        
+        \begin{concept}
+            The \vocab{gradient} $\deriv{J}{\theta}$ must have the \vocab{same shape as $\theta$}: this shape-matching is why we can easily \gren{subtract} it during gradient descent.
+            
+            \begin{equation*}
+                \underbrace{
+                    \red{ \theta_{new} } 
+                }_{(d \times 1)}
+                =  
+                \underbrace{
+                    \blu{ \theta_{old} } 
+                }_{(d \times 1)}
+                - \grn{ \eta } 
+                \underbrace{
+                    \nabla_\theta J ( \blu{ \theta_{old} } )
+                }_{(d \times 1)}
+            \end{equation*}
+        \end{concept}

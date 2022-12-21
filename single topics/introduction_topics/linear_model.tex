@@ -1,0 +1,108 @@
+\section*{The Linear Model}
+
+    Now that we understand the problem of \textbf{regression}, and the concept of \textbf{optimizing} over it, we can pick a concrete example.
+    
+    We want a function that can use information to \textbf{predict} outputs.
+    
+    \subsection*{The Linear Model, 1-D}
+    
+        We'll start off small: we have one variable, and something we want to predict. And we'll pick the simplest pattern we can:
+
+        \begin{equation}
+            y = mx+b
+        \end{equation}
+        
+        A linear equation: $m$ tells us how much our input affects our output. $b$ accounts for everything unrelated to $x$: what is $y$ when $x=0$?
+        
+        $b$ and $m$ are our parameters: that means they're part of $\Theta$. We'll rename them $\theta_0$ and $\theta_1$. 
+        
+        \begin{equation}
+            h(x) = \red{\theta_1} x + \red{\theta_0}
+        \end{equation}
+        
+    \subsection*{The Linear Model, 2-D}
+    
+        We want to have \textbf{multiple} input variables: $x$ will be a \textbf{vector}, not a number. So, for our above example, we'll \textbf{replace} $x$ with $x_1$.
+        
+        \begin{equation}
+            h(x) = \theta_1 \red{x_1} + \theta_0
+        \end{equation}
+        
+        The simplest way to include $x_2$ by just \textbf{adding} it. We have a scaling factor $\theta_1$ for $x_1$, so we'll give $x_2$ its own \textbf{parameter}, $\theta_2$:
+        \note{If $\theta_1$ is the "slope" for $x_1$, $\theta_2$ is the "slope" for $x_2$.}
+        
+        \begin{equation}
+            h(x) = \red{\theta_2 x_2} + \theta_1 x_1 + \theta_0
+        \end{equation}
+        
+    \subsection*{The Linear Model, $d$-D}
+    
+        You can \textbf{expand} this to $d$ dimensions by simply adding more terms:
+        \note{This is the "dimension" of our input space: the \textbf{number} of input variables we have.}
+        
+        \begin{equation}
+            h(x) = \red{\theta_0} + \red{\theta_1}x_1 + \red{\theta_2}x_2 + \red{\theta_3}x_3 + ... + \red{\theta_d}x_d
+        \end{equation}
+        
+    \subsection*{The Linear Model using Vectors}
+        
+        Here, we are \textbf{multiplying} components of $x$ and $\theta$ together, then \textbf{adding}. This looks like a \textbf{dot product}:
+        
+        \begin{equation}
+            h(x) = \theta_0 +
+            \red{
+                \begin{bmatrix}
+                    \theta_1 \\ \theta_2 \\ \vdots \\ \theta_d
+                \end{bmatrix}
+                \cdot
+                \begin{bmatrix}
+                    x_1 \\ x_2 \\ \vdots \\ x_d
+                \end{bmatrix}
+            }
+        \end{equation}
+        
+        If we write this symbolically, we get:
+        
+        \begin{equation}
+            h(x) = \theta_0 + \red{\theta \cdot x} 
+        \end{equation}
+        
+        Unfortunately, we had to leave $\theta_0$ out to make it work. $\theta$ is used for the parameters of our \textbf{dot product}, $\Theta$ is \textbf{all} parameters.\\
+        
+        \begin{notation}
+            We represent the \gren{parameters} of our \purp{linear} equation as $\Theta = (\theta, \theta_0)$.
+        \end{notation}
+        
+        This formula looks similar to $y=mx+b$ again! Only this time, we have \textbf{vectors} instead.
+        
+        We'll swap out the dot product for \textbf{matrix multiplication}: we'll use matrix multiplication a lot in this chapter, and course.
+        \note{One benefit is that we can use \textbf{matrices} instead of just \textbf{vectors}!}\\
+        
+        \begin{kequation}
+            The \vocab{linear regression} hypothesis is written as
+            
+            \begin{equation*}
+                h(x) = \red{ \theta^T x } + \theta_0
+            \end{equation*}
+        \end{kequation}
+        
+        \note{Make sure you know what $\theta^T$ is: it's the \textbf{transpose}!}
+        
+        Remember that, when written out, this looks like:
+        
+        \begin{equation}
+            h(x) = 
+            \red{
+                \begin{bmatrix}
+                    \theta_1 & \theta_2 & \theta_3 & \cdots & \theta_d
+                \end{bmatrix}
+            }
+            \blu{
+                \begin{bmatrix}
+                    x_1 \\ x_2 \\ x_3 \\ \vdots \\ x_d
+                \end{bmatrix}
+            }
+            + \theta_0
+        \end{equation}
+        
+        This is the \vocab{hypothesis class} of \textbf{linear hypotheses} we will reuse throughout the class.

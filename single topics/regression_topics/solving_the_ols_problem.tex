@@ -1,0 +1,268 @@
+
+\section*{Solving the OLS Problem}
+
+    \subsection*{Optimization in 1-D - Calculus Returns!}
+    
+        Now that we have our \textbf{problem} presented the way we \textbf{want}, we can figure out how to \textbf{optimize} our $\theta$.
+        
+        For now, we'll revert to \textbf{sum} notation, but we'll come back to our \textbf{matrices} later.
+        
+        \begin{equation}
+            J(\theta) = 
+            \frac{1}{n}  \sum_{i=1}^n 
+            \left( \red{\theta^T} \blu{\ex{x}{i}}  
+            - \blu{\ex{y}{i}} \right)^2 
+        \end{equation}
+        
+        How do we \textbf{optimize} this? Let's just take \textbf{one data point}:
+        
+        \begin{equation}
+            J(\theta) = (\red{ \theta^T x  } - y )^2
+        \end{equation}
+        
+        And we'll start in 1D.
+        
+        \begin{equation}
+            J(\theta) = (\red{\theta x}   - y )^2
+        \end{equation}
+        
+        If we treat $\theta$ like any ordinary \textbf{variable}, this is just a simple function! How would we find the \textbf{minimum}? 
+        
+        Using \textbf{calculus}! Anywhere there's a local \textbf{minimum}, we typically know the \textbf{derivative} is 0.
+        \note{Assuming a "smooth" surface...}
+        
+        Note that we aren't taking $\deriv{}{x}$: we want to change our \textbf{model}, not our \textbf{data}! So, since $\theta$ represents our \textbf{model}, we'll take $\deriv{}{\theta}$.
+        
+        \begin{equation}
+            J'(\theta) = 2(\theta x - y ) = 0
+        \end{equation}
+        
+        We just find where the slope is 0, and solve for $\theta$!
+        \note{We technically need to prove whether this is minimum, maximum, or neither. For now, we'll assume we have a minimum.}
+        
+        \begin{equation}
+            \theta^* = \frac{y}{x}
+        \end{equation}
+        
+        \begin{concept}
+            
+            If our function $J(\theta)$ has \vocab{one variable}, we can \gren{explicitly} find \vocab{local minima} by solving for $\theta$ when the \purp{derivative} is zero.
+            
+            \begin{equation*}
+                \deriv{J}{\theta}=0
+            \end{equation*}
+            
+            Then, you check each candidate using the second derivative to see if it is a minimum ($J''(\theta)>0$). In this class we will often be able to ignore this step.
+        \end{concept}
+        
+        \note{This concept is review from 18.01 (Single-variable calculus), but is worth repeating!}
+        
+    \subsection*{Using our sum}
+    
+        Now, we'll go back to having multiple data points we want to \textbf{average}:
+        
+        \begin{equation}
+            J(\theta) = \frac{1}{n}  \sum_{i=1}^n 
+            \left( \theta \blu{\ex{x}{i}}  
+            - \blu{\ex{y}{i}} \right)^2 
+        \end{equation}
+        
+        We want to do the same optimization. Thankfully, derivatives are \textbf{linear}: addition and scalar multiplication are not affected!
+        \note{Check the prerequisites chapter, chapter 0, for a full definition of linearity.}
+        
+        \begin{equation}
+            J'(\theta) = \frac{1}{n}  \sum_{i=1}^n \red{2(\theta \ex{x}{i}  
+            - \ex{y}{i} )} = 0
+        \end{equation}
+        
+        And we can \textbf{solve} this just the same way.
+        
+    \subsection*{Optimizing for multiple variables}
+    
+        Now, the tricky part is working with \textbf{vectors}.
+        \note{We'll ignore the averaging and $\ex{}{i}$ notation since that's easy to add on afterwards.}
+        
+        \begin{equation}
+            J(\theta) = (\red{ \theta^T x  } - y )^2
+        \end{equation}
+        
+        We want to \textbf{optimize} this. In the \textbf{one-dimensional} case, we wanted to set the \textbf{derivative} of $J$ to \textbf{zero}, using a single $\theta$ variable. Now, we have \textbf{multiple} variables $\theta_k$ to \textbf{change}.
+        
+        \textbf{Derivatives} are all about \textbf{change} in variables, and our \textbf{change} $\Delta \theta$ is a \textbf{combination} of changing the different \textbf{components}, $\Delta \theta_k$. 
+        
+        \begin{equation}
+            \Delta \theta =
+            \begin{bmatrix}
+                \Delta \theta_0 \\ \Delta \theta_1 \\ \Delta \theta_2 \\ \vdots \\ \Delta \theta_d
+            \end{bmatrix}
+        \end{equation}
+        
+        So, maybe it would be reasonable to just set \textbf{every} derivative to \textbf{zero}? It turns out, the answer is \textbf{yes}! 
+        
+        We can show this by using the \textbf{chain rule} definition:
+        
+        \begin{equation}
+            \overbrace{
+                \Delta \theta \; \deriv{J}{\theta}} 
+            ^{\text{The change in $J$ from $\theta$ overall } }
+            \approx 
+            \overbrace{
+                \Delta \theta_0 \; \pderiv{J}{\theta_0} + \Delta \theta_1 \; \pderiv{J}{\theta_1} + \dots + \Delta \theta_d \; \pderiv{J}{\theta_d}
+            }^{\text{The change in $J$ from each $\theta_k$ term} }
+        \end{equation}
+        
+        So, if all the derivatives are zero, the \textbf{overall} derivative is zero.
+        \note{This approximation formula becomes exact as the step size shrinks: we go from $\Delta \theta$ to $\dd \theta$.}\\
+        
+        \begin{concept}
+            If our function $J(\theta)$ has \red{$d$} \vocab{different variables} , we can \gren{explicitly} find \vocab{local minima} by getting all of the \purp{equations}
+            
+            \begin{equation*}
+                \pderiv{J}{\theta_0} = 0, \;\;\;
+                \pderiv{J}{\theta_1} = 0, \;\;\;
+                \pderiv{J}{\theta_2} = 0... \;\;\;
+                \pderiv{J}{\theta_d} = 0
+            \end{equation*}
+            
+            Or in general, 
+            
+            \begin{equation*}
+                \pderiv{J}{\theta_k} = 0 \;\;\; \text{ for all k in \{0, 1, 2, ..., d\} }
+            \end{equation*}
+            
+            ...And solving this \purp{system of equations} for the \gren{components} of $\theta$.
+            
+        \end{concept}
+        
+        \note{Again, we ignore the second requirement of making sure this isn't a \textbf{maximum} or \textbf{saddle} point.}
+        
+        The \textbf{solution} to this system of equations will be our \textbf{desired result}, $\theta^*$.
+        
+    \subsection*{Gradient Notation}
+    
+        Writing it this way can be a \textbf{hassle}. So, we'll continue our tradition of using \textbf{matrix-based} notation to make our lives easier.
+        
+        You may recognize these \textbf{component-wise} derivatives as part of the "\textbf{multivariable} version" of the derivative: the \textbf{gradient}.\\
+        
+        \begin{kequation}
+            The \textbf{gradient} of $J$ with respect to $\theta$ is
+            
+            \begin{equation}
+                \nabla_\theta J =
+                \pderiv{J}{\theta} =
+                \begin{bmatrix}
+                    \pderivslash{J}{\theta_0} \\
+                    \vdots \\
+                    \pderivslash{J}{\theta_d}
+                \end{bmatrix}
+            \end{equation}
+        
+        \end{kequation}
+        
+        \note{Note the subscript on the gradient! This emphasizes that our \textbf{space} is the components of $\theta$, not the components of our data $x$.}
+        
+        For example, our previous approach boiled down to saying
+        
+        \begin{equation}
+            \nabla_\theta J =
+            \begin{bmatrix}
+                \pderivslash{J}{\theta_0} \\
+                \vdots \\
+                \pderivslash{J}{\theta_d}
+            \end{bmatrix}
+            = 
+            \begin{bmatrix}
+                0 \\
+                \vdots \\
+                0
+            \end{bmatrix}
+            =
+            0
+        \end{equation}
+        
+        For our purposes, we will simply \textbf{represent} that \textbf{zero vector} with a single 0.\\
+        
+        \begin{concept}
+            
+            If our function $J(\theta)$ has a \vocab{vector variable}, we can \gren{explicitly} find \vocab{local minima} by solving for $\theta$ when the \purp{gradient} is \purp{0}.
+            
+            \begin{equation*}
+                \nabla_\theta J=0
+            \end{equation*}
+
+        \end{concept}
+        
+        \note{Ignoring the requirement from earlier! We're assuming it's a minimum.}
+        
+        This is the form we will be solving. 
+        
+    \subsection*{Matrix Calculus}
+    
+        Taking derivatives of vectors falls under \textbf{vector calculus}. That would solve our \textbf{above} problem.
+        
+        But, before, we showed that it's more \textbf{convenient} if we can store these instead as \textbf{matrices}: that way, we don't need the \textbf{sum}. Luckily, we can generalize our work with \textbf{matrix calculus}. 
+        
+        Below, we will use the alternative notation, to be consistent with the official notes.
+        
+        \begin{equation}
+            J = \frac{1}{n}
+                \left( \red{ \Xt \theta  - \Yt } \right)^T
+                \left( \red{ \Xt \theta  - \Yt } \right) 
+        \end{equation}
+        
+        We will not show here how to \textbf{find} these derivatives, but the important rules you need to compute our derivatives are in the \textbf{appendix}.
+        \note{There's a document explaining vector derivatives coming soon!}
+        
+        Note that \textbf{matrix} derivatives often look \textbf{similar} to \textbf{traditional} derivatives, but they are \textbf{not the same}. Most often, making this mistake will result in \textbf{shape errors}.
+        \note{Sometimes, you can guess a derivative by using the familiar rules and fixing shape errors with transposing/changing multiplication order. But be careful!}
+        
+        When we take our derivative, we get
+        
+        \begin{equation}
+            \nabla_\theta J = 
+                \frac{2}{n} \Xt^T
+                \left( \red{ \Xt \theta  - \Yt } \right) 
+            =0
+        \end{equation}
+        
+        From here, we just solve for $\theta$ just like in the official notes.\\
+        
+        \begin{kequation}
+        
+            The \vocab{solution} for \vocab{OLS optimization} is 
+            
+            \begin{equation*}
+                \theta = 
+                \underbrace{ 
+                \inv{ \left(  \Xt^T\Xt  \right)  }
+                }_{d \times d}
+                \underbrace{
+                \Xt^T
+                }_{d \times n}
+                \underbrace{
+                \Yt
+                }_{n \times 1} 
+            \end{equation*}
+            
+            Or, in our \purp{original} notation,
+            
+            \begin{equation*}
+                \theta = 
+                \underbrace{ 
+                \inv{ \left(  XX^T  \right)  }
+                }_{d \times d}
+                \underbrace{
+                X
+                }_{d \times n}
+                \underbrace{
+                Y^T
+                }_{n \times 1} 
+            \end{equation*}
+            
+        \end{kequation}
+        
+    And we're done with OLS!
+
+        
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

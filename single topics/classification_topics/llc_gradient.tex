@@ -1,0 +1,324 @@
+
+\section*{Gradient Descent for Logistic Regression (WIP)}
+
+    \subsection*{Summary}
+    
+    Now, we have developed all the tool we need to do binary classification with LLC:
+    
+    \begin{itemize}
+        \item A \textbf{linear} model that lets us \textbf{combine} our variables,
+            \begin{equation}
+                u(x) = \theta^T x + \theta_0
+            \end{equation}
+            
+        \item A \textbf{logistic} model that lets us get the \textbf{probability} of a classification,
+            \begin{equation}
+                \sigma(u) = \frac{1}{1+e^{-u}}
+            \end{equation}
+            
+        \item A \textbf{threshold value} we use to determine how to \textbf{classify} our data,
+            \begin{equation}
+                h(x; \theta) = 
+                \begin{cases}
+                    +1 & \text{if $\sigma(\red{u(x)})>\sigma_{thresh}$ }\\
+                    0 & \text{otherwise}
+                \end{cases}
+            \end{equation}
+            
+        \item A \textbf{loss function} NLL we use to \textbf{evaluate} our model performance:
+        
+            \begin{equation*}
+                \loss_{nll}
+                (\rgi ,\quad \byi)
+                =
+                -
+                \left(
+                    \byi \log{\rgi}
+                    +
+                    \left( 1 - \byi \right)
+                    \log
+                    \left( 1-\rgi \right) 
+                \right)
+            \end{equation*}
+            
+        \item And an \textbf{objective function} we can \textbf{optimize}:
+        
+            \begin{equation}
+                J_{lr}(\theta,\theta_0;\data)
+                =
+                \pur{ \lambda \norm{\theta}^2 }
+                +
+                \frac{1}{n} \sum_{i=1}^n 
+                    \loss_{nll}(\rgi ,\quad \byi)
+            \end{equation}
+    \end{itemize}
+    
+    We have everything we need to do optimization.
+    
+    \subsection*{The problem: Gradient Descent}
+    
+        We want to do \textbf{gradient descent} to minimize $J_{lr}$
+        
+        \begin{equation}
+            \pur{ R(\theta) }
+            +
+            J_{lr}(\theta,\theta_0)
+            =
+            \frac{1}{n}
+            \sum_{i=1}^n 
+            \loss_{nll}(\rgi ,\quad \byi)
+        \end{equation}
+        
+        We want repeatedly \textbf{adjust} our model $\Theta=(\theta,\theta_0)$ to improve $J_{lr}$. To do that, we want the gradients for $\theta$ and $\theta_0$. Let's start with $\theta$.
+        
+        \begin{equation}
+            \nabla_\theta J_{lr} = \pderiv{J_{lr}}{\theta}
+        \end{equation}
+        
+        First, $J_{lr}$ has \textbf{two} terms, so we'll separate them.
+        
+        \begin{equation}
+            \nabla_\theta J_{lr} = 
+            \pderiv{R}{\theta} + \frac{1}{n} \sum_{i=1}^{n }
+                \pderiv{\loss_{NLL}}{\theta} (\rgi ,\quad \byi)
+        \end{equation}
+        
+        The regularization term is pretty easy, because we did it last chapter:
+        
+        \begin{equation}
+            \pderiv{R}{\theta} = 2 \lambda \theta
+        \end{equation}
+        
+        But what about our first term?
+    
+    \subsection*{Getting the gradient: Chain Rule}
+    
+        Now, we just need to do
+        
+        \begin{equation}
+            \pderiv{\loss_{NLL}}{\theta} (\red{g} , \blu{y})
+        \end{equation}
+    
+        With our $\loss_{NLL}$ term, we run into an issue: how do we take the \textbf{derivative}? The function is very, very deeply \textbf{nested}. In our case: 
+        
+        $x$ \textbf{affects} $u(x)$. $u(x)$ \textbf{affects} $\sigma(u)$. $\sigma(u)=g$ \textbf{affects} $\loss_{NLL}(g,y)$, which finally \textbf{affects} $J(\theta,\theta_0)$. 
+        
+        How do we represent this \textbf{chain} of functions? With the \textbf{chain rule}:
+        
+        \begin{equation}
+            \pderiv{A}{C} = \pderiv{A}{B} \cdot \pderiv{B}{C}
+        \end{equation}
+        
+        So, we'll build up a \textbf{chain rule} for our needs. We'll use $g=\sigma(u)$.
+        
+        \begin{equation}
+            \pderiv{ \loss_{NLL} }{ \theta } 
+            = 
+            \pderiv{ \loss_{NLL} }{\blu{\sigma}} 
+            \cdot 
+            \pderiv{\blu{\sigma}}{\theta}
+        \end{equation}
+        
+        Sigma contains $u$, so we'll use that instead:
+
+        \begin{equation}
+            \pderiv{ \loss_{NLL} }{ \theta } 
+            = 
+            \pderiv{ \loss_{NLL} }{ \blu{\sigma} } 
+            \cdot 
+            \pderiv{ \blu{\sigma} }{\red{u}} 
+            \cdot 
+            \pderiv{\red{u}}{\theta}
+        \end{equation}
+        
+        This is our full \textbf{chain rule}!\\
+        
+        \begin{kequation}
+            The \vocab{gradient} of \vocab{NLL} can be calculated using the \purp{chain rule}:
+            
+            \begin{equation}
+                \pderiv{ \loss_{NLL} }{ \theta } 
+                = 
+                \pderiv{ \loss_{NLL} }{\blu{\sigma}} 
+                \cdot 
+                \pderiv{ \blu{\sigma} }{\red{u}} 
+                \cdot 
+                \pderiv{\red{u}}{\theta}
+            \end{equation}
+        \end{kequation}
+        
+    \subsection*{Getting our individual derivatives}
+    
+        We can take the derivative of each of these objects. First, let's look at $\loss_{NLL}$
+        
+        \begin{equation*}
+            \loss_{nll}
+            (\red{\sigma}, \blu{y})
+            =
+            -
+            \Big(
+                \blu{y} \log{ \red{\sigma} }
+                +
+                \left( 1 - \blu{y} \right)
+                \log
+                \left( 1 - \red{\sigma} \right) 
+            \Big)
+        \end{equation*}
+        
+        And we'll use $\deriv{}{x} log(x) = \frac{1}{x}$
+        
+        \begin{equation}
+        \boxed{
+            \pderiv{ \loss_{NLL} }{\red{\sigma}} =
+            -
+            \Big(
+                \frac{ \blu{y} } { \red{\sigma} } 
+                -
+                \frac{ 1-\blu{y} } { 1 - \red{\sigma} }
+            \Big)
+        }
+        \end{equation}
+        
+        Now, we look at $\sigma(u)$:
+        
+        \begin{equation}
+            \sigma(\blu{u}) = \frac{1}{1+e^{-\blu{u} }}
+        \end{equation}
+        
+        If we take the derivative, we can get:
+        
+        \begin{equation}
+            \pderiv{ \blu{\sigma} }{\red{u}}
+            =
+            \frac{ -e^{ -\blu{u} } }{ \Big( 1+e^{ -\blu{u} } \Big)^2 }
+        \end{equation}
+        
+        Which we can rewrite, conveniently, as
+            \note{Try this yourself if you're curious!}
+        
+        \begin{equation}
+        \boxed{
+            \pderiv{ \blu{\sigma} }{\red{u}}
+            =
+            \sigma (1-\sigma)
+        }
+        \end{equation}
+        
+        Finally, our last derivative:
+        
+        \begin{equation}
+            u = \theta^Tx+\theta_0
+        \end{equation}
+        
+        \begin{equation}
+        \boxed{
+            \pderiv{\red{u}}{\theta} = x
+        }
+        \end{equation}
+        
+    \subsection*{Simplifying our chain rule}
+    
+        So, now, we can put together our chain rule:
+        
+        \begin{equation}
+            \pderiv{ \loss_{NLL} }{ \theta } 
+            = 
+            \pderiv{ \loss_{NLL} }{ \blu{\sigma} } 
+            \cdot 
+            \pderiv{ \blu{\sigma} }{\red{u}} 
+            \cdot 
+            \pderiv{\red{u}}{\theta}
+        \end{equation}
+        
+        Plug in the derivatives:
+        
+        \begin{equation}
+            \pderiv{ \loss_{NLL} }{ \theta } 
+            = 
+            -
+            \Big(
+                \frac{ \blu{y} } { \red{\sigma} } 
+                -
+                \frac{ 1-\blu{y} } { 1 - \red{\sigma} }
+            \Big)
+            \cdot
+            \red{\sigma} (1-\red{\sigma})
+            \cdot 
+            x
+        \end{equation}
+        
+        Simplify:
+        
+        \begin{equation}
+            \pderiv{ \loss_{NLL} }{ \theta } 
+            = 
+            \Big(
+                (1-\blu{y})\red{\sigma} 
+                -
+                \blu{y}(1-\red{\sigma})
+            \Big)
+            \cdot 
+            x
+        \end{equation}
+        
+        And finally, we sum the terms. We can do the $\theta_0$ gradient at the same time: the only difference is that $\pderiv{u}{\theta_0}=1$, instead of x.\\
+        
+        \begin{kequation}
+            The \vocab{gradients} of NLL for gradient descent are
+            
+            \begin{equation*}
+                \nabla_\theta \loss_{NLL} 
+                =
+                (\red{\sigma} - \blu{y})x
+            \end{equation*}
+            
+            \begin{equation*}
+                \pderiv{\loss_{NLL}}{\theta_0}
+                =
+                (\red{\sigma} - \blu{y})
+            \end{equation*}
+        \end{kequation}
+        
+        We can plug this into $J_{lr}$:
+            \note{One comment we didn't make: remember that $R(\theta)$ won't show up in the $\theta_0$ derivative!}
+        
+        \begin{equation}
+            \nabla_\theta J_{lr} 
+            =
+            \frac{1}{n} \sum_{i=1}^{n }
+            \Bigg(
+                \Big(\rgi - \byi \Big) \ex{x}{i}
+            \Bigg)
+            +
+            \pur{ 2 \lambda \theta }
+        \end{equation}
+        
+        \begin{equation}
+            \pderiv{J_{lr}}{\theta_0}
+            =
+            \frac{1}{n} \sum_{i=1}^{n } \left( \rgi - \byi \right)
+        \end{equation}
+        
+        We can use this to do \textbf{gradient descent}!
+        
+        \begin{equation}
+            \red{ \theta_{new} } = \blu{ \theta_{old} } - \grn{\eta} \nabla_\theta J_{lr} (\blu{ \theta_{old} })
+        \end{equation}
+        
+        In $\ex{\theta}{t}$ notation:
+        
+        \begin{equation}
+            \red{ \ex{\theta}{t} } = \blu{ \ex{\theta}{t-1} } - \grn{\eta} 
+            \left(
+            \nabla_\theta J_{lr} (\blu{ \ex{\theta}{t-1} })
+            \right)
+        \end{equation}
+        
+        \begin{equation}
+            \red{ \ex{\theta_0}{t} } = \blu{ \ex{\theta_0}{t-1} } - \grn{\eta} 
+            \left(
+                \pderiv{ J_{lr} (\blu{ \ex{\theta}{t-1} })}{\theta_0}
+            \right)
+        \end{equation}
+        
+        This also corresponds to some basic math within Neural Networks, which we will return to \textbf{later} in the course.

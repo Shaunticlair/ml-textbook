@@ -1,0 +1,271 @@
+    \subsection*{7.X.16 \quad Other Derivatives}
+        \label{7.X.16}
+    
+        After these, you might ask yourself, what about other derivative combinations?
+        
+        \begin{equation}
+            \pderiv{ \org{v} }{ \blu{M} }? 
+            \qquad
+            \pderiv{ \blu{M} }{ \org{v} }? 
+            \qquad
+            \pderiv{ \blu{M} }{ \pur{M^2} }? 
+        \end{equation}
+    
+        There's a problem with all of these: the total number of axes is \textbf{too large}.
+        
+        What do we mean by an \textbf{axis}? \\
+        
+        \begin{definition}
+            An \vocab{axis} is one of the \purp{indices} we can adjust to get a different scalar in our array: each index is a "direction" we can move along our object to \gren{store} numbers.
+            
+            \begin{itemize}
+                \item A \vocab{scalar} has \vocab{0 axes}: we only have one scalar, so we have no indices to adjust.
+                
+                \boxdiv
+                
+                \item A \vocab{vector} has \vocab{1 axis}: we can get different scalars by moving \purp{vertically} (for column vectors): $v_1, v_2, v_3...$
+                
+                \begin{equation*}
+                    \begin{bmatrix}
+                        v_1\\v_2\\ \vdots \\ v_m
+                    \end{bmatrix}
+                    \bigggrB{60pt} \text{Axis 1}
+                \end{equation*}
+                
+                \boxdiv
+                
+                \item A \vocab{matrix} has \vocab{2 axes}: we can move \purp{horizontally} or \purp{vertically}.
+                
+                \begin{equation*}
+                    \overbrace{
+                        \begin{bmatrix}
+                            m_{11} & m_{12} & \cdots & m_{1r} \\ 
+                            m_{21} & m_{22} & \cdots & m_{2r} \\ 
+                            \vdots & \vdots & \ddots & \vdots \\
+                            m_{k1} & m_{k2} & \cdots & m_{kr} \\ 
+                        \end{bmatrix}
+                    }^{ \text{\normalsize Axis 2: Columns} }
+                    \bigggrB{60pt} \text{Axis 1: Rows}
+                \end{equation*}
+            \end{itemize}
+            
+            These can also be called \vocab{dimensions}.
+        \end{definition}
+
+        Why does the number of \textbf{axes} matter? Remember that, so far, for our derivatives, each axis of the output represented an axis of the \textbf{input} or \textbf{output}.
+            \note{Note that last bit: we're saying a vector has one dimension. Can't a vector have \textbf{multiple} dimensions? Jump to \hyperref[7.X.17]{7.X.17} for a clarification.}\\
+        
+        \begin{equation*}
+            \pderiv{ \pur{w} }{ \org{v} } 
+            =
+            \overbrace{
+                \begin{bmatrix}
+                    \begin{matrix}
+                        \bigpderiv{ \pur{w_1} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_1} }   { \org{v_m} }
+                    \end{matrix} &
+                    \begin{matrix}
+                        \bigpderiv{ \pur{w_2} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_2} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_2} }   { \org{v_m} }
+                    \end{matrix} &
+                    \begin{matrix}
+                        \cdots\\\\ \cdots \\\\ \ddots \\\\ \cdots
+                    \end{matrix} &
+                    \begin{matrix}
+                        \bigpderiv{ \pur{w_n} }   { \org{v_1} }\\ 
+                        \\
+                        \bigpderiv{ \pur{w_n} }   { \org{v_2} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \pur{w_n} }   { \org{v_m} }
+                    \end{matrix}
+                \end{bmatrix}
+            }^{ \text{\small Column $j$: vertical axis of $\pur{w}$} }
+            \bigggrB{125pt} \text{\small Row $i$: vertical axis of $\org{v}$} 
+        \end{equation*}
+        
+        The way we currently build derivatives, we try to get \textbf{every pair} of input-output variables: we use \textbf{one} axis for each \textbf{axis} of either the \textbf{input} or \textbf{output}.
+        
+        Take some examples:
+        
+        \begin{itemize}
+            \item $\pderivslash{ \red{s} }{ \org{v} }$: we need one axis to represent each term $v_i$.
+                \begin{itemize}
+                    \item 0 axis + 1 axis $\rightarrow$ 1 axis: the output is a (column) \vocab{vector}.
+                \end{itemize}
+                
+            \item $\pderivslash{ \org{v} }{ \red{s} }$: we need one axis to represent each term $w_j$.
+                \begin{itemize}
+                    \item 1 axis + 0 axis $\rightarrow$ 1 axis: the output is a (row) \vocab{vector}.
+                \end{itemize}
+                
+            \item $\pderivslash{ \pur{w} }{ \org{v} }$: we need one axis to represent each term $v_i$, and another to represent each term $w_j$.
+                \begin{itemize}
+                    \item 1 axis + 1 axis $\rightarrow$ 2 axes: the output is a \vocab{matrix}.
+                \end{itemize}
+                
+            \item $\pderivslash{ \blu{M} }{ \red{s} }$: we need one axis to represent the rows of $M$, and another to represent the columns of $M$.
+                \begin{itemize}
+                    \item 2 axis + 0 axis $\rightarrow$ 2 axes: the output is a \vocab{matrix}.
+                \end{itemize}    
+                
+            \item $\pderivslash{ \red{s} }{ \blu{M} }$: we need one axis to represent the rows of $M$, and another to represent the columns of $M$.
+                \begin{itemize}
+                    \item 0 axis + 2 axis $\rightarrow$ 2 axes: the output is a \vocab{matrix}.
+                \end{itemize}    
+        \end{itemize}
+        
+        Notice the pattern!\\
+        
+        \begin{concept}
+            A \vocab{matrix derivative} needs to be able to account for each type/\gren{index} of variable in the input \purp{and} the output.
+            
+            So, if the \gren{input} $x$ has $m$ axes, and the \gren{output} $y$ has $n$ axes, then the derivative needs to have the same \purp{total} number:
+            
+            \begin{equation}
+                \text{Axes}
+                \Bigg(
+                    \pderiv{\pur{y}}{\org{x}}
+                \Bigg) 
+                = 
+                \text{Axes}(\pur{y}) + \text{Axes}(\org{x})
+            \end{equation}
+        \end{concept}
+        
+        This is where our problem comes in: if we have a vector and a matrix, we need \textbf{3 axes}! That's more than a matrix.
+    
+    \secdiv
+    
+    \subsection*{7.X.17 \quad Dimensions (Optional)}
+        \label{7.X.17}
+    
+        Here's a quick aside to clear up possible confusion from the last section: our definition of axes and "dimensions".
+        
+        We said a vector has 1 axis, or "dimension" of movement. But, can't a vector have \textbf{multiple} dimensions?
+        
+        \begin{clarification}
+            We have two competing definition of \vocab{dimension}: this explains why we can say seemingly conflicting things about derivatives.
+            
+            \boxdiv
+            
+            So far, by "\vocab{dimension}", we mean, "a separate \purp{value} we can \gren{adjust}".
+            
+            \begin{itemize}
+                \item Under this definition, a $(k \times 1)$ column \purp{vector} has \red{$k$} dimensions: it contains \red{$k$} different scalars we can \gren{adjust}.
+                
+                \begin{equation*}
+                    \begin{bmatrix}
+                        \org{v_1} \\ \org{v_2} \\ \vdots \\ \org{v_k}  
+                    \end{bmatrix}
+                    \bigggrB{60pt} \text{We can adjust each of our \red{$k$} scalars.}
+                \end{equation*}
+                
+                \item You might say a $(k \times r)$ \purp{matrix} has \red{$k$} dimensions, too: based on the \gren{dimensionality} of its column vectors.
+                    \begin{itemize}
+                        \item Since we prioritize the size of the vectors, we could say this is a very "vector-centric" definition.
+                    \end{itemize}
+            \end{itemize}
+            
+            \boxdiv
+            
+            In this section, by "dimension", we mean, "an \purp{index} we can \gren{adjust} (move along) to find another scalar.
+            
+            \begin{itemize}
+                \item Under this definition, a $(k \times 1)$ column \purp{vector} has \red{1} dimension: we only have \org{1} axis of \gren{movement}.
+                
+                \item You might say a $(k \times r)$ \purp{matrix} has \red{2} dimensions: a \gren{horizontal} one, and a \gren{vertical} one.
+                    \begin{itemize}
+                        \item This \vocab{definition} is the kind we use in the following sections.
+                    \end{itemize}
+            \end{itemize}
+        \end{clarification}
+        
+        If you jumped here from 7.X.16, feel free to follow this \hyperref[7.X.16]{link} back. Otherwise, continue on.
+    
+    \secdiv
+    
+    \subsection*{7.X.18 \quad Dealing with Tensors}
+    
+        If a vector looks like a "\textbf{line}" of numbers, and a matrix looks like a "\textbf{rectangle}" of numbers, then a \textbf{3-axis} version would look like a "\textbf{box}" of numbers. How do we make sense of this?
+        
+        First, what is this kind of object we've been working with? Vectors, matrices, etc. This collection of numbers, organized neatly, is an \textbf{array}.\\
+        
+        \begin{definition}
+            An \vocab{array} of objects is an \purp{ordered sequence} of them, stored together. 
+            
+            The most typical example is a \gren{vector}: an ordered sequence of \gren{scalars}.
+            
+            A \purp{matrix} can be thought of as a \gren{vector} of \gren{vectors}. For example: it could be a row vector, where every column is a column vector. 
+            
+            So, we think of a matrix as a "two-dimensional array". 
+        \end{definition}
+        
+        We can extend this to any number of dimensions. We call this kind of generalization a \textbf{tensor}.\\
+        
+        \begin{definition}
+            In \gren{machine learning}, we think of a \vocab{tensor} as a "\purp{multidimensional array}" of numbers.
+            
+            Each "dimension" is what we have been calling an "\purp{axis}".
+            
+            A tensor with $c$ axes is called a \vocab{$c$-Tensor}.
+            
+            Note that what we call a tensor is \redd{not} a mathematical (or physics) tensor: we do not often use the "tensor product", or other tensor properties. 
+            
+            Our tensor can be better thought of as a "\vocab{generalized matrix}".
+        \end{definition}
+        
+        \miniex The 3-D box we are talking about above is called a 3-Tensor. We can simply think of it as a stack of matrices.
+        
+        How do we handle \textbf{tensors}? Simply, we convert them into regular \textbf{matrices} in some way, and then do our usual math on them:
+            \note{These examples aren't especially important, but you'll see different variations in different softwares!}
+        
+        \begin{itemize}
+            \item If a tensor has a pattern of zeroes, we might be able to flatten it into a matrix.
+                \begin{itemize}
+                    \item For example, if we wanted to flatten a matrix into a vector (which we sometimes do!), we could do
+                    
+                    \begin{equation}
+                        \begin{bmatrix}
+                            3 & 0 & 0\\
+                            0 & 9 & 0\\
+                            0 & 0 & 4
+                        \end{bmatrix}
+                        \rightarrow
+                        \begin{bmatrix}
+                            3\\9\\4
+                        \end{bmatrix}
+                    \end{equation}
+                    
+                \end{itemize}
+                
+            \item We can also flatten it into a matrix or vector by placing the layers next to each other.
+            
+            \item We cleverly do regular matrix multiplication in a way that's compatible with our tensors.
+                \begin{itemize}
+                    \item Note that tensors do not have a matrix multiplication-like multiplication by default: several have been designed, however.
+                \end{itemize}
+                
+            \item We ignore the structure of the tensor, and just look at the individual elements: we take the scalar chain rule for each of them, without respecting the overall tensor.\\
+        \end{itemize}
+        
+        \begin{clarification}
+            If you look into \vocab{derivatives} that would result in a \purp{3-tensor} or higher, you'll find that there's no consistent \gren{notation} for what these derivatives look like.
+            
+            These techniques are part of why: there are \gren{different} approaches for how to approach these objects.
+        \end{clarification}
+        
+        As we will see in the next chapter, tensors are \textbf{very} important to machine learning. 
+        
+        However, because they don't have a natural matrix multiplication, we'll try to convert it into a matrix in most cases.
+    

@@ -1,0 +1,126 @@
+\section*{OLS Objective-Matrix Form}
+   
+This section follows from the "Using Multiple Data Points" topics section.
+    
+    \subsection*{Putting it together: Matrices}
+    
+        Now, we have shown both a way to express $x_1, x_2, x_3$ as a single $(d \times 1)$ matrix:
+        
+        \begin{equation}
+            x = 
+            \begin{bmatrix}
+              x_1 \\ x_2 \\ x_3 \\ \vdots \\ x_d
+            \end{bmatrix}
+        \end{equation}
+        \note{We'll leave off the appended 1 for now.}
+        
+        And a way to express $\ex{x}{1}, \ex{x}{2}, \ex{x}{3}$ as a single $(1 \times n)$ matrix:
+        
+        \begin{equation}
+            X =
+                \begin{bmatrix}
+                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{d}
+                \end{bmatrix}
+        \end{equation}
+        
+        Why not combine them into a single object?\\
+        
+        \begin{kequation}
+            $X$ is our \vocab{input matrix} in the shape \purp{$(d \times n)$} that contains information about both \gren{dimension} and \gren{data points}.
+            
+            \begin{equation}
+                    X = 
+                        \overbrace{
+                            \begin{bmatrix}
+                                \ex{x_1}{1} & \cdots  & \ex{x_1}{n} \\
+                                \vdots      & \ddots & \vdots      \\
+                                \ex{x_d}{1} & \cdots  & \ex{x_d}{n}
+                            \end{bmatrix}
+                            }^{ n \text{ data points}}
+                        \bigggrB{50pt} d \text{ dimensions}
+            \end{equation}
+
+        \end{kequation}
+        
+        If we include the appended 1, we write this as the \purp{$( (d + 1) \times n)$} matrix
+        
+        \begin{equation}
+                X = 
+                    \overbrace{
+                        \begin{bmatrix}
+                            1           & \cdots & 1           \\
+                            \ex{x_1}{1} & \cdots  & \ex{x_1}{n} \\
+                            \vdots      & \ddots & \vdots      \\
+                            \ex{x_d}{1} & \cdots  & \ex{x_d}{n}
+                        \end{bmatrix}
+                        }^{ n \text{ data points}}
+                    \bigggrB{70pt} d+1 \text{ dimensions}
+        \end{equation}
+        
+        Because each data point $\ex{y}{i}$ has only one dimension, it's the same as in the last section:\\
+        
+        \begin{kequation}
+            $Y$ is our \vocab{output matrix} in the shape \purp{$(1 \times n)$} that contains all data points.
+            
+            \begin{equation*}
+                Y = 
+                    \begin{bmatrix}
+                        \ex{y}{1} & \cdots & \ex{y}{n}
+                    \end{bmatrix}
+            \end{equation*}
+        \end{kequation}
+        
+        All we have to do is combine our \textbf{equations}: We can use the one in the last section, but because $\theta$ is a matrix, we have to \textbf{transpose} it.\\
+        
+        \begin{kequation}
+            Using our \purp{appended} matrix, we can write our \gren{objective function} for \purp{multiple} variables and \purp{multiple} data points as
+            
+            \begin{equation*}
+                J = \frac{1}{n}
+                    \left( \red{ \theta^T X - Y} \right)
+                    \left( \red{ \theta^T X - Y} \right)^T
+            \end{equation*}
+        \end{kequation}
+        
+        It is important to \textbf{remember} the \textbf{shape} of our objects, as well.\\
+        
+        \begin{concept}
+            Our matrices have the shapes:
+            
+            \begin{itemize}
+                \item $X$:        $(d \times n)$ - matrix
+                \item $Y$:        $(1 \times n)$ - row vector\\
+                
+                \item $\theta$:   $(d \times 1)$ - column vector
+                \item $\theta_0$: $(1 \times 1)$ - scalar\\
+                
+                \item $J$:        $(1 \times 1)$ - scalar
+            \end{itemize}
+            
+            If we combine $\theta_0$ into $\theta$, replace every use of $d$ with $d+1$.
+            
+        \end{concept}
+        
+        \note{Notice that these shapes make sense for our above equation! Try working through the matrix multiplication to verify this.}
+        
+        These shapes are worth \textbf{memorizing}.
+        
+    \subsection*{Alterate Notation}
+    
+        One side problem: some ML texts use the \textbf{transpose} of $X$ and $Y$.\\
+    
+        \begin{notation}
+            Some subjects use \vocab{different notation} for \vocab{matrices}. The main difference is that $X$ and $Y$ use their \purp{transpose}, which we'll notate as
+        
+            \begin{equation*}
+                \Xt = X^T \;\;\;\;\;\;\;\; \Yt = Y^T
+            \end{equation*}
+            
+            Thus, our equation above becomes
+            
+            \begin{equation*}
+                J = \frac{1}{n}
+                    \left( \red{ \Xt \theta  - \Yt } \right)^T
+                    \left( \red{ \Xt \theta  - \Yt } \right) 
+            \end{equation*}
+        \end{notation}

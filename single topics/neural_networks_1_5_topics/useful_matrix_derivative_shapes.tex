@@ -1,0 +1,158 @@
+
+    \subsection*{Relevant Derivatives}
+    
+        If you aren't interesting in understanding matrix derivatives, here we provide the general format of each of the derivatives we care about.\\
+        
+        \begin{notation}
+            Here, we give useful \vocab{derivatives} for \vocab{neural network gradient descent}.
+        
+            \boxdiv
+            
+            Loss is not given, so we can't compute it, as before:
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\pur{\loss}}{\blu{A^L}}
+                }^{(n^{L} \times 1)}
+            \end{equation*}
+            
+            \boxdiv
+            
+            We get the same result for each of these terms as we did before, except in matrix form.
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\red{Z^\ell}}   {W^{\ell}} 
+                }^{ (m^{\ell} \times 1) }
+                = 
+                \blu{A^{\ell-1}}
+            \end{equation*}
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv{\red{Z^\ell}} {\blu{A^{\ell-1}}}
+                }^{ (m^{\ell} \times n^{\ell}) }
+                =
+                W^\ell
+            \end{equation*}
+            
+            \boxdiv
+            
+            The last one is actually pretty different from before:
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
+                }^{ (n^{\ell} \times n^{\ell}) }
+                =
+                \begin{bmatrix}
+                    f'({\red{z_1^\ell}})&0                   &0                   &\cdots  & 0 \\
+                    0                   &f'({\red{z_2^\ell}})&0                   &\cdots  & 0 \\
+                    0                   &0                   &f'({\red{z_3^\ell}})&\cdots  & 0 \\
+                    \vdots              &\vdots              &\vdots              &\ddots  & 0 \\
+                    0                   &0                   &0                   &0   &f'({\red{z_r^\ell}})
+                \end{bmatrix}
+            \end{equation*}
+            
+            Where $r$ is the length of $Z^\ell$.
+        \end{notation}
+        
+        
+        
+        In short, we only have the $\red{z_i}$ derivative on the $\nth{i}$ diagonal.
+            \note{Why this is will be explained in the matrix derivative notes.}
+        
+        \miniex Suppose you have the activation $f(\red{z}) = \red{z}^2$.
+        
+        Your pre-activation might be 
+        
+        \begin{equation}
+            \red{z^\ell} = 
+            \begin{bmatrix}
+                1 \\ 2 \\ 3
+            \end{bmatrix}
+        \end{equation}
+        
+        The output would be 
+        
+        \begin{equation}
+            \blu{a^\ell} 
+            = 
+            f(\red{z^\ell})
+            = 
+            \begin{bmatrix}
+                1 \\ 2^2 \\ 3^2
+            \end{bmatrix}
+        \end{equation}
+        
+        But the derivative would be:
+        
+        \begin{equation}
+            f(\red{z}) = 2z
+        \end{equation}
+        
+        Which, gives our matrix derivative as:
+        
+        \begin{equation*}
+            \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
+            =
+            \begin{bmatrix}
+                2\cdot 1 & 0         & 0         \\
+                0        & 2 \cdot 2 & 0         \\
+                0        & 0         & 2 \cdot 3 \\
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+                2 & 0 & 0  \\
+                0 & 4 & 0  \\
+                0 & 0 & 6  \\
+            \end{bmatrix}
+        \end{equation*}
+        
+        If you want to be able to \textbf{derive} some of the derivatives, without reading the matrix derivative section, just use this formula for vector derivatives:
+            \note{If you have time, do read - you won't understand what you're doing otherwise!}
+        
+        \begin{equation}
+                \pderiv{ \pur{w} }{ \org{v} } 
+                =
+                \overbrace{
+                    \begin{bmatrix}
+                        \begin{matrix}
+                            \bigpderiv{ \pur{w_1} }   { \org{v_1} }\\ 
+                            \\
+                            \bigpderiv{ \pur{w_1} }   { \org{v_2} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \pur{w_1} }   { \org{v_m} }
+                        \end{matrix} &
+                        \begin{matrix}
+                            \bigpderiv{ \pur{w_2} }   { \org{v_1} }\\ 
+                            \\
+                            \bigpderiv{ \pur{w_2} }   { \org{v_2} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \pur{w_2} }   { \org{v_m} }
+                        \end{matrix} &
+                        \begin{matrix}
+                            \cdots\\\\ \cdots \\\\ \ddots \\\\ \cdots
+                        \end{matrix} &
+                        \begin{matrix}
+                            \bigpderiv{ \pur{w_n} }   { \org{v_1} }\\ 
+                            \\
+                            \bigpderiv{ \pur{w_n} }   { \org{v_2} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \pur{w_n} }   { \org{v_m} }
+                        \end{matrix}
+                    \end{bmatrix}
+                }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+                \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
+            \end{equation}
+            
+            We can use this for scalars as well: we just treat them as a vector of length 1.
+            
+            With some cleverness, you can derive the Scalar/Matrix and Matrix/Scalar derivatives as well.  
+                \note{Part of what the next section covers.}
+        

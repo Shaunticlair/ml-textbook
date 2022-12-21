@@ -1,0 +1,83 @@
+\section*{Hyperparameter Tuning}
+    
+        Now, we know how to \textbf{evaluate} a learning algorithm, just like how we \textbf{evaluate} a hypothesis. 
+        
+        Once we knew how to evaluate a hypothesis, we started \textbf{optimizing} our parameters for the \textbf{best} hypothesis. So, we could do the same for our \textbf{learning algorithm}.
+        
+        Each $\lambda$ value creates a slightly \textbf{different} learning algorithm: we can \textbf{optimize} this \textbf{hyperparameter} to create the \textbf{best} learning algorithm.
+        
+    \subsection*{How to tune our algorithm}
+    
+        When we were \textbf{optimizing} our hypothesis, we started by \textbf{randomly} trying hypotheses. Then, we used an \textbf{analytical} approach.
+        \note{By "analytical", we mean directly creating an equation, and solving it.}
+        
+        We don't always have \textbf{simple} equations to work with: with all of our data, it's hard to come up with \textbf{manageable} equations. So, we \textbf{won't} try doing it \textbf{analytically}.
+        
+        So, we could \textbf{randomly} try $\lambda$ values and pick the \textbf{best} one. This is pretty \textbf{close} to what we usually end up doing. For each value we pick, we'll use \textbf{cross-validation} to evaluate.
+        
+        For now, we'll systematically go through $\lambda$ values: $\lambda=.1, .2, .3 \dots$\\
+        
+        \begin{concept}
+            \vocab{Hyperparameter tuning} is how we \purp{optimize} our \gren{learning algorithm} to create the \purp{best} hypotheses.
+            
+            The simplest way to do this is to try \gren{multiple} different values of $\lambda$. For each value, we use \gren{cross-validation} to evaluate that learning algorithm.
+            
+            Finally, we pick whichever $\lambda$ gives you the \purp{best} algorithm, and thus the \purp{best} hypotheses.
+        \end{concept}
+        
+    \subsection*{Hyperparameter Tuning: Two kinds of optimization}
+    
+        There's something often \textbf{confusing} about hyperparameter tuning to students:
+        
+        When we're \textbf{optimizing} $\lambda$, we have to determine the quality of \textbf{each} learning algorithm.
+        
+        But, to get the \textbf{quality} of that algorithm, we have to optimize $\Theta$ based on that \textbf{single} learning algorithm.
+        \note{If we do cross-validation, then we have to optimize $k$ times!}
+        
+        That means, \textbf{every time} we try a different $\lambda$ value, we have to do one optimization problem. But trying different $\lambda$ values is a \textbf{different} kind of optimization.
+        
+        That means we have \textbf{two layers} of optimization!\\
+        
+        \begin{clarification}
+            We \purp{optimize} $\lambda$ by trying many values.
+            
+            But, for each $\lambda$ value, we have to \gren{optimize} $\Theta$.
+            
+            So, we have to optimize $\Theta$ \purp{repeatedly} in order to optimize $\lambda$ \purp{once}! This gives us $\lambda^*.$
+        \end{clarification}
+        
+        But, our goal is to get a \textbf{hypothesis}. So we use that $\lambda^*$ to, finally, get our $\theta^*$
+        
+    \subsection*{Pseudocode Example}
+        
+        This technique is \textbf{not} limited to regression. Thus, we'll be a bit more \textbf{general}: we won't assume an \textbf{analytical} solution. Instead, we \textbf{optimize} by just trying different $\Theta$ values.
+        
+        We can represent this in pseudocode:
+        \note{If this pseudocode isn't helpful to you, don't worry! Some students like it, some don't.}
+        
+        \begin{codebox}
+            \Procname{$\proc{Lambda-Optimization}
+                       (\data, lambda\_values, theta\_values)$}
+                       
+                \li \For $\lambda$ \In $lambda\_values$        
+                \qquad\quad\#Try lambda values
+                
+                \li     \Do \For $\Theta$ \In $theta\_values$  
+                \qquad\quad\#Try theta values    
+                            \Do
+
+                                \li Calculate $J(\Theta)$    
+                                \qquad\qquad\qquad\#Compare values
+                            \End
+                        
+                        \li Choose best theta value $\Theta^*$ 
+                        \quad\#Best for each lambda
+
+                        \End
+                \li Choose best lambda value $\lambda^*$
+                \li
+                    
+                \li \Return $\lambda^*$
+        \end{codebox}
+        
+    To reiterate: this $\lambda^*$ will then we used to get our final result, $\theta^*$.

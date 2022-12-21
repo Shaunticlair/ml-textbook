@@ -1,0 +1,233 @@
+    \subsection*{Activation Derivatives}
+    
+        We weren't able to \textbf{simplify} our expressions above, partly because we didn't know which \textbf{loss} or \textbf{activation} function we were going to use.
+        
+        So, here, we will look at the \textbf{common} choices for these functions, and \textbf{catalog} what their derivatives look like.
+        
+        \begin{itemize}
+            \item \vocab{Step function} step$(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z} \text{step}(z) = 0
+                \end{equation}
+                
+                This is part of why we don't use this function: it has no gradient. We can show this by looking piecewise:
+                
+                \begin{equation}
+                    \text{step}(z) 
+                    =
+                    \begin{cases}
+                      \blu{1} & \text{if $z \geq 0$}\\
+                      \blu{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+                And take the derivative of each piece:
+                
+                \begin{equation}
+                    \deriv{}{z} \text{ReLU}(z)
+                    =
+                    0
+                    =
+                    \begin{cases}
+                      \red{0} & \text{if $z \geq 0$}\\
+                      \red{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+        
+            \item \vocab{Rectified Linear Unit} ReLU$(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z} \text{ReLU}(z) = \text{step}(z)
+                \end{equation}
+                
+                This one might be a bit surprising at first, but it makes sense if you \textbf{also} break it up into cases:
+                
+                \begin{equation}
+                    \text{ReLU}(z) 
+                    =
+                    \max(0,z)
+                    =
+                    \begin{cases}
+                      \blu{z} & \text{if $z \geq 0$}\\
+                      \blu{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+                And take the derivative of each piece:
+                
+                \begin{equation}
+                    \deriv{}{z} \text{ReLU}(z)
+                    =
+                    \text{step}(z) 
+                    =
+                    \begin{cases}
+                      \red{1} & \text{if $z \geq 0$}\\
+                      \red{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+               
+                
+            \item \vocab{Sigmoid} function $\sigma(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z}\sigma(z) 
+                    =
+                    \sigma(z)(1-\sigma(z))
+                    =
+                    \frac{e^{-z}}{(1+e^{-z})^2}
+                \end{equation}
+                
+                This derivative is useful for simplifying NLL, and has a nice form.
+                    \note{We can just compute the derivative with the single-variable chain rule.}
+                    
+                As a reminder, the function looks like:
+                
+                \begin{equation}
+                    \sigma(z) 
+                    =
+                    \frac{1}{1+e^{-z}}
+                \end{equation}
+                
+            \item \vocab{Identity} ("linear") function $f(z)=z$:
+            
+                \begin{equation}
+                    \deriv{}{z} z
+                    =
+                    1
+                \end{equation}
+                
+                This one follows from the definition of the derivative.
+                
+                We cannot rely on a linear activation function for our \textbf{hidden} layers, because a linear neural network is no more \textbf{expressive} than one layer.
+                
+                But, we use it for \textbf{regression}.
+                
+            \item \vocab{Softmax} function softmax$(z)$:
+            
+                This function has a difficult derivative we won't go over here. 
+                    \note{If you're curious, here's a \href{https://towardsdatascience.com/derivative-of-the-softmax-function-and-the-categorical-cross-entropy-loss-ffceefc081d1}{link}. }
+                
+            \item \vocab{Hyperbolic tangent} function $\tanh(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z}\tanh(z)
+                    =
+                    1 - \tanh(z)^2
+                \end{equation}
+                
+                This strange little expression is the "hyperbolic secant" squared. We won't bother further with it.\\
+        \end{itemize}
+        
+        
+        \begin{notation}
+            For our various \vocab{activation} functions, we have the \vocab{derivatives}:
+            
+            Step:
+            
+            \begin{equation*}
+                \deriv{}{z} \text{step}(z) = 0
+            \end{equation*}
+            
+            ReLU:
+            
+            \begin{equation*}
+                \deriv{}{z} \text{ReLU}(z) = \text{step}(z)
+            \end{equation*}
+            
+            Sigmoid:
+            
+            \begin{equation*}
+                \deriv{}{z}\sigma(z) 
+                =
+                \sigma(z)(1-\sigma(z))
+            \end{equation*}
+            
+            Identity/Linear:
+            
+            \begin{equation*}
+                \deriv{}{z} z 
+                =
+                1
+            \end{equation*}
+        \end{notation}
+        
+    \secdiv
+    
+    \subsection*{Loss derivatives}
+    
+        Now, we look at the loss derivatives.
+        
+        \begin{itemize}
+            \item \vocab{Square loss} function $\loss_{sq} = (a-y)^2$:
+            
+                \begin{equation}
+                    \deriv{}{a} \loss_{sq} = 2(a-y)
+                \end{equation}
+                
+                Follows from chain rule+power rule, used for regression.
+                
+            \item \vocab{Linear loss} function $\loss_{sq} = |a-y|$:
+            
+                \begin{equation}
+                    \deriv{}{a} \loss_{lin} = \text{sign}(a-y)
+                \end{equation}
+                
+                This one can also be handled piecewise, like step$(z)$ and ReLU$(z)$:
+                
+                \begin{equation}
+                    |u| 
+                    =
+                    \begin{cases}
+                      \blu{u} & \text{if $z \geq 0$}\\
+                      \blu{-u} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+                We take the piecewise derivative:
+                
+                \begin{equation}
+                    \deriv{}{u}
+                    |u|
+                    =
+                    \text{sign}(u) 
+                    =
+                    \begin{cases}
+                      \red{1} & \text{if $z \geq 0$}\\
+                      \red{-1} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+            \item \vocab{NLL} (Negative-Log Likelihood) function $\loss_{NLL} = -( y \log(a) + (1-y) \log(1-a) )$
+            
+                \begin{equation}
+                    \deriv{}{a} \loss_{NLL} = - \Bigg( \frac{y}{a} - \frac{1-y}{1-a} \Bigg)
+                \end{equation}
+            
+            \item \vocab{NLLM} (Negative-Log Likelihood Multiclass) function $\loss_{NLL} = - \sum_j y_jlog(a_j)$
+            
+                Similar to softmax, we will omit this derivative.\\
+        \end{itemize}
+        
+        \begin{notation}
+            For our various \vocab{loss} functions, we have the \vocab{derivatives}:
+            
+            Square:
+            
+            \begin{equation}
+                \deriv{}{a} \loss_{sq} = 2(a-y)
+            \end{equation}
+            
+            Linear (Absolute):
+            
+            \begin{equation}
+                \deriv{}{a} \loss_{lin} = \text{sign}(a-y)
+            \end{equation}
+            
+            NLL (Negative-Log Likelihood):
+            
+            \begin{equation}
+                \deriv{}{a} \loss_{NLL} = - \Bigg( \frac{y}{a} - \frac{1-y}{1-a} \Bigg)
+            \end{equation}
+        \end{notation}
+        

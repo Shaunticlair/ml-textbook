@@ -1,0 +1,53 @@
+
+    \subsection*{Solutions: Validation}
+    
+        Now, we start trying to answer the \textbf{question}: how do we \textbf{check} whether we have a \textbf{good} clustering?
+        
+        Well, first, we can check for a \textbf{poor fit} (or overfitting) using new, \textbf{held-out} testing data: do we get \textbf{low loss} on that testing data?
+        
+        If we \textbf{don't}, then our clusters definitely aren't \textbf{representative} of the overall \textbf{dataset}: they don't \textbf{generalize} to new data.\\
+        
+        \begin{concept}
+            If our clusters give \gren{large} \vocab{testing loss}, then they aren't \purp{generalizing} well, and are probably \gren{not representative} of the overall distribution.
+            
+            So, we already know our clusters \vocab{don't fit the distribution}.
+        \end{concept}
+        
+            
+    \subsection*{Solutions: Consistency}
+    
+        But, just like for classification/regression \textbf{validation}, we don't only run our algorithm \textbf{one time}: we'll run it \textbf{many} times, with different training and testing sets.
+        
+        We can't \textbf{just} use the loss, though: having \textbf{more} clusters could make our error lower, without making a better clustering, for example.
+        
+        Another thought: we're trying to find some patterns \textbf{inherent} in the data. The idea is: if the pattern we're finding is \textbf{real}, we should find a similar pattern \textbf{each time}!
+        
+        So, we look to see if our clusters are \textbf{consistent} when we generate them using different training data: 
+            \note{Different training data from the same distribution, of course.}
+        if they \textbf{aren't}, then it's possible we're not finding the "\textbf{real}" patterns in the data.\\
+        
+        \begin{concept}
+            If our \vocab{clusters} accurately \purp{reflect} the underlying classes of data, then we should expect some \vocab{consistency} of which clusters we \gren{generate} by running $k$-means many times.
+            
+            If our clusters aren't \purp{consistent}, then we might doubt if any of them especially reflect the \purp{distribution}, rather than \gren{noise}.
+        \end{concept}
+
+        If our clusters are \textbf{consistent}, then we're probably seeing something about the \textbf{real} dataset.
+            \note{If it was based on random noise, then the odds of getting matching results would be really low!}
+    
+    \subsection*{Solutions: Ground Truth}
+    
+        But, even if we're getting something \textbf{consistent}, that doesn't mean we're seeing the patterns that \textbf{matter}. 
+        
+        One way to \textbf{check} this is, if we have some idea of what the "\textbf{true}" clustering looks like for just a few data points, we can compare those results to ours.
+        
+        We call this "real" clustering the "ground truth".\\
+        
+        \begin{definition}
+            In machine learning, the \vocab{ground truth} is what we know about the "real world".
+            
+            In general, we want our models to be able to \purp{reproduce} this reality: it is the data that we tend to \gren{trust} the most, if it is gathered correctly.
+        \end{definition}
+        
+        That way, we can use a very \textbf{small} amount of \textbf{supervision} to get an idea of whether our clustering is on the \textbf{right track}.
+    

@@ -1,0 +1,91 @@
+
+\section*{Stochastic Gradient Descent}
+
+    \subsection*{Another problem with gradient descent}
+        One \textbf{advantage} we mentioned for gradient descent at the beginning of the chapter is that we can \textbf{stop early} if we think we're done, saving on \textbf{time}.
+        
+        This is helpful for really \textbf{large} datasets, and it's also more \textbf{computationally manageable} than inverting a gigantic $XX^T$ matrix.
+        
+        But, we \textbf{haven't} taken \textbf{full advantage} of it: above, we used a \textbf{sum} to get our gradient - we're assuming we'll use all of our \textbf{data points}.
+        
+        But, what if we don't want to have to use all of them at once? That might be \textbf{expensive}. 
+        
+        And in fact, there are \textbf{other} reasons not to: maybe the gradient will change directions after only a \textbf{small} distance. 
+        
+        Right now, we're getting \textbf{lots of data} before even taking a \textbf{single step}: if we start moving \textbf{immediately}, our program could \textbf{adapt} to the "terrain" more quickly!
+        
+    \subsection*{A better way: stochastic GD}
+        
+        Instead, why wait until we have \textbf{added} up over all the data? We could just \textbf{compute} the gradient over \textbf{one} data point \textbf{at a time}. In fact, to be fair, we'll do it \textbf{randomly}. 
+            \note{To compensate, our steps will have to be \textbf{smaller}!}
+        
+        But wait, this \textbf{seems} like it would be \textbf{less} effective - after all, how much does \textbf{one} data point tell you? 
+        
+        Well, even if it isn't much, this isn't very \textbf{different} from adding them up all at \textbf{once}: in \textbf{theory}, taking lots of \textbf{little} steps should average out to the \textbf{same} information as if we do it all at once.\\
+        
+        \begin{definition}
+            \vocab{Stochastic Gradient Descent (SGD)} is the process of applying \purp{gradient descent} on \gren{randomly} selected data points.
+            
+            This should \gren{average} out to being \gren{similar} to regular (batch) gradient descent, but the \purp{randomness} often lets it improve \purp{faster} and \gren{avoid} some common problems.
+        \end{definition}
+            
+        \note{Stochastic is just a very mathematically precise word for "random".}
+        
+        There are more possible benefits, too: \textbf{randomly} choosing data points adds some \textbf{noise}, and random movement might be able to pull us out of local minima we don't want.
+            \note{We mean "noise" in the signals sense: random \textbf{variation} in our data that \textbf{isn't} part of what we're trying to pay attention to: in this case, the \textbf{distribution}.}
+            
+        This sort of \textbf{noise} and \textbf{randomness} can make it hard for our model to \textbf{perfectly} fit the training data: this can reduce \textbf{overfitting}, too!
+            \note{For example, it's hard to focus on the details of someone's eyelashes (unimportant details) if your vision is blurry.}
+            
+        \begin{concept}
+            There are many \vocab{benefits} to \vocab{SGD} (Stochastic Gradient Descent) over regular BGD (Batch Gradient Descent).
+            
+            \begin{itemize}
+                \item SGD can sometimes \gren{learn} a good model \purp{without} using all of our \gren{data}, which can \vocab{save us time} when data sets are \purp{too large}.
+                    \begin{itemize}
+                        \item It can also let us address problems \gren{early} if the model \purp{isn't} improving.
+                    \end{itemize}
+                    
+                \item The noise produced by the random sampling in SGD can sometimes help it \vocab{avoid local minima} that aren't very good models, 
+                    \begin{itemize}
+                        \item This is because the model might be moved in a \purp{random direction} in \gren{parameter space}, and randomly \gren{pulled out} of that minimum, even if BGD would have gotten \purp{stuck}.
+                    \end{itemize}
+                    
+                \item The noise also \vocab{reduces overfitting}, because it's \gren{harder} for the model to \purp{memorize} the exact details of the \purp{distribution}.
+            \end{itemize}
+        \end{concept}
+        
+    \subsection*{Ensuring Convergence}
+    
+        How do we make sure that our SGD method converges? We need some kind of termination criteria. Thankfully, there's a useful theorem on the matter:\\
+        
+        \begin{theorem}
+            SGD \purp{converges} with \textit{probability one} to the \purp{optimal} $\Theta$ if
+            
+            \begin{itemize}
+                \item $f$ is convex
+            \end{itemize}
+            
+            And our step size(learning rule) $\eta(t)$ follows these rules:
+            
+            \begin{equation*}
+                \sum_{t=1}^{\infty} \eta(t) = \infty
+                \qquad \qquad
+                and
+                \qquad \qquad
+                \sum_{t=1}^{\infty} \eta(t)^2 < \infty
+            \end{equation*}
+        \end{theorem}
+        
+        Why these rules? Let's see:
+        
+        \begin{itemize}
+            \item The \textbf{first} rule is for the \textbf{same} reason as for regular BGD: if it isn't \textbf{convex}, we can get stuck in \textbf{local minima}, or if it's \textbf{concave}, decrease \textbf{forever}.
+            
+            \item The \textbf{second} rule means that your steps need to add up to an \textbf{infinite distance}: this allows you to reach \textbf{any} possible point in your \textbf{parameter space}.
+            
+            \item The \textbf{third} one is a bit \textbf{trickier}, but basically means the steps need to get \textbf{smaller}, so we can approach the \textbf{minimum} (otherwise we might \textbf{diverge}!)
+        \end{itemize}
+        
+        One option is $\eta(t)=1/t$. But often, we use rules that \textbf{decrease} more \textbf{slowly}, so that it doesn't take as \textbf{long}.
+            \note{But technically, we're no longer guaranteed convergence!}

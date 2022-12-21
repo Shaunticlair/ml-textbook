@@ -1,0 +1,1039 @@
+\chapter{Introduction - Explanatory Notes}
+\label{intro}
+
+%%Chapter 1
+
+
+These are the explanatory course notes produced by \textbf{Shaunticlair Ruiz}, a current TA who has also served as an LA in Spring 2022. They are intended to be \textbf{supplementary} to the official lectures notes.
+
+The official course lecture notes are designed to be \textbf{minimal}, and present what the instructors think that you absolutely \textbf{need} to \textbf{know} to understand and interact with the current state of machine learning.
+
+These notes, by contrast, are designed to provide more thorough \textbf{explanations}. We \textbf{explain} certain logical leaps, \textbf{break down} concepts into smaller parts, and try to make the notes more \textbf{accessible} to students who find the primary notes too dense.
+
+These notes cover the \textbf{same} topics as the primary notes, just with a different \textbf{presentation}. Most of the explanations in this document are a reaction to \textbf{difficulties} that students have had in previous semesters.
+
+If the concepts in these explanatory note chapters are \textbf{familiar} to you, or if you find them to be too \textbf{drawn-out}, you can \textbf{skim} sections that you're not concerned about. 
+
+We, again, stress that neither set of notes is more "advanced", as they cover the \textbf{same material}. They simply reflect \textbf{different} learning styles and backgrounds. 
+
+It may be helpful to refer to these explanatory notes as you digest the official lecture notes: the main section numbers (1.1, 1.2, 1.3...) should \textbf{match} with the official notes.
+
+If you have any concerns or points of \textbf{confusion}, feel free provide \textbf{feedback} on this ongoing project.
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \subsection{What is machine learning?} %Semi-redundant
+    
+        Why study machine learning? To answer that, let's learn what machine learning really \textit{is}. Fortunately, it's all in the name.
+        
+        Machine learning is a broad field. We use \textbf{machines}, or computers, and give them data to \textbf{learn} from. 
+        
+        Why are we teaching machines? Same as why we want \textbf{people} to learn: so they can use that learning to make good \textbf{decisions}.
+        
+        So, in short, we can say: \\
+        
+        \begin{concept}
+            The main focus of \vocab{machine learning} is making \purp{decisions} or \purp{predictions} based on \gren{data}.
+        \end{concept}
+        
+        
+    \subsection{Why do Machine Learning: The Benefits} %Semi-redundant
+        
+        Why use machine learning? What is it good for?
+        
+        The techniques used in machine learning have many applications. It has become the best way to handle many different problems:\note{Based on speed, time to develop, "robustness", etc.}
+        
+        \begin{itemize}
+            \item Facial detection
+            \item Speech recognition
+            \item Language processing
+            \item Many problems that involve data or signal processing
+        \end{itemize}
+        
+        Different ML techniques have become the best way to handle many problems in many fields. As a result, it has become very popular!
+
+    
+    \subsection{The role of humans} %Not redundant!
+        
+        If machines can solve all of these problems, where do humans play a role?
+        
+        Well, these machines aren't (yet) able to \textbf{set themselves up} to solve these problems: humans have to set up the system so the machines can succeed. We call this \textbf{framing} the problem.
+        
+        We'll use an example to help explain.
+        
+        \begin{itemize}
+            \item A human has to \textbf{recognize} that there is a problem to solve.
+                \begin{itemize}
+                    \item \miniex You want to have self-driving cars. Your problem: those cars need to be able to \textbf{watch} the road.
+                \end{itemize}
+                
+            \item They have to decide what kind of \textbf{solutions} you want to try, and use that as the basis for training.
+                \begin{itemize}
+                    \item \miniex You decide to create a \textbf{model} that can replicate vision for our car.
+                    \item This \textbf{model} represents the kinds of \textbf{solutions} you expect to work: a particular model will allow for a certain approach to a situation.
+                \end{itemize}
+                
+            \item They have to \textbf{gather} data to train with.
+                \begin{itemize}
+                    \item \miniex You might gather \textbf{videos} from dashcam footage, or create a virtual simulator for your car to drive in. 
+                \end{itemize}
+                
+                %Might create a sidebox for the word "dashcam"
+                
+            \item They have to choose the \textbf{algorithms} we'll use for learning: what \textbf{instructions} do we give our computer?
+                \begin{itemize}
+                    \item \miniex To "train" your model, you could need to adjust it to perform \textbf{better}. How do you adjust it, using the videos?
+                \end{itemize}
+                
+            \item They have to look at the final result and \textbf{validate} whether it's a good enough solution to use.
+            
+                \begin{itemize}
+                    \item \miniex You \textbf{test} out your model in a car: does it notice obstacles?
+                \end{itemize}
+            
+            \item They have to consider the possible \textbf{ethics} or other consequences of this solution.
+            
+                \begin{itemize}
+                    \item \miniex What's the most "responsible" way of driving? When should a car prioritize its own safety, or the safety of pedestrians? How much control should the user have?
+                \end{itemize}
+            
+        \end{itemize}
+        
+        This is over-simplified, but it gives us a high-level view of what we'll need going forward.
+        
+        These are all important steps, and they require the human in question to make smart and responsible choices. That's why you need to learn machine learning: in order to use it \textbf{effectively}, you have to \textbf{understand} it!
+    
+\pagebreak  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+
+
+    We want to understand machine learning, so we'll break it down into different parts. \note{This breakdown is different from the one above!}
+    
+    We'll do this by \textbf{asking} ourselves a couple \textbf{questions}, and thinking about machines in the broadest sense we can: as the \textbf{solution} to a \textbf{problem}.
+    
+    \subsection{What's the plan?}
+    
+        We know that, in machine learning, we want to make \textbf{decisions} or \textbf{predictions} using \textbf{data}. 
+        
+        Let's frame this more generally: we want to \textbf{solve} a \textbf{problem} presented to us, using our \textbf{machine} and some \textbf{data}.
+        
+        This brings up some questions:
+        
+        \begin{itemize}
+            \item What exactly is our \textbf{problem}?
+            \item And \textbf{solution} do we want to use?
+        \end{itemize}
+        
+        The answer depends on the situation, but we can break down these questions into simpler, easier ones.
+        
+        
+    \subsection{The Problem}
+    
+        Simply put, our goal is to create a \textbf{machine} that \textbf{takes in} data and \textbf{spits out} some kind of results. \note{In that way, our machine is just a \textbf{function}.}
+        
+        The \textbf{problem}, then, is to reach that goal: to get our desired output from our input.
+        
+        That means we're focused on what's \textbf{outside} of our machine - here, we don't know or care how the machine works, we just know what we've got (input), and what we want (output).
+        
+            \begin{itemize}
+                \item \vocab{Assumptions}: What do we \textbf{assume} about our \textbf{problem}? What do we expect about our \textbf{data}, or our possible \textbf{solutions}? How do we use this knowledge?
+                
+                    \begin{itemize}
+                        \item This step is important because these assumptions can allow us to \textbf{simplify} the problem, and often, our approach \textbf{depends} on them.
+                        \note{We often use these assumptions to come up with solutions: if they aren't true, your approach may fail!}
+                        
+                        \item \miniex We might be looking at our patients (several adorable puppies), and \textbf{assume} that they are all the same \textbf{age}: we can simplify by not including age as a varible.
+                    \end{itemize}
+                
+                \item \vocab{Problem Class}: What are the \textbf{needs} of our particular problem? What \textbf{kind} of inputs and outputs are expected?
+                    \begin{itemize}
+                        \item In this situation, "class" means, "\textbf{set} of things with something in \textbf{common}". So, our "problem class" tells us, "what \textbf{kind} of problem do we have"? 
+                        \note{"\textbf{Which group} of problems does ours \textbf{fit into?}" }
+                        
+                        \item This is important for choosing our solution: our solution follows from the problem. \note{In order to answer a question, you need to know what you're being asked!} 
+                            \begin{itemize}
+                                \item We might also use \textbf{existing} solutions to similar \textbf{problems} as inspiration for our own work.
+                            \end{itemize}
+                            
+                        \item \miniex Our inputs are weight, blood pressure, and breed. Our output is a number: how long do they have to live? This will be a real number, in years.
+                        
+                
+                    \end{itemize}
+                \item \vocab{Evaluation Criteria}: What is our goal? We know the \textbf{kind} of output we want (structure, type, etc.), but how do we measure the \textbf{quality} of an answer?
+                
+                    \begin{itemize}
+                        \item This evaluation criteria is crucial, both for telling our machine how to \textbf{improve}, and to \textbf{show} other humans how well it \textbf{performs}.
+                        
+                        \miniex We could use the absolute difference between the lifetime predicted, and the lifetime the puppies actually experience. 
+                    \end{itemize}
+            \end{itemize}
+            
+        These aspects together make up our problem, that we now need a \textbf{solution} for.
+            
+    \subsection{Solution Setup: What is a model?}
+    
+        Remember: our goal is to create a \textbf{machine} that \textbf{takes in} data and \textbf{spits out} some kind of results. 
+    
+        The \textbf{solution} is what's \textbf{inside} the machine - how do we do it? What approach do we use? 
+        
+        First, let's dig a little into what a \textbf{solution} is: we've mentioned before that our solution will often rely on a \textbf{model}, but what exactly \textit{is} a model?
+        
+        For our purposes, a model is a way to \textbf{simplify reality}: we strip away everything that doesn't matter, and just leave a system that can work \textit{well enough}, in the ways that matter.
+        
+        In machine learning, we sometimes care less about how \textbf{realistic} the model is, than its ability to get \textbf{good results}. That means our model is not always structured to match reality.
+        \note{We do this sometimes because we don't \textit{know} the true model, and sometimes because simulating the true model is too expensive and time-consuming.}\\
+        
+        \begin{definition}
+            A \vocab{model} is a way of mathematically \purp{representing} a \gren{system}. 
+            
+            This system is \purp{simplified} to only include the \gren{details} we care about and give us the level of \gren{accuracy} we want.
+        \end{definition}
+        
+        We boil down a \textbf{system} into the values we \textbf{care about}, and how those values \textbf{affect} each other (in terms of math equations).
+        
+        \miniex A planetary model that simulates \textbf{gravity} between Mars and the sun may not account for the density of the planet, or everything that happens on the surface... but that might be good enough to predict the \textbf{length of a year} on Mars.
+        \note{Again, we emphasize that a model doesn't have to be structured to match reality - but if we know the true model, this can help.}
+        
+        However, in this example, we knew all of the values of the model (the weight of the planet and sun, the distance from the sun...). We have no need for machine learning: the model is already \textbf{complete}.
+        
+        In the problems we face, we \textbf{don't know} those values, or even always what \textbf{model} will work best. That's where the techniques we will learn come in.
+        
+    \subsection{The Solution}
+        
+        So now, we have a vague idea of what our solution might look like. So, let's break it into parts, like we did for the problem.
+        
+        \begin{itemize}
+            \item \vocab{Model Type}: Will we make a model? What kinds of \textbf{data} will we \textbf{include} in our model?
+            
+                \begin{itemize}
+                    \item Sometimes, a model isn't necessary: do we really need it? If we do, how do we \textbf{use} that model?
+                \end{itemize}
+            
+            \item \vocab{Model Class}: What \textbf{kind} of model will we use? What sort of \textbf{variables} will we use, and what \textbf{structure} will our math use? 
+                
+                \begin{itemize}
+                    \item Just like with problem classes, a model class is a "type" of model: a collection of models with similar structure.
+                    \item We will spend much of this class exploring \textbf{different} model classes: each has benefits in different circumstances.
+                \end{itemize}
+                
+            \item \vocab{Algorithm}: Once we have a model, how do we "teach" it what we want it to know? We'll need a \textbf{procedure} for this - an algorithm.
+                
+                \begin{itemize}
+                    \item Which algorithms we choose will affect how well our machine can learn: how quickly will it learn, and how good is the end result?
+                \end{itemize}
+        \end{itemize}
+        
+        Now, we take a deeper dive into each aspect listed about, starting with our \textbf{base assumptions}.
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Problem Class}
+
+    "Problem class" is, from the name, the type of problem you are presented with: what inputs and outputs are expected?
+    
+    But there is a second aspect of the problem we haven't discussed - what \textbf{data} is does the machine have available when it is \textbf{training}?
+    
+    \subsection{Supervised vs. Unsupervised}
+    
+        We know that, to train our computer, we have to give it \textbf{input} data, but how does the machine know whether it's doing well? We could, for example, give it an "\textbf{answer key}": the correct outputs we expect from it.
+        
+        If we do, we call that \textbf{supervised} learning. 
+        \note{In a way, we're "supervising" it by giving it the right answer: we're guiding it and making sure it does what we want it to!}
+        
+        Or, do we find a different way to measure its success? We break it down into a few common cases:
+        
+        \begin{itemize}
+            \item \vocab{Supervised Learning} is when train our machine using a set of \textbf{inputs} and the correct matching \textbf{outputs}. 
+                
+                \begin{itemize}
+                    \item \miniex You show your machine a bunch of \textbf{pictures} (inputs), and then \textbf{label} what is in each picture: like a dog (output).
+                \end{itemize}
+            
+            \item \vocab{Unsupervised Learning} is when we \textbf{don't} give our machine the answers, and it has to guess without having a "correct" answer.
+                \begin{itemize}
+                    \item This is often used in cases where we don't know a "correct" answer in advance. For example, we might want to find some kind of \textbf{pattern} in our data, and we have no way of predicting that!
+                    
+                    \item \miniex You look at a bunch of animals (input) and try to invent species for groups of animals.
+                    \note{You don't need to know the species "cow" and "pig" to figure out that they're different from each other! }
+                \end{itemize}
+                
+            \item There are other cases that we will save for the end of this section.
+        \end{itemize}
+        
+        We'll list some common problem classes for each of these types. You don't have to memorize these types, but they will come back later in the course.
+        
+        But first, one more detail.
+        
+        \subsection{How do we store our data?}
+        
+            Each data point typically contains \textbf{multiple} values: pieces of information you want to draw \textbf{conclusions} from.
+            
+            We often standardize the information our machine receives by storing this information in a \textbf{vector}.
+            \note{Being consistent makes it easier to develop the techniques we need!}
+            
+            Our models are usually made up of \textbf{equations}, so we want to be able to \textbf{compute} with these values. So, each variable will be represented with a real number, or multiple if necessary.
+            
+            Thus, one data point is a \textbf{vector of real numbers}. Specifically, a \textbf{column vector}.\\
+            
+            \begin{notation}
+                $x$ is our \vocab{vector of inputs}.
+                
+                It is a column vector. Its matrix shape is $(d \times 1)$.
+            \end{notation}
+            
+            \miniex Suppose we have a data point $x$ that's a vector of 3 numbers: its shape is $(3 \times 1)$. We write this as:
+            
+            \begin{equation}
+                x = 
+                \begin{bmatrix}
+                    x_1 \\ x_2 \\ x_3
+                \end{bmatrix}
+            \end{equation}
+            
+            
+            
+            Since this is so common, we introduce some notation.
+            
+            The real numbers are represented with $\RR$. Since we're combining \textbf{multiple} real numbers, we use \textbf{exponent} notation to represent this.\\
+            
+            \begin{notation}
+                The \vocab{set of length-$d$ vectors} is written as \purp{${\RR^d}$}.
+            \end{notation}
+            
+            \miniex $\RR^2$ represents all of the length-2 vectors: all of the vectors/points on the 2D plane.
+            
+            So, we might say a data point $x \in \RR^d$ if all we know is that $x$ is a length-$d$ vector.
+    
+    \subsection{Supervised Learning}
+    
+        \begin{itemize}
+            \item \vocab{Regression} takes in a vector of numbers, and predicts some \textbf{real number} as an output. Our goal is to correctly guess the desired output.
+                \begin{itemize}
+                    \item \miniex You want to predict how much a worker makes based on their job, where they live, and how many years they've worked. 
+                \note{Notice that "where they live" isn't usually represented as a number: we often have to convert certain data types.}
+                \end{itemize}
+            
+            \item \vocab{Classification} also takes in a vector of numbers, but outputs a \textbf{label}: we have a set of \textbf{classes}, and we want to \textbf{label} each data point as a member of one class. 
+            \note{As before, a "class" is just another word for a group of related things.}
+                \begin{itemize}
+                    \item This means our output is \textbf{discrete}: each class is separate output value, and we have $k$ classes.
+                    \item \miniex You have several documents and want to \textbf{label} which \textbf{language} each is written in.
+                \end{itemize}
+        \end{itemize}
+        
+    
+    \subsection{Unsupervised Learning}
+    
+        \begin{itemize}
+            \item \vocab{Density Estimation} takes in data, and tries to approximate the \textbf{distribution} of that data: what is the chance of getting a new data point $x$? \note{We define "\textbf{distributions}" in section 1.2.}
+                \begin{itemize}
+                    \item \miniex You want to get the \textbf{distribution} of human \textbf{heights} in a particular city.
+                \end{itemize}
+                
+            \item \vocab{Clustering} is when you want to sort data points into groups of similar points, without knowing the groups in advance.
+                \begin{itemize}
+                    \item \miniex You want to sort patients with a disease into groups, where each group might need different treatments.
+                \end{itemize}
+                
+            \item \vocab{Dimensionality Reduction} is a bit different: the goal is to take a vector, and reduce the length of the vector, while still keeping the information that's important.
+                \begin{itemize}
+                    \item You may not need every dimension to store the information you need, so you can save on space and time by storing it in a smaller vector.
+                    \item \miniex You find out height has no effect on income, so you ignore height. Or maybe you find that having both education and literacy is redundant.
+                    \note{Since we often automate this process, real examples might not be so simple!}
+                    \item Notice that what information is relevant depends on what you're using it for.
+                \end{itemize}
+        \end{itemize}
+    
+    \subsection{Other Types of Learning}
+    
+        Now, we turn to some types of learning that are, arguably, neither supervised nor supervised.
+        
+        \begin{itemize}
+            \item \vocab{Reinforcement Learning} is used when you have an "environment" you can interact with. Different choices will change what that environment looks like, and may reward or punish you.
+            \note{We represent the current environment with something called a \textbf{state}.}
+                \begin{itemize}
+                    \item The goal is to pick the actions that give you the best rewards.
+                    \item \miniex You have a robot on Mars, and you want to move your robot (action) to reach certain goals (rewards)
+                    \item This isn't \textbf{supervised} because you \textbf{don't know} the correct action. But it isn't fully unsupervised because you \textbf{do know} when you get a reward.
+                \end{itemize}
+            \item \vocab{Sequence Learning} is used to take one sequence, and turn it into another. In these sequences, each output depends on all of the previous inputs. 
+                \begin{itemize}
+                    \item This means you need to store information about previous inputs using a \textbf{state}.
+                    
+                    \item \miniex Predicting the next word in a sentence, based on the words so far. You \textbf{predict} one word for each new one you receive, so you return a \textbf{sequence}.
+                    
+                    \item We're partly "supervised" by being given the output sequence, but we don't know what our states need to look like.
+                \end{itemize}
+        \end{itemize}
+    
+    \subsection{Types of Learning not covered in this class (Optional)}
+    
+        These will not be covered, but are worth mentioning.
+        
+        \begin{itemize}
+            \item \vocab{Semi-supervised Learning} gives us some supervised training data that has been labelled, but also some that has not.
+            
+            \item \vocab{Active Learning} gives our computer the ability to \textbf{choose} which data points it receives: this is used when data is \textbf{expensive}, and we want to learn efficiently.
+            
+            \item \vocab{Transfer Learning} is used when we apply learning from one task to another, related task. That way, the new task can be learned faster.
+        \end{itemize}
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Assumptions}      
+
+    Let's look at our underlying assumptions: the rest of this class relies on these assumptions.
+    
+    \subsection{An assumption about data}
+        
+        Let's return back to our original goal: we want to use \textbf{data} to teach our machine to give us \textbf{results} we want. Just like how a person might learn from their \textbf{experience} and use it to make \textbf{judgments}.
+        
+        However, there's an \textbf{assumption} built in to this statement, one we need to look at more closely: we are assuming that \textbf{past} data allows us to predict \textbf{future} data. 
+        
+        This may seem obvious, but it isn't always: past data may not be \textbf{representative} of the future, for example.
+        
+        \begin{itemize}
+            \item \miniex We can't use the weather over the month of July to predict the weather in the month of December.
+        \end{itemize}
+        
+        This often called the problem of \textbf{induction}: using the past to predict the future.
+        
+        
+    \subsection{Is our data representative?}
+    
+        First, let's solve the problem presented above:
+        
+        \begin{itemize}
+            \item \miniex We got our weather from a \textbf{different} month than we're trying to predict.
+        \end{itemize} 
+        
+        So, it seems our problem is that our \textbf{data} and what we're trying to \textbf{predict} are from \textbf{two different sources}.
+        
+        We want them to come from the \textbf{same source}, then. In this case, we could say we want them to be from the \textbf{same} month. Great. But how do we say this in general?
+        
+    \subsection{How do we compare data?}
+        
+        We got down to the real problem: we want our new data to be from a similar source to the old data. One month couldn't \textbf{represent} another, because they \textbf{behave} differently.
+        
+        \begin{itemize}
+            \item \miniex For different months, we get different rainy days, different temperature ranges, so on: they can't be compared.
+        \end{itemize} 
+        
+        In general, we need a way to describe what we mean by "different": what describes one of these months?
+        
+        \begin{itemize}
+            \item \miniex To us, all that matters is the weather: how \textbf{likely} are we have a rainy day, for example? In fact, we'd like to know how \textbf{likely} every outcome is.
+        \end{itemize}
+        
+        We represent this with something called a \textbf{distribution}. A distribution gives us exactly what we just described: \textbf{how likely} different events are to occur. 
+        \note{This is how our system "behaves", in a way.}\\
+        
+        \begin{definition}
+            A \vocab{distribution} is a \gren{function} that gives us the \purp{probability} of different \purp{outcomes}.
+        \end{definition}
+        
+        \note{Why is it called a distribution? Well, we're taking the \textbf{odds}, and spreading them out (or \textbf{distributing} them) over multiple different outcomes!}
+        
+        \miniex The \textbf{distribution} of outcomes on a coin is 50\% chance of heads, 50\% chance of tails.
+        
+        Notice that distributions are \textbf{probabilistic}: outcomes have a certain \textbf{chance} of occurring. Otherwise, these problems would be simple.
+        
+    \subsection{Identically Distributed Data}
+        
+        We can think of this distribution as a \textbf{simplified} view of the \textbf{source} of our data. Each "outcome" is a data point; one we can use to \textbf{learn}.
+        
+        We want our \textbf{past} data we \textbf{learn} from, and our \textbf{future} data with \textbf{test} with, to have the \textbf{same} distribution.
+        
+        We also want different points in the \textbf{same} dataset (past \textit{or} future) to be from the same \textbf{distribution}: if they aren't, then why are we lumping them together? 
+        \note{We want to focus on one problem at a time - one distribution.}
+        
+        We want them to be the "same", or \textbf{identical}: they have \textbf{exactly} the same chances for each outcome.
+        
+        In other words: we want our sets of data to be \textbf{identically distributed}.\\
+        
+        \begin{definition}
+            If two \purp{data points}(or datasets) are \vocab{identically distributed}, then they have the \gren{same} underlying \purp{distributions}.
+            
+            In other words, they have the \gren{same} \purp{probabilities} for each possible \purp{outcome}.
+        \end{definition}
+        
+        \miniex Two fair coins will behave the same as each other: they both have 50-50 odds. Thus, they're \textbf{identically distributed}.
+        
+        
+    \subsection{Independence (Review)}
+        
+        There's a second assumption that is just as important: when we draw two different data points, we are also \textbf{assuming} that the results of one do not \textbf{affect} the other. 
+        
+        If one point \textbf{depended} on another, then there's no \textbf{new} information: you could have used the last point to guess this one.
+        
+        This means you're \textbf{not learning}, which is a problem: you need many experiences to come to a good \textbf{conclusion}, that will apply well in the future.
+        
+        Because we don't want the result of one data point to \textbf{depend} on another, we call this assumption \textbf{independence}.\\
+        
+        \begin{definition}
+            Two \gren{data points} are \vocab{independent} if \purp{knowledge} of the outcome for one data point does not affect the \purp{probabilities} for the other.
+        \end{definition}
+        
+        \note{This definition is a bit informal: the proper definition is to say that, for two events A and B, $P(A)P(B) = P(A \text{ and } B)$} 
+        
+        \miniex If you flip two coins, knowing that one coins comes up heads does not tell you anything about the other coin: the two coin tosses are \textbf{independent}.
+        
+    \subsection{Independent and Identically Distributed}
+    
+        We combine both of these assumptions into our final result: we want our data points and data sets to be both \textbf{independent and identically distributed.}\\
+        
+        \begin{definition}
+            \vocab{IID}, or \vocab{Independent and Identically Distributed}, means that if you draw two data points, they
+            
+            \begin{itemize}
+                \item Come from the \gren{same} \purp{distribution}: they have the same \purp{probabilities} for each outcome,
+                \item They \gren{aren't related} in any other way: they are \purp{independent}, meaning the \purp{outcome} of one \gren{does not} affect the other.
+            \end{itemize}
+        \end{definition}
+        
+        \miniex Based on the two examples above, flipping two coins (or rolling a die twice) is IID.
+            
+        We shorten this to one acronym, which tells you how important it is: it is the base assumption in many different statistics, inference, and machine learning settings.
+        
+        We will assume this to be true, and use that assumption throughout the class. We expect our data to be IID in most cases.
+        
+    \subsection{Estimation and Generalization}
+    
+        In this section, the main theme has been applying knowledge about \textbf{training} data to \textbf{new}, unfamiliar situations, like our \textbf{testing} data. 
+        
+        We have a word for this that we haven't used so far: \textbf{generalization}.\\
+        
+        \begin{definition}
+            \vocab{Generalization} is the \purp{problem} of applying \gren{current} knowledge to \gren{new} situations we've never seen before.
+            
+            We want to be able to take the \purp{specific} case of our training data, and apply it to the more \purp{general} case of any of the possible \gren{new} data.
+        \end{definition}
+        
+        A second problem is the \textbf{nature} of our training data: because we \textbf{randomly} select it, we don't have a perfect idea of what the true distribution looks like.
+        
+        The randomness means that our sample will look a bit different each time we generate it. This creates some \textbf{noise}: something that interferes with what we're trying to focus on. 
+        \note{Just like how background \textbf{noise} can make it harder to listen to a phone call!}
+        
+        The problem of using our sample to \textbf{estimate} the true distribution, despite imperfect, "noisy" data, is \textbf{estimation.}\\
+        
+        \begin{definition}
+            \vocab{Estimation} is the \purp{problem} of taking \gren{imperfect} data and using it to \purp{estimate} the "true" information we're looking for.
+        \end{definition}
+        
+    \subsection{Other Assumptions}
+    
+        There are some other assumptions we will make, that will will not go into as much detail on:
+        
+            \begin{itemize}
+                \item We know the set of possible answers: the type of answer we should give back, whether number, label, making a choice...
+                    \begin{itemize}
+                        \item If we don't know what kind of answer we're supposed to give, how can we build a model to give back that answer? 
+                        \note{Imagine if you were supposed to write an essay, but could only answer with real numbers between 0 and 1 - this is what we want to avoid.}
+                    \end{itemize}
+                    
+                \item Our problem is solvable: the "true" model can be represented and answered using our computer.
+                        
+            \end{itemize}
+            
+        Here are some more which are less universal.
+        
+        \begin{itemize}
+            \item The data is generated by a Markov chain. \note{If you don't know what this is, don't worry! We come back to it later.}
+            
+            \item The data might be \textbf{adversarial}: designed to specifically exploit weaknesses in the machine.
+        \end{itemize}
+            
+        Some of these assumptions are required in order to move forward at all. Others narrow down the options we have to work with, so we can find a good solution in a reasonable amount of time.
+        
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Evaluation Criteria}
+    
+    \subsection{What is a loss function?}
+    
+        In order to solve our task, we want to be able to measure how our machine is performing. We do this by creating a measure of success or failure, called a \textbf{loss function}.\\
+    
+        \begin{definition}
+            A \vocab{loss function}  measures how \purp{poorly} your machine is \purp{performing} on a \gren{task}.
+            
+            The output is a \gren{real number}. If your machine is performing \purp{well}, then you will have a \purp{low} output. And vice versa: if it is doing \gren{badly}, it will have a \gren{high} output.
+        \end{definition}
+        
+        \miniex If you counted the number of questions you got \textbf{wrong} on a test, that could be a \textbf{loss function}.
+        
+        A loss function usually has the \textbf{correct} and \textbf{predicted} guesses as inputs: it has to compare them to know how well it's doing.\\
+        
+        \begin{notation}
+            Often, we will use $g$ to represent our \vocab{guess} as to the correct answer: this is the output of our model; our \textbf{prediction}.
+            
+            The \vocab{true answer} is often represented by either $a$ or $y$.
+            
+            Our \vocab{loss} is the function $\loss$, so altogether, our computed loss is $\loss(g,a)$.
+        \end{notation}
+    
+    \subsection{Examples of Loss Functions}
+    
+        Different loss functions are useful for different situations.
+        
+        \begin{itemize}
+            \item \vocab{0-1 Loss} is a simple kind of loss: if our answer is correct, the value is 0. If our answer is incorrect, the value is 1.
+            \note{This matches our earlier example of "number of questions wrong on a test".}
+                
+                \[\loss(g, a) = \begin{cases}
+                 0 & \text{if $g = a$} \\
+                 1 & \text{otherwise}
+                \end{cases}\]
+            
+                \begin{itemize}
+                    \item This kind of loss is often used for \textbf{discrete} situations, where there are $k$ options and one is correct - like on a multiple-choice test.
+                \end{itemize}
+                
+            \item \vocab{Linear loss} is the \textbf{absolute difference} between your answer and the correct one.
+                \begin{equation}
+                    \loss(g,a) = \abs{g-a}
+                \end{equation}
+                
+            \item \vocab{Square loss} is the \textbf{square difference}.
+                \begin{equation}
+                    \loss(g,a) = (g-a)^2
+                \end{equation}
+                
+                \begin{itemize}
+                    \item Because the slope increases as you get further away from 0, it punishes large errors more aggressively than small errors.
+                \end{itemize}
+            
+            \item \vocab{Asymmetric Loss} punishes some outcomes more than others. It may be worse to miss a heart attack, than to expect one and be wrong.
+            
+            \[\loss(g, a) = \begin{cases}
+                         1 & \text{if $g = 1$ and $a = 0$} \\
+                         10 & \text{if $g = 0$ and $a = 1$} \\
+                         0 & \text{otherwise}
+                        \end{cases}\]
+            
+        \end{itemize}
+        
+    \subsection{How to use loss}
+    
+        We want to reduce loss as much as we can: in other words, \textbf{minimize} it. But there are lots of ways to do that. 
+        \note{We could the "worst-case" loss, or the average loss, etc...}
+        
+        In this class we will minimize the \textbf{expected loss}: the average loss we would \textit{expect} based on the probability of each outcome.
+        
+        We do this because, over the \textbf{long-term}, the \textbf{expected loss} should reflect what we actually get.\note{This is called the \textbf{law of large numbers}: if you have a large number of trials, the average value should be close to the expected value.}\\
+        
+        \begin{concept}
+            In most machine learning problems, we want to \gren{minimize} our \purp{expected loss}.
+        \end{concept}
+        
+        But we also need to be careful when choosing our loss function: if we get to choose how we're grading ourselves, then we need to pick an accurate way to measure progress!
+
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Model Type}
+
+    Now, we start on the solution. Do we choose to use a model? If we do, there are some other details we have to consider.
+    
+    \subsection{No Model}
+    
+        A model allows us to \textbf{simplify} what we learn from our data. So, if we don't use a model, we have to use our data \textbf{directly}. 
+        
+        One way to do this is to simply average some known data points that "seem" similar to the newest query. This is called the \textbf{nearest neighbor} approach.
+        \note{When we say "similar", there are multiple ways to interpret this, but often we use distance in $\RR^d$ space.}
+        
+        \miniex You measure a chemical's physical properties, and \textbf{label} it based on which one you've seen before is the most \textbf{similar}.
+        
+    \subsection{Models using Parameters}
+    
+        These days, we're much more likely to \textbf{use} a model to make our prediction.
+        
+        But, as we mentioned before, a model can be adjusted, and for almost any problem, we'll need to adjust it to fit our needs. This is the process of \textbf{training}.
+        
+        How do we adjust a model? Our models will be a \textbf{function}, that has several values it uses to do calculations on our inputs. For example, here's a simple model:
+        
+        \begin{equation}
+            f(x) = \red{A}\sin(\red{B}x) + \red{C}
+        \end{equation}
+        
+        In this case, we have one input variable, $x$. And we have three values that don't change based on the input: $A$, $B$, and $C$. These values are called \textbf{parameters}.\\
+        
+        \begin{definition}
+            \vocab{Parameters} are the \gren{non-input} \purp{variables} in a model that can be \gren{adjusted} to adjust the model.
+        \end{definition}
+        
+        \miniex When using the linear equation $f(x) = mx+b$, $m$ and $b$ are your parameters.
+    
+        You can think of a parameter as a dial on a machine that you can "tune" to different values, like a radio.
+        
+        Adjusting these parameters will change how the model behaves - different outputs for each input - but it keeps the same overall \textbf{structure}.
+        
+        By structure, we mean the formula: the way variables and parameters \textbf{interact}. The above model will (almost) always be \textbf{different} from 
+        \note{"Almost" because, if $A=B=0$ for both cases, they're both the constant function $f(x)=C$.}\\
+        
+        \begin{equation}
+            f(x) = \red{A}x^2 + \red{B}x + \red{C}
+        \end{equation}
+        
+        They both have three parameters, and one input, but they are different models.
+        
+    
+    \subsection{Prediction Rule}
+    
+        Our goal is to use one of these equations to \textbf{directly} calculate our prediction. For that reason, we call this equation our \textbf{prediction rule}, but more often, we will call it our \textbf{hypothesis}.\\
+        
+        \begin{definition}
+            A \vocab{hypothesis} is the \purp{function} that defines our model, using a fixed number of \gren{parameters}.
+            
+            The \gren{output} of our hypothesis is typically the \purp{prediction} our model is designed to create.
+        \end{definition}
+        
+    \subsection{Hypothesis Notation}
+        
+        For simplicity's sake, we often lump all of our \textbf{parameters} into a single \textbf{vector}, $\theta$. Just like for $x$, we'll use a \textbf{column vector}.\\
+        
+        \begin{notation}
+            $\theta$ is our \vocab{vector of parameters}. 
+            
+            It is a column vector. Its matrix shape is $(d \times 1)$.
+        \end{notation}
+        
+        \note{Often, a vector is represented by bolding a variable ($\mathbf{x}$), or putting an arrow over it ($\vec{x}$). Since we work with vectors so often in this class, we will omit this notation.}
+        
+        \miniex Here is a vector $\theta$ with 4 parameters.
+        
+        \begin{equation}
+            \theta =
+                \begin{bmatrix}
+                    \theta_1 \\ \theta_2 \\ \theta_3 \\ \theta_4
+                \end{bmatrix}
+        \end{equation}
+        
+        Similarly, we lump all of our inputs into a single \textbf{vector}, $x$. 
+        
+        
+        But, if we have \textbf{multiple} data points, we need to label them \textbf{separately}.\\
+        
+        \begin{notation}
+            $x^{(i)}$ is the \vocab{$\nth{i}$ data point}, represented as a vector.
+            
+            Sometimes, you may instead see the notation $x_i$.
+        \end{notation}
+        
+        $x$ is the \textbf{input} to our hypothesis $h$, but since $\theta$ (our parameters) can be \textbf{adjusted}, we can think of it as a \textbf{second} "type" of input.
+        
+        To represent this, we use $f(a;b)$ notation: $a$ is our input to a single \textbf{function}, but $b$ allows us to describe a whole \textbf{family} of functions (by adjusting parameters).\\
+        
+        \begin{notation}
+            Our \vocab{hypothesis} is shown in the form $h(x;\theta)$.
+        \end{notation}
+        
+        
+    \subsection{Fitting}
+    
+        The process of \textbf{adjusting} our model (i.e. its \textbf{parameters}) to match our data is called \textbf{fitting}.
+        
+        As we mentioned before, our goal is typically to \textbf{minimize} expected loss. But this expected loss is based on knowing the \textbf{true} distribution of our data. We call this loss our \textbf{test error}.
+        \note{We call it this because we're "testing" our machine in the real world.}
+        
+        Since we usually don't know the true distribution, we have to settle for our best guess - the \textbf{training data} that we've gathered. 
+        
+        Instead, we could minimize the \textbf{training} error: we average it out, to see our performance. Let's write that out.
+        
+        The loss for our $\nth{i}$ data point is $\loss(g^{(i)},a^{(i)})$. So, we average out $n$ of those points:
+        
+        \begin{equation}
+            \frac{1}{n}  \sum_{i=1}^n \red{ \loss(  g^{(i)},  a^{(i)}  ) }
+        \end{equation}
+        
+        Let's write this in terms of $x$ and $y$. $a$ is just another name for $y$. 
+        
+        Our guess is given by the hypothesis, so $g^{(i)} = h(x^{(i)};\theta)$.
+        \note{In this equation, we'll leave off $\theta$, to allow for non-parametric hypotheses.}\\
+        
+        \begin{kequation}
+            
+            The \vocab{expected loss} for a hypothesis is:
+        
+            \begin{equation*}
+                \frac{1}{n}  \sum_{i=1}^n  \loss( \red{ h( x^{(i)} ) }, \blu{ y^{(i)} }  ) 
+            \end{equation*}
+        
+        \end{kequation}
+        
+        
+        This is the equation we would \textbf{minimize} with $\theta$.
+        
+        \subsection{Overfitting}
+        
+        But, we have to be careful - we mentioned before that the randomness of our sampling can introduce \textbf{noise}.
+        
+        If we too heavily emphasize the current values, we may not \textbf{generalize} well to new data. This problem is called \textbf{overfitting}, and we will talk about it a lot in this course.\\
+        
+        \begin{definition}
+            \vocab{Overfitting} happens when we fit \purp{too strongly} to a particular dataset. 
+            
+            Because we focus too much on that \gren{dataset}, our machine \purp{learns} incorrect facts about the overall distribution. 
+            
+             This makes our model worse at \purp{generalizing} to new situations.
+        \end{definition}
+        
+        \miniex You want to know what cats are like. By coincidence, you see three black cats in a row. You assume all cats are probably black: you've \textbf{overfit} to your data.
+        
+        In this course, we will discuss many ways to tackle \textbf{overfitting}.
+
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Model Class}
+
+    In this section, we'll assume we're using a model. 
+    
+    \subsection{Hypothesis Class}
+    
+        As we mentioned before, changing our \textbf{parameters} will change the specific model we have, but it will have the same overall \textbf{structure}.
+        
+        Models with the same overall equation are put in the same \textbf{model class}. Since our models are defined by their \textbf{hypothesis}, we will more often talk about \textbf{hypothesis class}.\\
+        
+        \begin{definition}
+            A \vocab{hypothesis class} is a collection of \purp{hypotheses} with the \gren{same type of equation}: the only difference between them is the \gren{value} of their \purp{parameters}.
+            
+            Another way to view it is that the \vocab{hypothesis class} represents all of the \purp{possibilities} for a model class: we can get every option based on our \purp{parameters}.
+        \end{definition}
+        
+        \note{Another way to say "same type of equation" is "\textbf{same functional form}".}
+        
+        \miniex Every hypothesis of the form $mx+b$ is in the same \textbf{hypothesis class}.
+    
+    \subsection{Expressiveness}
+    
+        Note that some hypothesis classes are capable of things that others are \textbf{not}. For example, our linear function $mx+b$ could never produce a \textbf{parabola} $x^2$.
+        
+        That means if our problem \textbf{requires} a more complicated model, then we can't ever get a good result!
+        
+        This can be summarized by \textbf{expressiveness} or "richness" of a hypothesis class.\\
+        
+        \begin{definition}
+            If one \purp{hypothesis class} is more \vocab{expressive} than another, it can represent a \gren{larger} collection of possible hypotheses.
+            
+            Sometimes, if a problem can't be solved in one model class, it might be solvable in a more \vocab{expressive} one.
+        \end{definition}
+        
+        \miniex \textbf{Quadratic} equations ($Ax^2+Bx+C$) are more expressive than \textbf{linear} equations ($mx+b$). Every linear equation can be \textbf{created} using quadratics, but not the other way around.
+        
+    \subsection{Choosing Model Classes}
+    
+        So, the question is - which model class should you use for a given problem?
+        
+        Your first instinct might be to use the most \textbf{expressive} one you can. However, this can become very \textbf{expensive} to compute, because there are many more options you have to explore.
+        \note{It's also more likely to overfit! We'll discuss why another time.}
+        
+        Often, it is already \textbf{known} what kinds of models work well for what kinds of problems - we'll explore some of those options in this class.
+        
+        As an ML researcher gains more \textbf{experience}, they can use that experience to make \textbf{educated} guesses: they may look at multiple possible models, and pick one based on theory or practice.
+        \note{Research on this is ongoing: we continue to develop new model classes to try to better handle new and old problems!}
+        
+        Choosing the \textbf{class} of model we want is called the \textbf{model selection} problem. Choosing the \textbf{parameters} for our model, on the other hand, is \textbf{model fitting}.
+    
+    \subsection{Our Linear Model}
+    
+        We will start this class off using one of the simplest models we know: one that only uses \textbf{addition} and \textbf{scalar multiplication}.
+        
+        We have our input variables, $x_1, x_2, x_3...$ that we can combine using these two operations. We can add them together, add a constant, or multiply by a constant.
+        
+        We can write this in general as:
+        
+        \begin{equation}
+            h(x) = \red{\theta_0} + \red{\theta_1}x_1 + \red{\theta_2}x_2 + \red{\theta_3}x_3 + ... + \red{\theta_d}x_d
+        \end{equation}
+        
+        Where $\theta_i$ are our parameters. 
+        
+    \subsection{Linear Model: Vector Form}
+        
+        $\theta$ and $x$, both being vectors, are being multiplied in a way that looks similar to the \textbf{dot product}: multiplying together elements, and then adding.
+        
+        \begin{equation}
+            h(x) = \theta_0 +
+            \red{
+                \begin{bmatrix}
+                    \theta_1 \\ \theta_2 \\ \vdots \\ \theta_d
+                \end{bmatrix}
+                \cdot
+                \begin{bmatrix}
+                    x_1 \\ x_2 \\ \vdots \\ x_d
+                \end{bmatrix}
+            }
+        \end{equation}
+        
+        So, we can rewrite it more compactly this way:
+        
+        \begin{equation}
+            h(x) = \theta_0 + \red{\theta \cdot x} 
+        \end{equation}
+        
+        Note that this looks very similar to the $y=mx+b$ formula, our original linear function!
+        
+        Note that, in order for the dot product to work, $x$ and $\theta$ must have the same \textbf{shape}.\\
+        
+        \begin{concept}
+            When using a linear model, \vocab{$x$ and $\theta$} must have the \vocab{same shape}. They both have length $d$.
+            
+            Meaning, they are both $(d \times 1)$ column vectors.
+        \end{concept}
+        
+    \subsection{Linear Model: Cleaning Up}
+        
+        Unfortunately, we had to leave $\theta_0$ out to make it work: if we want to talk about \textbf{all} parameters, we'll instead use the symbol $\Theta$.\\
+        
+        \begin{notation}
+            We represent the \textbf{parameters} of our \textbf{linear} equation as $\Theta = (\theta, \theta_0)$
+        \end{notation}
+        
+        We'll swap out the dot product for matrix multiplication, because this allows us to use matrices instead of just vectors (which we'll need later!)\\
+        
+        \begin{equation}
+            h(x) = \theta_0 +
+            \red{
+                \begin{bmatrix}
+                    \theta_1 & \theta_2 & \cdots & \theta_d
+                \end{bmatrix}
+                \begin{bmatrix}
+                    x_1 \\ x_2 \\ \vdots \\ x_d
+                \end{bmatrix}
+            }
+        \end{equation}
+        \note{In order to make the matrix multiplication work, we have to take the \textbf{tranpose} $\theta^T$.}
+        
+        Finally, we condense our vectors into symbols.\\
+        
+        \begin{kequation}
+        
+            The \vocab{linear model} has a hypothesis of the form
+        
+            \begin{equation}
+                h(x) = \red{ \theta^T x } + \theta_0
+            \end{equation}
+        \end{kequation}
+        
+        
+        This is the form you will use through a significant portion of this course - it's good to get used to it!
+        
+        
+    \subsection{Other Models}
+    
+        We will explore several different kinds of models in this course.
+        
+        In general, we will assume that we have a fixed, finite number of parameters. Models that don't have this restriction are called \textbf{non-parametric} models. We will use them in only one chapter.
+        
+        Instead, we will focus on our \textbf{linear} model, and functions we can apply to allow it to handle $non-linear$ problems. 
+        
+        We will combine many of these "non-linear units" to create \textbf{neural networks} later on - arguably the most \textbf{powerful} tool in the ML arsenal, and key to machine learning's modern explosion in usage.
+        
+        Many of the modern models used in complex and high-performing system are \textbf{variations} on neural networks, so we will give them all the attention they need.
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Algorithm}
+
+    Finally, once we have our model class and a tool for evaluating our model, we can finally begin the process of \textbf{fitting} our model.
+    
+    This is where the problem of developing an \textbf{algorithm} comes in - we need to decide on what set of instructions will best help us find a good model.
+    
+    Our problem will typically boil down to a kind of optimization: minimizing a loss function, or more often, a modified loss function called an \textbf{objective function}.
+    
+    Different problems will require different algorithms and techniques: some are general-purpose optimizers, others are specially tailors for the needs of machine learning.
+    
+    One of our most powerful tools will be \textbf{gradient descent}; so much so that it has its own devoted chapter.
+    
+    But, we will leave that to the next chapters.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Overview of the Course}
+
+    Here is a short summary of each chapter.
+    
+    \begin{itemize}
+        \item \vocab{Introduction}: an introduction to the basic concepts of the course, and what to expect going forward.
+        
+        \item \vocab{Regression}: using our linear model to learn to make numeric predictions about future data.
+        
+        \item \vocab{Gradient Descent}: learning to use the gradient, our "multivariable derivative", to optimize functions, like loss.
+        
+        \item \vocab{Classification}: using our model to sort data into different classes, and introducing some non-linear functions into that model.
+        
+        \item \vocab{Feature Representation}: transforming the data we receive, both to make them usable by a computer, and expanding our hypotheses to non-linear functions.
+        
+        \item \vocab{Neural Networks}: showing how you can combine multiple non-linear functions, to create a much more powerful function for new, exciting problems.
+        
+        \item \vocab{Convolutional Neural Networks}: building on neural networks with convolution, making it easier to handle images, signals, and other problems.
+        
+        \item \vocab{Sequential Models}: introducing "states", a way to store information over time, and how to do decision-making using that information.
+        
+        \item \vocab{Recurrent Neural Networks}: We combine neural networks with states to build up a sequence of outputs over time, allowing us to do some language processing.
+        
+        \item \vocab{Reinforcement Learning}: making decisions in a changing environment, where some states and choices reward you more than other.
+        
+        \item \vocab{Non-parametric methods}: introducing some different tools, which are often cheaper to develop and sometimes just as effective as more complex methods.
+        
+        \item \vocab{Clustering}: trying to find hidden patterns and structures in data, and making that data easier to visualize for human usage.
+        
+        
+    \end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \section{Terms}
+    
+        \begin{itemize}
+            \item Machine Learning
+            \item Problem Class
+            \item Model
+            \item Model Class
+            \item Distribution
+            \item Identically Distributed
+            \item Independence
+            \item IID
+            \item Induction
+            \item Generalization
+            \item Estimation
+            \item Supervised Learning
+            \item Unsupervised Learning
+            \item Regression
+            \item Classification
+            \item Loss Function
+            \item Expected Loss
+            \item Parameter
+            \item Non-Parametric Model
+            \item Hypothesis
+            \item Fitting
+            \item Overfitting
+            \item Hypothesis Class
+            \item Expressiveness
+            \item Linear Model
+            
+        \end{itemize}
+    
+%%Not yet updated
+
+
+
+
+        
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "top"
+%%% End:

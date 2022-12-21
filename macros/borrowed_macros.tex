@@ -1,0 +1,149 @@
+
+\usepackage{amsmath,amsthm,amssymb,graphicx,mathtools,tikz,hyperref,unicode-math,mathdots}
+
+\usepackage[normalem]{ulem}
+
+%Not sure of any special consequences - used to fix \mathbb{1}
+\usepackage[bb=dsserif]{mathalpha}
+
+\usetikzlibrary{positioning}
+\newcommand{\n}{\mathbb{N}}
+\newcommand{\z}{\mathbb{Z}}
+\newcommand{\q}{\mathbb{Q}}
+\newcommand{\cx}{\mathbb{C}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\field}{\mathbb{F}}
+\newcommand{\ita}[1]{\textit{#1}}
+\newcommand{\com}[2]{#1\backslash#2}
+\newcommand{\oneton}{\{1,2,3,...,n\}}
+\newcommand\idea[1]{\begin{gather*}#1\end{gather*}}
+\newcommand\ef{\ita{f} }
+\newcommand\eff{\ita{f}}
+\newcommand\proofs[1]{\begin{proof}#1\end{proof}}
+\newcommand\inv[1]{#1^{-1}}
+\newcommand\setb[1]{\{#1\}}
+\newcommand\en{\ita{n }}
+\newcommand{\vbrack}[1]{\langle #1\rangle}
+
+
+
+
+
+\newenvironment{drytheorem}[2][dryTheorem]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{drylemma}[2][dryLemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{dryexercise}[2][dryExercise]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{dryreflection}[2][dryReflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{dryproposition}[2][dryProposition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{drycorollary}[2][dryCorollary]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+ \hypersetup{
+ colorlinks,
+ linkcolor=blue
+ }
+ 
+%Used for arbitrary-sized curly braces
+\newcommand{\biggglB}[1]{\left\{\!\parbox{0pt}{\rule{0pt}{#1}}\right.}
+\newcommand{\bigggrB}[1]{\left.\parbox{0pt}{\rule{0pt}{#1}}\!\right\}}
+ 
+ 
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+ 
+\newcommand\overmat[2]{%
+  \makebox[0pt][l]{$\smash{\color{white}\overbrace{\phantom{%
+    \begin{matrix}#2\end{matrix}}}^{\text{\color{black}#1}}}$}#2}
+\newcommand\bovermat[2]{%
+  \makebox[0pt][l]{$\smash{\overbrace{\phantom{%
+    \begin{matrix}#2\end{matrix}}}^{\text{#1}}}$}#2}
+ 
+ 
+ 
+% \newcommand\iddots{\mathinner{
+%   \kern1mu\raise1pt{.}
+%   \kern2mu\raise4pt{.}
+%   \kern2mu\raise7pt{\Rule{0pt}{7pt}{0pt}.}
+%   \kern1mu
+% }} 
+ 
+
+%%Shaunticlair's own macros
+ 
+\newcommand{\deriv}[2]{\frac{\dd #1}{\dd #2}}
+\newcommand{\dderiv}[2]{\frac{\dd^2 #1}{\dd #2^2} }
+
+\newcommand{\derivslash}[2]{{\dd #1}/{\dd #2}}
+\newcommand{\pderivslash}[2]{{\partial #1}/{\partial #2}}
+
+\newcommand{\p}[1]{ \mathbf{P} \left\{ #1 \right\} }
+
+\newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\pdderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
+
+\newcommand{\bigderiv}[2]{\dfrac{\dd #1}{\dd #2}}
+\newcommand{\bigpderiv}[2]{\dfrac{\partial #1}{\partial #2}}
+
+\usepackage{parskip, physics, enumitem}
+
+\definecolor{betterpurple}{HTML}{7F00FF}
+\definecolor{darkbrown}{HTML}{964b00}
+\definecolor{easypink}{HTML}{ff607f}
+\definecolor{darkgray}{HTML}{6b7283}
+\definecolor{darkgreen}{HTML}{008600}
+\definecolor{brownbrown}{HTML}{A4711E}
+\definecolor{teal}{HTML}{008080}
+
+\newcommand{\org}[1]{\textcolor{orange}{#1}}
+\newcommand{\pur}[1]{\textcolor{betterpurple}{#1}}
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\blu}[1]{\textcolor{blue}{#1}}
+\newcommand{\bro}[1]{\textcolor{darkbrown}{#1}}
+\newcommand{\pin}[1]{\textcolor{easypink}{#1}}
+\newcommand{\gre}[1]{\textcolor{darkgray}{#1}}
+\newcommand{\grn}[1]{\textcolor{green!70!black}{#1}}
+\newcommand{\tea}[1]{\textcolor{teal}{#1}}
+\newcommand{\bru}[1]{\textcolor{brownbrown}{#1}}
+
+\newcommand{\orgg}[1]{\textbf{\textcolor{orange}{#1}}}
+\newcommand{\redd}[1]{\textbf{\textcolor{red}{#1}}}
+\newcommand{\gren}[1]{\textbf{\textcolor{green!70!black}{#1}}}
+\newcommand{\brow}[1]{\textbf{\textcolor{darkbrown}{#1}}}
+\newcommand{\purp}[1]{\textbf{\textcolor{betterpurple}{#1}}}
+\newcommand{\brun}[1]{\textbf{\textcolor{brownbrown}{#1}}}
+\newcommand{\pink}[1]{\textbf{\textcolor{easypink}{#1}}}
+
+\newcommand{\miniex}[0]{\purp{Example: }}
+\newcommand{\nth}[1]{ #1^{ \text{th} } }
+
+\newcommand{\In}[0]{\textbf{in }}
+
+\newcommand{\rgi}[0]{ \red{\ex{g}{i}} }
+
+\newcommand{\exi}[0]{ \ex{x}{i} }
+\newcommand{\eyi}[0]{ \ex{y}{i} }
+
+\newcommand{\rxi}[0]{ \red{\exi }}
+\newcommand{\ryi}[0]{ \red{\eyi }}
+
+\newcommand{\bxi}[0]{ \blu{\exi }}
+\newcommand{\byi}[0]{ \blu{\eyi }}
+
+\newcommand{\cmul}[0]{\; \cdot \;}
+
+\newcommand{\secdiv}[0]{\centerline{\uwave{\uwave{\hspace{14cm}}}}}
+\newcommand{\subsecdiv}[0]{\centerline{\uwave{\uwave{\hspace{10cm}}}}}
+%\newcommand{\boxdiv}[0]{\centerline{\rule{10cm}{1pt}}}
+
+\newcommand{\boxdiv}[0]{\centerline{\uwave{\uwave{\hspace{10cm}}}}}
+
+
+% \newcommand{\loss}[0]{\mathcal{L}}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "top"
+%%% End:

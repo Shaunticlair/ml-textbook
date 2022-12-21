@@ -1,0 +1,259 @@
+
+\section*{7.X  Matrix Derivatives}
+    \label{mderiv}
+        
+    In general, we want to be able to combine the powers of matrices and calculus:
+    
+    \begin{itemize}
+        \item \textbf{Matrices}: the ability to store lots of \textbf{data}, and do fast linear operations on all that data at the \textbf{same time}.
+        
+        \miniex Consider
+        
+        \begin{equation}
+            \blu{w}^T\red{x} =
+            \begin{bmatrix}
+                \blu{w_1} & \blu{w_2} & \cdots & \blu{w_m}
+            \end{bmatrix}
+            \begin{bmatrix}
+                \red{x_1} \\ \red{x_2} \\ \vdots \\ \red{x_m}
+            \end{bmatrix}
+            =
+            \sum_{i=1}^m \red{x_i}\blu{w_i}
+        \end{equation}
+        
+        In this case, we're able to do $m$ different \textbf{multiplications} at the same time! This is what we like about matrices.
+            \note{In this case, we're thinking about vectors as $(m  \times 1)$ matrices.}
+        
+        \item \textbf{Calculus}: analyzing the way different variables are \textbf{related}: how does changing $x$ affect $y$?
+        
+        \miniex Suppose we have 
+        
+        \begin{equation}
+            \pderiv{f}{x_1}=10 \qquad 
+            \pderiv{f}{x_2}=-5
+        \end{equation}
+        
+        Now we know that, if we increase $x_1$, we increase $f$. This \textbf{understanding} of variables is what we like about derivatives.\\
+    \end{itemize}
+    
+    \begin{concept}
+        \vocab{Matrix derivatives} allow us to find \purp{relationships} between large volumes of \gren{data}.
+        
+        \begin{itemize}
+            \item These "relationships" are \vocab{derivatives}: consider $\derivslash{y}{x}$. How does $y$ change if we modify $x$? Currently, we only have \purp{scalar derivatives}.
+            
+            \item This "data" is stored as \vocab{matrices}: blocks of data, that we can do linear operations (matrix multiplication) on.
+        \end{itemize}
+        
+        Our goal is to work with many scalar derivatives at the \gren{same time}. 
+        
+        In order to do that, we can apply some \gren{derivative} rules, but we have to do it in a way that \purp{agrees} with \gren{matrix} math.
+    \end{concept}
+    
+    Our work is a careful balancing act between getting the \textbf{derivatives} we want, without violating the \textbf{rules} of matrices (and losing what makes them useful!)
+    
+    \miniex When we multiply two matrices, their inner shape has to match: in the below case, they need to share a dimension $b$.
+    
+    \begin{equation}
+        \overbrace{
+            X
+        }^{ (a \times \red{b}) }
+        \overbrace{
+            Y
+        }^{(\red{b} \times c)}
+    \end{equation}
+    
+    We can't do anything that would \textbf{violate} this rule: otherwise, our \textbf{equations} don't make sense, and we get stuck. This means we need to build our math carefully.
+    
+    First, we'll look at the \textbf{properties} of derivatives. Then figure out how to usefully apply them to \textbf{vectors}, and then \textbf{matrices}.
+    
+    \secdiv
+    
+    \subsection*{7.X.1 \quad Review: Partial Derivatives}
+    
+        One more comment, though - we may have many different variables floating around. This means we \textbf{have} to use the multivariable \textbf{partial derivative}.\\
+        
+        \begin{definition}
+            The \vocab{partial derivative} 
+            
+            \begin{equation*}
+                \pderiv{B}{A}
+            \end{equation*}
+            
+            Is used when there may be \purp{multiple variables} in our functions.
+            
+            The rule of the partial derivative is that we keep every \gren{independent} variable other than $A$ and $B$ \purp{fixed}.
+        \end{definition}
+        
+        \miniex Consider $f(x,y) = 2x^2y$.
+        
+        \begin{equation}
+            \pderiv{f}{x} = 2(2x)y
+        \end{equation}
+        
+        Here, we kept $y$ \textit{fixed} - we treat it as if it were an unchanging \textbf{constant}. 
+        
+        Using the partial derivative lets us keep our work tidy: if \textbf{many} variables were allowed to \textbf{change} at the same time, it could get very confusing. 
+            \note{Imagine keeping track of $k$ different variables $x_i$ with $k$ different changes $\Delta x_i$ at the same time! That's a headache.}
+        
+        If this is too complicated, we can change those variables \textit{one at a time}. We get a partial derivative for each of them, holding the others \textbf{constant}.
+        
+        Our \textbf{total} derivative is the result of all of those different variables, \textbf{added} together. This is how we get the \textbf{multi-variable chain rule}.\\ 
+        
+        \begin{definition}
+            The \vocab{multi-variable chain rule} in 3-D ($\{x,y,z\}$) is given as
+            
+            \begin{equation*}
+                \deriv{\red{f}}{\blu{s}} 
+                = 
+                \overbrace{
+                    \pderiv{\red{f}}{\pur{x}}
+                    \pderiv{\pur{x}}{\blu{s}}
+                }^{\text{only modify $x$}}
+                +
+                \overbrace{
+                    \pderiv{\red{f}}{\pur{y}}
+                    \pderiv{\pur{y}}{\blu{s}}
+                }^{\text{only modify $y$}}
+                +
+                \overbrace{
+                    \pderiv{\red{f}}{\pur{z}}
+                    \pderiv{\pur{z}}{\blu{s}}
+                }^{\text{only modify $z$}}
+            \end{equation*}
+            
+            If we have $k$ variables $\{x_1,x_2,\dots x_k\}$ we can generalize this as:
+            
+            \begin{equation*}
+                \deriv{\red{f}}   {\blu{s}} = 
+                \sum_{i=1}^{k}
+                \overbrace{
+                    \pderiv{\red{f}}   {\pur{x_i}}
+                    \pderiv{\pur{x_i}} {\blu{s}}
+                }^{\text{$x_i$ component}}
+            \end{equation*}
+            
+        \end{definition}
+    
+    \secdiv
+    
+    \subsection*{7.X.2 \quad Thinking about derivatives}
+    
+        The typical definition of derivatives
+        
+        \begin{equation}
+            \lim_{h \rightarrow 0} \frac{f(x+h)-f(x)}{h}
+        \end{equation}
+        
+        Gives an \textit{idea} of what sort of things we're looking for. It reminds us of one piece of information we need:
+        
+        \begin{itemize}
+            \item Our derivative \textbf{depends} on the \textbf{current position} $x$ we are taking the derivative at.
+        \end{itemize}
+        
+        We need this because derivative are \textbf{local}: the relationship between our variables might change if we move to a different \textbf{position}.
+        
+        But, the problem with vectors is that each component can act \textbf{separately}: if we have a vector, we can change in many different "directions".
+        
+        \begin{equation}
+            A = 
+            \begin{bmatrix}
+                a_1 \\ a_2 \\ a_3
+            \end{bmatrix}
+            \qquad
+            B = 
+            \begin{bmatrix}
+                b_1 \\ b_2
+            \end{bmatrix}
+        \end{equation}
+        
+        \miniex Suppose we want a derivative $\pderivslash{B}{A}$: $\Delta a_1, \Delta a_2,$ and $\Delta a_3$ could each, separately, have an effect on $\Delta b_1$ and/or $\Delta b_2$. That requires 6 different derivatives, $\pderivslash{b_i}{a_j}$.
+            \note{3 dimensions of $A$ times 2 dimensions of $B$: 6 combinations.}
+        
+        Every component of the input $A$ can potentially modify \textbf{every} component of the output $B$. 
+        
+        One solution we could try is to just collect all of these derivatives into a \textbf{vector} or \textbf{matrix}.\\
+        
+        \begin{concept}
+            For the \vocab{derivative} between two objects (scalars, vectors, matrices) $\red{A}$ and $\blu{B}$
+            
+            \begin{equation*}
+                \pderiv{\blu{B}}{\red{A}}
+            \end{equation*}
+            
+            We need to get the \purp{derivatives}
+            
+            \begin{equation*}
+                \pderiv{\blu{b_j}}{\red{a_i}}
+            \end{equation*}
+            
+            between every \purp{pair} of elements $\red{a_i}$, $\blu{b_j}$: each pair of elements could have a \gren{relationship}.
+            
+            The total number of elements (or "size") is...
+            
+            \begin{equation*}
+                \text{Size}\Bigg(  \pderiv{\blu{B}}{\red{A}}  \Bigg) 
+                = 
+                \text{Size}(\blu{B})
+                *
+                \text{Size}(\red{A})
+            \end{equation*}
+            
+            Collecting these values into a \gren{matrix} will gives us all the information we need.
+        \end{concept}
+        
+        But, how do we gather them? What should the \textbf{shape} look like? Should we \textbf{transpose} our matrix or not?
+    
+    \secdiv
+    
+    \subsection*{7.X.3 \quad Derivatives: Approximation}
+        
+        To answer this, we need to ask ourselves \textit{why} we care about these derivatives: their \textbf{structure} will be based on what we need them for.
+        
+        \begin{itemize}
+            \item We care about the \textbf{direction of greatest decrease}, the gradient. For example, we might want to adjust weight vector $w$ to reduce $\loss$.
+            
+            \item We also want other derivatives that have the \textbf{same} behavior, so we can combine them using the \textbf{chain rule}.
+        \end{itemize}
+        
+        Let's focus on the first point: we want to \textbf{minimize} $\loss$. Our focus is the \textbf{change} in $\loss$, $\Delta \loss$.
+            \note{We want to take steps that reduce our loss $\loss$.}
+        
+        \begin{equation}
+            \pderiv{\loss}{w} 
+            \approx 
+            \frac{\text{Change in }\loss }{ \text{Change in w} }
+            =
+            \frac{\Delta \loss}{ \Delta w}
+        \end{equation}
+        
+        Thus, we \textbf{solve} for $\Delta \loss$:
+            \note{All we do is multiply both sides by $\Delta w$.}
+        
+        \begin{equation}
+            \Delta \loss
+            \approx
+            \pderiv{\loss}{w} 
+            \Delta w
+        \end{equation}
+        
+        Since this derivation was gotten using scalars, we might need a \textbf{different} type of multiplication for our \textbf{vector} and \textbf{matrix} derivatives.\\
+        
+        \begin{concept}
+            We can use derivatives to \vocab{approximate} the change in our output based on our input:
+            
+            \begin{equation*}
+                \Delta \loss
+                \approx
+                \pderiv{\loss}{\pur{w}} 
+                \star
+                \Delta \pur{w}
+            \end{equation*}
+            
+            Where the $\star$ symbol represents some type of \purp{multiplication}.
+            
+        \end{concept}
+        
+        We can think of this as a \textbf{function} that takes in change in $\Delta w$, and returns an \textbf{approximation} of the loss.
+        
+        We already understand \textbf{scalar} derivatives, so let's move on to the \textbf{gradient}.

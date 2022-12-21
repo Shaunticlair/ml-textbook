@@ -1,0 +1,76 @@
+    \subsection*{Using gradient descent: minimizing $\mu$}
+    
+        We can also use \textbf{gradient descent} to solve this problem!
+        
+        We want to \textbf{minimize} our loss $\loss$, and we do this by \textbf{adjusting} our cluster means $\ex{\mu}{j}$ until they're in the \textbf{best} position.\\
+        
+        \begin{concept}
+            We can solve the \vocab{$k$-means problem} using \vocab{gradient descent}!
+        \end{concept}
+        
+        So, we want to \textbf{optimize} $\loss$ using $\mu$:
+        
+        \begin{equation}
+            \loss(\mu) =
+            \sum_{i=1}^n 
+                    \mathbb{1}(\eyi = j)
+                    \norm{ \rxi - \bmuj }^2 
+        \end{equation}
+        
+        Rather than dealing with the indicator function $1(\cdot)$, we could instead just consider whichever $\mu$ is closest: \textbf{minimum} distance.
+        
+        \begin{equation}
+            \overbrace{
+                \min_{j} 
+            }^{Minimizing}
+            \overbrace{
+                \norm{ \rxi - \bmuj }^2 
+            }^{distance}
+        \end{equation}
+        
+        This \textbf{automatically} assigns every point to the closest \textbf{cluster} before we get our loss! So, all we need to worry about is $\mu_j$.
+        
+        \begin{notation}
+            Instead of using an \purp{indicator function}, we can represent \gren{cluster assignment} another way: using the \vocab{function} $\min_{j}$.
+            
+            It can give \vocab{minimum distance} from $\ex{x}{i}$ to one of the cluster means: it picks the \purp{closest} mean. 
+            
+            This \gren{automatically} assigns the point to the \purp{closest} cluster, making our job easier.
+        \end{notation}
+        
+        \begin{equation}
+            \loss(\mu) =
+            \sum_{i=1}^n 
+            \overbrace{
+                    \min_{j} 
+            }^{\text{Nearest cluster}}
+                    \norm{ \rxi - \bmuj }^2 
+        \end{equation}
+        
+        Now, we can do gradient descent using $\pderiv{L(\mu)}{\mu}$. 
+            \note{We move our means until they're minima!}
+        
+        $L(\mu)$ is \textbf{mostly} smooth, except when the cluster assignment of a \textbf{point} changes. So, it's usually smooth \textbf{enough} to do gradient descent.
+    
+    \subsection*{Getting labels}
+        
+        Once we've finished gradient descent, and we've \textbf{minimized} our loss, we can get our \textbf{labels}.
+        
+        $\min$ gives the \textbf{output} value that we get by minimizing. In this case, average \textbf{squared distance} from the cluster mean.
+        
+        Meanwhile, $\argmin$ gives us the \textbf{input} value that gives us the minimum output. In this case, the \textbf{cluster} that gives the minimum distance. 
+        
+        So, $\argmin$ gives us the cluster closest to each point: that's our \textbf{label}!
+        
+        We can use this notation to get our \textbf{labels}.\\
+        
+        \begin{notation}
+            After \purp{optimizing} $\mu$, our \vocab{labels} are given by:
+            
+            \begin{equation}
+                \eyi = \arg\min_j \norm{ x^{(i)} - \mu^{(j)} }^2
+            \end{equation}
+        \end{notation}
+        
+        Using gradient descent can give us a \textbf{local} minimum, but our surface is not fully \textbf{convex}: so, we don't necessarily get a \textbf{global} minimum.
+            \note{Even though individual terms of squared distance may be convex, adding $\min$ terms may not be convex.}

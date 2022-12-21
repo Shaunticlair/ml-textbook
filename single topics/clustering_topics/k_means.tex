@@ -1,0 +1,225 @@
+
+\section*{The k-means formulations}
+
+    In this section, we'll introduce a common way to do clustering called the \textbf{$k$-means approach}.
+
+    \subsection*{Defining a cluster: The mean}
+        
+        We need to define what makes a "cluster" in order to move \textbf{forward}.
+        
+        We want the points within a cluster to be as \textbf{close together} as possible. So, you might measure the \textbf{distance} from one point to all the others.
+        
+        So, it would make sense to \textbf{average} them out. And we need to average every pair of points. That's a lot of work: can we \textbf{simplify} it?
+        
+        Well, if we're trying to \textbf{average} the result of many data points, it would make sense to use the \textbf{mean}!
+        
+        That's how we'll \textbf{define} our cluster: as the \textbf{mean}, the point that is the \textbf{average} of all the other points in the cluster.\\
+        
+        \begin{definition}
+            We want to represent our \purp{cluster} using its \vocab{mean}: the \gren{average} of all of the data points in that \purp{cluster}.
+             
+            Our goal is for the \vocab{cluster mean} to have the \vocab{minimum average distance} possible to all of our data points: it's as \gren{close} to our points as we can get.
+        \end{definition}
+        
+        \miniex We describe the "male lifespan" using \textbf{life expectancy}: the \textbf{average} time a male human lives for. Same for women as well.
+         
+    \subsection*{$k$-means}
+    
+        Now, we've created \textbf{one} cluster. To extend this to \textbf{many} clusters, we just need each cluster to have its \textbf{own} mean.
+        
+        There are $k$ of these clusters: this is why we call this the \textbf{k-means formulation}.
+        
+        How do we decide which point goes in which \textbf{cluster}? Well, we want our points to be close. So, we'll assign it to the \textbf{closest} one.\\
+        
+        \begin{concept}
+            A \gren{point} is assigned to the \purp{closest} \vocab{cluster mean}.
+            
+            For a point $\ex{x}{i}$, the \gren{output} is which \purp{cluster} ("new class") it has been assigned to: $\ex{y}{i}$.
+        \end{concept}
+        
+        Once we've successfully clustered using our \textbf{algorithm} below, we will find that both of these goals are met:
+        
+        \begin{itemize}
+            \item Our points are \textbf{assigned} to the \textbf{closest} cluster mean.
+            
+                \begin{itemize}
+                    \item This separates \vocab{different} clusters of points from each other.
+                \end{itemize}
+            
+            \item The cluster mean is the \textbf{average} of all of our points: the \textbf{minimum distance} to them.
+            
+                \begin{itemize}
+                    \item This makes sure our cluster is made up of points that are \vocab{similar} to each other.
+                    
+                    \item If our point is close to the \textbf{mean}, it's probably close to the \textbf{other} points in the cluster.
+                \end{itemize}
+        \end{itemize}
+        
+    \subsection*{$k$-means loss}
+    
+        Now, we know what we want out of our \textbf{clusters}. But, the problem is, we don't know \textbf{which} points will give us our nice clusters. 
+        
+        So, first, we will have to \textbf{assign} our initial "cluster means": often, we \textbf{randomly} select some points from our dataset.\\
+        
+        \begin{concept}
+            We \vocab{initialize} our clustering by \purp{randomly} selecting one point to \gren{represent} each cluster, which we call the \vocab{cluster mean}.
+            
+            At first, each point is assigned to the \purp{closest} cluster mean.
+        \end{concept}
+        
+        But as you'll notice, these points are \textbf{not} the cluster means we're looking for! They're just a random \textbf{initialization}. So, we have to \textbf{optimize}.\\
+        
+        \begin{clarification}
+            Notice that, when we \gren{first} select our "cluster means", we don't get them by \purp{averaging} any points: we choose them \purp{randomly}.
+            
+            That means, at first, is our cluster mean \vocab{isn't a true mean}!
+            
+            Our $k$-means algorithm is designed to \gren{fix} this problem.
+        \end{clarification}
+
+        
+        In order to \textbf{improve} our clustering, it helps to have a way to measure the \textbf{quality} of a clustering: we need a \textbf{loss function}.
+    
+    \subsection*{One-cluster loss}
+    
+        Let's start with just one cluster: what do we want to \textbf{minimize}? 
+        
+        Well, we want the points within a cluster to be as \textbf{close together} as possible. So, we want to minimize the \textbf{distance} to the mean, $\mu$.
+        
+        To make our function smooth, we'll use \textbf{squared distance} instead.\\
+        
+        \begin{concept}
+            In \vocab{k-means loss}, we want to minimize the \purp{square distance} from each point $\ex{x}{i}$ to the \gren{cluster mean} $\mu$.
+        \end{concept}
+        
+        \begin{equation}
+            D_i = \norm{ \rxi - \blu{\mu} }^2
+        \end{equation}
+        
+        We'll add this up for each of the $n$ data points in our cluster.
+        
+        \begin{equation}
+            \loss = \sum_{i=1}^n \norm{ \rxi - \blu{\mu} }^2
+        \end{equation}
+        
+    \subsection*{Building up to $k$ clusters}
+    
+        So, what do we do for each of our $k$ clusters? Well, we can just \textbf{add} up the \textbf{loss} for them.
+        
+        We'll use $j \in \{1, 2, 3, ... k\}$ to represent our $\nth{j}$ cluster. Each cluster has a mean $\blu{\ex{\mu}{j}}$.
+        
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Command for readability
+        \newcommand{\bmuj}[0]{ \blu{\ex{\mu}{j}} } %Blue mu^j
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        \begin{equation}
+            \loss_j = \sum_{i=1}^n \norm{ \rxi - \bmuj }^2
+        \end{equation}
+        
+        Problem is, we're including \textbf{every} point $\exi$ in \textbf{every} cluster! We want a way to filter by \textbf{cluster}.
+        
+        Remember that we \textbf{label} clusters the same way we labeled \textbf{classes} before:\\
+        
+        \begin{notation}
+            For a \vocab{data point} $\exi$, its \purp{cluster} is given by
+            
+            \begin{equation*}
+                \eyi \in \{1, 2, ... k \}
+            \end{equation*}
+            
+            Where $j$ represents the $\nth{j}$ cluster.
+        \end{notation}
+        
+        Cluster mean $\bmuj$ is the $\nth{j}$ cluster mean: it only counts for points in $c_j$. So, we \textbf{only} want to add up the loss when 
+        
+        \begin{equation}
+            \eyi = j
+        \end{equation}
+        
+        We'll do this using the following helpful \textbf{function}:\\
+        
+        \begin{notation}
+            The \vocab{indicator function} $\mathbb{1}$ tells you whether a statement $p$ is true:
+            
+            \begin{equation*}
+                \mathbb{1}(p) = 
+                \begin{cases}
+                    1 & \text{if $p=$ True} \\
+                    0 & \text{otherwise ( if $p=$ False)}
+                \end{cases}
+            \end{equation*}
+        \end{notation}
+        
+        Combined with our \textbf{condition} of matching clusters, this can be useful:
+        
+        \begin{equation}
+            \mathbb{1}(\eyi = j)
+        \end{equation}
+        
+        If we \textbf{multiply} this by our loss, it'll \textbf{only} appear if the clusters \textbf{match}! We can \textbf{eliminate} data points in a different cluster.
+        
+    \subsection*{$k$-mean loss: final form}
+    
+        So, we can \textbf{filter} by the data points in our cluster:
+        
+        \begin{equation}
+            \loss_j =
+            \sum_{i=1}^n 
+                \overbrace{
+                    \mathbb{1}(\eyi = j)
+                }^{ \text{Check cluster}}
+                \overbrace{
+                    \norm{ \rxi - \bmuj }^2 
+                }^{\text{Dist from mean} }
+        \end{equation}
+        
+        And finally, we add up over many clusters:
+        
+        \begin{equation}
+            \loss = \sum_{j=1}^k \loss_j
+        \end{equation}
+        
+        Using our equation, we get:
+        
+        \begin{equation*}
+                \loss =
+                \overbrace{
+                    \sum_{j=1}^k
+                }^{\text{clusters }}
+                \overbrace{
+                \sum_{i=1}^n 
+                }^{\text{data points}}
+                    \overbrace{
+                        \mathbb{1}(\eyi = j)
+                    }^{ \text{Check cluster}}
+                    \overbrace{
+                        \norm{ \rxi - \bmuj }^2 
+                    }^{\text{Dist from mean} }
+            \end{equation*}
+            
+            Let's clean that up:\\
+        
+        \begin{kequation}
+            The \vocab{$k$-means loss} is given as:
+            
+            \begin{equation*}
+                \loss =
+                \pur{
+                    \sum_{j=1}^k \sum_{i=1}^n
+                }
+                \red{
+                    \mathbb{1}(\eyi = j)
+                }
+                \blu{
+                    \norm{ \exi - \bmuj }^2 
+                }
+            \end{equation*}
+            
+            Where:
+            
+            \begin{itemize}
+                \item $\mu_j$ is the \vocab{cluster mean}: the \purp{average} of the points in the $\nth{j}$ cluster.
+                
+                \item $\mathbb{1}(\eyi = j)$ is the \vocab{indicator function}: meaning that we only \gren{include} terms where the data point and mean are in the \purp{same cluster}.
+            \end{itemize}
+        \end{kequation}

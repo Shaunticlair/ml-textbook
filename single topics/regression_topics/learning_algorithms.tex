@@ -1,0 +1,181 @@
+\section*{Learning Algorithms}
+
+    \subsection*{Evaluating Hypotheses}
+    
+        So, we know that we have these \textbf{two} types of \textbf{error}. But it's \textbf{difficult} to \textbf{measure} them separately. 
+        
+        So instead, we just want to measure the \textbf{overall performance} of our hypothesis. 
+        
+        We do this using our \textbf{testing error}: this tells us how good our hypothesis is \textbf{after} training.
+        
+        \begin{equation}
+            \testerr(h) =
+            \frac{1}{m}  
+            \sum_{i\purp{=n+1}}^{\purp{n+m}} 
+                \left( 
+                    h(\ex{x}{i}) - \ex{y}{i} 
+                \right)^2
+        \end{equation}
+        
+        Note that, before, we were using \textbf{regularization}. This is so we can \textbf{make} a more \textbf{general} model. 
+        
+        But here, we've \textbf{removed} it, because training is \textbf{done}: we're \textbf{not} going to make our hypothesis \textbf{better}. We just care about how \textbf{good} it came out.
+        \note{We're already measuring the \textbf{generalizability} by using \textbf{new data}!}\\
+        
+        \begin{clarification}
+            When we \vocab{evaluate a hypothesis} using \purp{testing error}, we are \gren{done training}: our hypothesis will not change.
+            
+            Because of this, we \textbf{do not} include the \purp{regularizer} when \gren{evaluating} our hypothesis.
+        \end{clarification}
+        
+    \subsection*{$\lambda$'s purpose: learning algorithms}
+    
+        Notice that we \textbf{removed} regularization when we were \textbf{evaluating} our hypothesis: regularization was used to \textbf{create} our hypothesis, but it is not \textbf{part} of that hypothesis.
+        \note{Our hypothesis only includes the parameters $\Theta$: not $\lambda$!}
+        
+        That's because $\lambda$ is part of our \textbf{algorithm}: it determines how we run our algorithm. So, let's talk about that.\\
+        
+        \begin{definition}
+            A \vocab{learning algorithm} is our procedure for \purp{learning} from data. It uses that data to create a \gren{hypothesis}. We can diagram this as:
+            
+            \begin{equation*}
+                \data_n \longrightarrow 
+                \boxed{\text{learning alg ($\hclass$)}} 
+                \longrightarrow h
+            \end{equation*}
+            
+            In a way, it's a function that takes in \gren{data} $\data_n$, and outputs a \purp{hypothesis} $h$.
+        \end{definition}
+        
+        We're choosing \textbf{one hypothesis} $h$ from the hypothesis class $\hclass$: this is why $\hclass$ appears in the notation above.
+        \note{We can write this as $h \in \hclass$}
+        
+    \subsection*{Comparing Hypotheses and Learning Algorithms}
+        
+        We can take our learning algorithm
+        
+        \begin{equation*}
+            \data_n \longrightarrow 
+            \boxed{\text{learning alg ($\hclass$)}} 
+            \longrightarrow h
+        \end{equation*}
+        
+        And compare it to our hypothesis $h$:
+        
+        $$ x \rightarrow \boxed{h} \rightarrow y $$
+        
+        In a way, our learning algorithm is a function, that outputs another function!
+        \note{This is similar to $\trainerr$, which instead \textbf{takes in} a function!}
+        
+        Our \textbf{hypothesis} can be adjusted with our \textbf{parameter} $\Theta$: if we change $\Theta$, we change our \textbf{performance}.
+        
+        Our \textbf{learning algorithm} depends on $\lambda$: so, it's like a \textbf{parameter}. But, it's different from $\Theta$: $\Theta$ \textbf{is} our model, $\lambda$ controls how we \textbf{choose} our model.
+        
+        So, it's a parameter ($\lambda$) that affects other parameters ($\Theta$). Because of that, we call it a \textbf{hyperparameter}.
+        \note{It affects our hypothesis by pressuring it to have lower magnitude!}\\
+        
+        \begin{definition}
+            \purp{Parameters} are \gren{variables} that adjust the behavior of \purp{our model}: our hypothesis.
+            
+            A \vocab{hyperparameter} is a \gren{variable} that can adjust \purp{how we make models}: our learning algorithm. 
+        \end{definition}
+        
+        The \textbf{only} hyperparameter we have for now is $\lambda$, but the \textbf{development} of hyperparameters is an ongoing area of \textbf{research}.\\
+        
+        \begin{concept}
+            \vocab{Lambda}, or $\lambda$, is a \vocab{hyperparameter}: it controls our \purp{learning algorithm.}
+        \end{concept}
+        
+    \subsection*{Evaluating our Learning Algorithm}
+    
+        So, while we can evaluate each \textbf{hypothesis}, it's also important to measure how our \textbf{learning algorithm} is performing.
+        
+        How do we measure it? Well, the job of our \textbf{learning algorithm} is to \textbf{pick good hypotheses}.\\
+        
+        \begin{concept}
+            We can \vocab{evaluate} the performance of a \vocab{learning algorithm} using \purp{testing loss}: a good learning algorithm will create \gren{hypotheses} with \purp{low testing loss}.
+        \end{concept}
+        
+        You could think of this as measuring the \textbf{skill} of a \textbf{teacher} (the learning algorithm) by the \textbf{success} of their \textbf{student} (the hypothesis) on a \textbf{test} (testing loss).
+        
+    \subsection*{Validation: Evaluating with lots of data}
+    
+        When we were creating hypotheses, \textbf{randomness} caused some problems: you might not get \textbf{training data} that matched the \textbf{testing data} very well.
+        
+        The \textbf{same} can happen here, when \textbf{evaluating} your \textbf{algorithm}: maybe your model happened to create a bad (or unusually good!) hypothesis because of \textbf{luck}.
+        
+        The easy solution to \textbf{randomness} is to add \textbf{more data}: we get more \textbf{consistency} that way.
+        
+        So, we \textbf{repeatedly} get new training data and test data. For each, we \textbf{train} a different hypothesis. We can \textbf{average} their performance out, and use that to \textbf{estimate} the quality of our algorithm.\\
+        
+        \begin{definition}
+            \vocab{Validation} is a way to \vocab{evaluate a learning algorithm} using \vocab{large amounts of data}.
+            
+            We do this by \gren{running} our algorithm \purp{many times} with new data, and \gren{averaging} the testing error of all the hypotheses.
+            
+            This process is often requires having \purp{lots of data} to train with, but is a \textbf{provably} good approach.
+        \end{definition}
+        
+    \subsection*{Our Problem: When data is less available}
+        
+        As mentioned, this takes up \textbf{lots of data}. What if we can't get as much: it's \textbf{expensive}, or not even possible? In this case, we have some \textbf{finite} data, $\data_n$. We \textbf{can't get more}.
+        
+        We solved the \textbf{randomness} problem by using \textbf{more} training and testing \textbf{data}. So, we need some way to \textbf{get} more \textbf{distinct} hypotheses.
+        
+        One set of data gives us one \textbf{hypothesis}. But, what if, rather than using \textbf{completely} new data, we used \textbf{slightly different} data each time?
+        
+        First, need to break $\data_n$ into a chunk for training, and a chunk for testing.
+        
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=70mm,scale=0.5]{images/regression_images/training_and_test_data.png}
+        \end{figure}
+        
+        How do we get more hypotheses from this dataset?
+        
+    \subsection*{Cross-Validation}
+    
+        We mentioned that we just want \textbf{different} hypotheses. Our hypotheses depend on our \textbf{training data}. So we want to \textbf{change} our training data.
+        
+        We can't \textbf{add} data to it, because then we \textbf{lose} testing data. We shouldn't \textbf{remove} data, because then we're just making a hypothesis that's \textbf{less well-informed}.
+        
+        Instead, we'll \textbf{swap} some of the training data for testing data.
+        
+        \begin{figure}[H]
+        \centering
+            \includegraphics[width=70mm,scale=0.5]{images/regression_images/training_and_test_data_2.png}
+        \end{figure}
+        
+        This will create a new hypothesis, and the data is partially different! In fact, we can do this for each of our chunks:
+        
+        \begin{figure}[H]
+        \centering
+            \begin{subfigure}
+                \includegraphics[width=70mm,scale=0.5]{images/regression_images/training_and_test_data_3.png}
+            \end{subfigure}
+            \\
+            \begin{subfigure}
+                \includegraphics[width=70mm,scale=0.5]{images/regression_images/training_and_test_data_4.png}
+            \end{subfigure}
+            
+        \end{figure}
+        
+        We now have \textbf{four different hypotheses} for the price of one!\\
+        
+        \begin{definition}
+            \vocab{Cross-validation} is a way to \vocab{evaluate a learning algorithm} using \vocab{limited data}.
+            
+            We do this by \purp{breaking} our data it into \gren{chunks} to create \purp{multiple hypotheses} from one dataset.
+            
+            For each \gren{chunk}, we train one dataset on all the data \textbf{not in that chunk}. We get our \purp{test error} using the chunk \textbf{we left out}.
+            
+            For $k$ chunks, we end up with $k$ hypotheses. By \gren{averaging} out their performance, we can \purp{approximate} the quality of our algorithm.
+        \end{definition}
+        
+        This approach is much \textbf{less expensive}, and very common in machine learning! But, some of the theoretical \textbf{benefits} of validation are not \textbf{proven} to be true for cross-validation.\\
+        
+        \begin{clarification}
+            Note that the goal of validation and cross-validation is \textbf{not} to evaluate \purp{one hypothesis}.
+            
+            Instead, it is instead meant to evaluate a \purp{learning algorithm}. This is why we have to create \purp{many} hypotheses: we want to see that our algorithm is \gren{generally} good!
+        \end{clarification}

@@ -1,0 +1,301 @@
+\section*{Matrix Math: Debugging}
+
+    Matrices are useful, but we have to be careful of some \textbf{problems} when doing math with them.
+    
+    These problems come up just when \textbf{multiplying} matrices like normal. But, they are much more common when trying to do \textbf{calculus}.
+    
+    In this class, \textbf{matrix calculus} is entirely about taking \textbf{derivatives} of vectors and matrices.
+    
+    We will not show here how to \textbf{find} these derivatives, but the important rules you need to compute our derivatives are in the \textbf{appendix}.
+    \note{There's a document explaining vector derivatives coming soon!}
+    
+    Instead, we'll focus on those problems mentioned above:\\
+    
+    \begin{concept}
+        
+        Important things to remember about \vocab{matrix derivatives}:
+    
+        \begin{itemize}
+            \item Often, matrix derivative rules look \gren{similar} to regular derivatives rules. \textbf{HOWEVER}, they are \purp{not} exactly the same.
+            
+            \item If you're confused about a \gren{derivative}, or you aren't getting the result you expect, check the dimensions (\purp{shape}) of your objects.
+        \end{itemize}
+    \end{concept}
+    
+    The second point is especially important: many problems in this course come down to problems with the \textbf{shape} of your matrix.
+    
+    \subsection*{Issue 1: Your answer is transposed}
+
+        Your final result might be the \textbf{transpose} of what it should be.
+        
+        \begin{itemize}
+            \item \miniex You wanted a \textbf{column} vector, but you got a \textbf{row} vector. 
+            \begin{equation*}
+                \begin{bmatrix}
+                  1\\2\\3\\4
+                \end{bmatrix}
+                \neq
+                \begin{bmatrix}
+                  1&2&3&4
+                \end{bmatrix}
+            \end{equation*}
+            \item You might just need to \textbf{transpose} that result (or an earlier step), but not always.
+        \end{itemize}
+    
+    \subsection*{Issue 2: Multiplication with invalid dimensions}
+    
+        You could be doing \textbf{multiplication} with \textbf{mismatched} dimensions. 
+        
+        \begin{itemize}
+            \item Remember that the "inner" dimensions need to \textbf{match}: you need to multiply $(a \times b) * (b \times c)$.
+            \item \miniex You are trying to multiply a $(2 \times 2)$ matrix by a $(1 \times 2)$ matrix. 
+            
+            \begin{equation*}
+                \begin{bmatrix}
+                  1&1\\2&2
+                \end{bmatrix}
+                *
+                \begin{bmatrix}
+                  3&4
+                \end{bmatrix}
+                =
+                \text{\red{INVALID!}}
+            \end{equation*}
+            
+            \item Sometimes you can fix it by \textbf{transposing} one of the vectors. Be \textbf{careful} which one you transpose.
+            
+            \begin{equation*}
+                \begin{bmatrix}
+                  1&1\\2&2
+                \end{bmatrix}
+                *
+                \begin{bmatrix}
+                  3\\4
+                \end{bmatrix}
+                =
+                \text{\red{Valid multiplication!}}
+            \end{equation*}
+            
+            \item You can also switch the \textbf{order}, but you will get a different result.
+            
+            \begin{equation*}
+                \begin{bmatrix}
+                  3&4
+                \end{bmatrix}
+                *
+                \begin{bmatrix}
+                  1&1\\2&2
+                \end{bmatrix}
+                =
+                \text{\red{Also valid, but different!}}
+            \end{equation*}
+            
+        \end{itemize}
+        
+        Because these give \textbf{different} answers, \textbf{only one} is going to be correct for your question.\\
+        
+        \begin{clarification}
+            A \vocab{valid} expression just means it has an \purp{answer}: \vocab{invalid} means you can't even \gren{calculate} an answer.
+            
+            But valid \textbf{does not} means we have a \gren{correct} answer.
+            
+            An expression can be \purp{valid} and \purp{incorrect}!
+        \end{clarification}
+        
+        \miniex 1/0 is an \textbf{invalid} expression, while 1/2 is \textbf{valid}. But that \textbf{doesn't} mean 1/2 is the \textbf{answer} to our question!
+        
+        It's up to you to figure out which one is \textbf{correct}.
+        
+        
+    \subsection*{Issue 3: Addition with Invalid Dimensions}
+        
+        You could be \textbf{adding} two matrices with \textbf{incompatible} dimensions.
+        \begin{itemize}
+            \item Both dimensions must match, \textbf{OR} the non-matching dimension is 1:
+            
+            \begin{itemize}
+                \item $(a \times b)$, $(a \times b)$, $(a \times 1)$, $(1 \times b)$, $(1 \times 1)$ can all add together.
+            \end{itemize}
+            \item \miniex You try to add a $(3 \times 2)$ matrix to a $(2 \times 3)$ matrix.
+            
+            \begin{equation*}
+                \begin{bmatrix}
+                  1&2\\3&4\\5&6
+                \end{bmatrix}
+                +
+                \begin{bmatrix}
+                  7&8&9\\1&2&3
+                \end{bmatrix}
+                = \text{\blu{???} }
+            \end{equation*}
+        
+            \item You might have multiplied to get the \textbf{wrong shape} earlier, or, again, need a transpose.
+            
+            \begin{equation*}
+                \begin{bmatrix}
+                  1&2\\3&4\\5&6
+                \end{bmatrix}
+                +
+                \begin{bmatrix}
+                  7&8\\9&1\\2&3
+                \end{bmatrix}
+                = \text{ \blu{Valid!} }
+            \end{equation*}
+        \end{itemize}
+        
+        Be careful to figure out which one to transpose!
+        
+        \begin{equation*}
+                \begin{bmatrix}
+                  1&2&3\\4&5&6
+                \end{bmatrix}
+                +
+                \begin{bmatrix}
+                  7&8&9\\1&2&3
+                \end{bmatrix}
+                = \text{\blu{Also valid}, but which one is right? }
+            \end{equation*}
+        
+    \subsection*{Issue 4: Your answer has the wrong shape}
+        
+        Your \textbf{final} result is the completely \textbf{wrong shape}.
+        
+        \begin{itemize}
+            \item \miniex You got $(3 \times 3)$ instead of $(2 \times 2)$.
+            
+            \begin{equation*}
+                \begin{bmatrix}
+                  1&2\\3&4
+                \end{bmatrix}
+                \neq
+                \begin{bmatrix}
+                  1&2&3\\4&5&6\\7&8&9
+                \end{bmatrix}
+            \end{equation*}
+            
+            \item You might have done $(3 \times 2)*(2 \times 3)$ instead of $(2 \times 3)*(3 \times 2)$. For a specific example:
+            
+            \begin{equation*}
+                \red{
+                    \begin{bmatrix}
+                      50&14\\122&32
+                    \end{bmatrix}
+                }
+                \neq
+                \blu{
+                    \begin{bmatrix}
+                      11&16&21\\19&26&33\\27&36&45
+                    \end{bmatrix}
+                }
+            \end{equation*}
+            
+            The mystery here is revealed by seeing our \textbf{multiplication}: we \textbf{transposed} our matrices!
+            
+            \begin{equation*}
+                \red{
+                    \begin{bmatrix}
+                      1&2&3\\4&5&6
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                      1&7\\2&8\\3&9
+                    \end{bmatrix}
+                }
+                \neq
+                \blu{
+                    \begin{bmatrix}
+                      1&4\\2&5\\3&6
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                      7&8&9\\1&2&3
+                    \end{bmatrix}
+                }
+            \end{equation*}
+            
+            But we also could have switched the \textbf{order} of our matrices.
+            
+            \begin{equation*}
+                \red{
+                    \begin{bmatrix}
+                      1&2&3\\4&5&6
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                      1&7\\2&8\\3&9
+                    \end{bmatrix}
+                }
+                \neq
+                    \begin{bmatrix}
+                      1&7\\2&8\\3&9
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                      1&2&3\\4&5&6
+                    \end{bmatrix}
+            \end{equation*}
+        \end{itemize}
+        
+    \subsection*{Summary}
+    
+        In general, you can solve most of these situations (\textbf{shape} problems) by taking a \textbf{transpose}, or changing \textbf{order} of multiplication.
+        
+        If this doesn't work, you may have a more \textbf{significant} problem.\\
+        
+        \begin{concept}
+            If you are struggling to compute \gren{matrix} math, you may be having a problem with the \purp{shape} of your matrices.
+            
+            Often, the solution is either
+            
+            \begin{itemize}
+                \item take a \purp{transpose} to make shapes compatible
+                \item change the \purp{order} of multiplication.
+            \end{itemize}
+            
+            However, there are often \gren{multiple} ways to get the right \purp{shape}, with the different answers.
+        \end{concept}
+        
+        If you have an official equation, you can try referencing that.
+        
+        Otherwise, a good way to figure out the correct form is the use only one \textbf{data point} and see which equation seems logical.
+    
+    \subsection*{Reference Equations}
+    
+        You might find these equations useful:
+        
+        $A$ is a matrix.\\
+        
+        \begin{kequation}
+            Taking a transpose twice gives the original matrix.
+            
+            \begin{equation*}
+                (A^T)^T=A
+            \end{equation*}
+        \end{kequation}
+        
+        $B$ is a matrix, and $k$ is a real number.\\
+            
+        \begin{kequation}
+            
+            A transpose is \textbf{linear}: it preserves addition and scalar multiplication.
+            
+            \begin{equation*}
+                (A+B)^T=A^T+B^T
+            \end{equation*}
+            
+            \begin{equation*}
+                (kA)^T = kA^T
+            \end{equation*}
+        \end{kequation}
+        
+        And finally:\\
+        
+        \begin{kequation}
+            
+            Transposes and multiplication can be swapped like this:
+            
+            \begin{equation*}
+                (AB)^T=B^TA^T
+            \end{equation*}
+            
+        \end{kequation}
+    
+    
+    
+    

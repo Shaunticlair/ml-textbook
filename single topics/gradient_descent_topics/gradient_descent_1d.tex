@@ -1,0 +1,89 @@
+\subsection*{Our procedure}
+
+    So, we have our parameter \textbf{update}, $\Delta \theta$. We'll start at $t=0$.
+    
+    Before, we represented the $\nth{i}$ \textbf{data point} with $\ex{x}{i}$. We'll reuse this \textbf{notation}.\\
+    
+    \begin{notation}
+        Here, we're changing $\theta$ over \purp{time}: each step happens at $t=\{1,2,3, \dots \}$ so we need \gren{notation} for that. 
+        
+        We'll \gren{reuse} the notation from $\ex{x}{i}$, for the $\nth{i}$ data point.
+        
+        In this case, we'll do $\ex{\theta}{t}$: the value of $\theta$ after $t$ \purp{steps} are taken.
+        
+        Earlier, we \textbf{introduced} \blu{$\theta_{old}$} and \red{$\theta_{new}$}: these are \blu{$\ex{\theta}{t-1}$} and \red{$\ex{\theta}{t}$}.
+    \end{notation}
+    
+    \miniex After \textbf{10 steps} of 1-D gradient descent, we have gone from $\ex{\theta}{0}$ to $\ex{\theta}{10}$.
+    
+    So, we move the \textbf{first} time using $J'(\ex{\theta}{0})$.
+    
+    Once we've moved in parameter space \textbf{one} time, though, our \textbf{derivative} has changed: we're in a different part of the \textbf{surface}.
+    
+    So, we'll take a \textbf{second} step with a \textbf{new} derivative, $J'(\ex{\theta}{1})$.
+    
+    We want to do this \textbf{repeatedly}. We'll take our equation
+    
+    \begin{equation}
+        \theta_{new} = \theta_{old} + \Delta \theta
+    \end{equation}
+    
+    And combine it with our \textbf{chosen} step size.\\
+    
+    \begin{kequation}
+        In \vocab{1-D}, \vocab{Gradient Descent} is implemented as follows:
+    
+        At each time step $t$, we \purp{improve} our hypothesis $\theta$ using the following rule:
+        
+        \begin{equation*}
+            \red{ \theta_{new} } = 
+            \blu{ \theta_{old} } - \grn{\eta} J'( \blu{ \theta_{old} })
+        \end{equation*}
+        
+        Using $\ex{\theta}{t}$ notation:
+        
+        \begin{equation*}
+            \red{ \ex{\theta}{t} } = 
+            \blu{ \ex{\theta}{t-1} } -
+            \grn{\eta} J'( \blu{ \ex{\theta}{t-1} })
+        \end{equation*}
+        
+        We repeat until we reach whatever our chosen \purp{termination condition} is.
+    \end{kequation}
+    
+    We can also write it as:
+    
+    \begin{equation*}
+            \red{ \theta_{new} } = 
+            \blu{ \theta_{old} } - 
+            \grn{\eta} 
+            \left( \deriv{J}{ \blu{ \theta_{old} }} \right)
+        \end{equation*}
+    
+    We've got our gradient descent \textbf{update} rule in 1-D!
+
+\subsection*{Termination Conditions}
+
+    When do we \textbf{stop}? We can't let it run forever.
+    
+    We have some options:
+    
+    \begin{itemize}
+        \item Stop after a \textbf{fixed} $T$ steps.
+            \begin{itemize}
+                \item This has the advantage of being \textbf{simple}, but how do you know what the \textbf{correct} number of steps is?
+            \end{itemize}
+        
+        \item Stop when $\theta$ \textbf{isn't changing} much: $\big| \Delta \theta \big| < \epsilon$, for example.
+        \begin{itemize}
+            \item If our $\theta$ isn't changing much, our algorithm isn't \textbf{improving} our hypothesis much. So, it makes sense to stop: we've stabilized.
+        \end{itemize}
+        
+        \item Stop when the \textbf{derivative is small}: $\big| J'(\theta) \big| < \epsilon$.
+        \begin{itemize}
+            \item Mathematically \textbf{equivalent} to our last choice. But a different \textbf{perspective}: if the slope is small, our surface is relatively \textbf{flat}, and we're near a \textbf{minimum} (probably).
+            
+            \item "The derivative is \textbf{small}" is weaker, but in the same spirit as "the derivative is \textbf{zero}", $J'(\theta)=0$, from last chapter.
+        \end{itemize}
+        
+    \end{itemize}

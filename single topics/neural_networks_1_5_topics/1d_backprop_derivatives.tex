@@ -1,0 +1,173 @@
+    
+    \subsection*{What do these derivatives equal?}
+    
+        Let's look at each of these derivatives and see if we can't simplify them a bit.
+        
+        First, every gradient needs
+        
+        \begin{itemize}
+            \item The \vocab{loss derivative}:
+            
+                \begin{equation}
+                    \pderiv {\pur{\loss}} {\blu{a^L}}
+                \end{equation}
+                
+                This \textbf{depends} on on our loss function, so we're \textbf{stuck} with that one.
+            
+        \end{itemize}
+            
+        Next, within each layer, we have
+        
+        \begin{itemize}
+            \item The \vocab{activation function} - between our activation $a$ and preactivation $z$:
+            
+                \begin{equation}
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
+                \end{equation}
+                
+                What does the function between these \textbf{look} like?
+                
+                \begin{equation}
+                    \blu{a} = f(\red{z})
+                \end{equation}
+                
+                Well, that's not super interesting: we \textbf{don't know }our function. But, at least we can \textbf{write} it using $f$: that way, we know that this term only depends on our \textbf{activation} function.
+                
+                \begin{equation}
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}} 
+                    = 
+                    \Big(
+                        \overbrace{
+                        f^\ell 
+                        }^{\text{func for layer $\ell$}}
+                    \Big)'
+                    (
+                        \red{z^\ell}
+                    )
+                \end{equation}
+                
+                This expression is a bit visually clunky, but it works.
+                
+        \end{itemize}
+        
+    Between layers, we have
+        
+        \begin{itemize}
+            
+            \item We can also think about the derivative of the \vocab{linear function} that \textbf{connects two layers}:
+                \note{Be careful not to get this mixed up with the last one!\\
+                They look similar, but one is within the layer, and the other is between layers.}
+            
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {\blu{a^{\ell-1}}}
+                \end{equation}
+                
+                So, we want the function of these two:
+                
+                \begin{equation}
+                    \red{z^\ell} = w^\ell \blu{ a^{\ell-1} } + w_0^\ell
+                \end{equation}
+                
+                This one is pretty simple! We just take the derivative manually:
+                
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {\blu{a^{\ell-1}}}
+                    =
+                    w^{\ell}
+                \end{equation}
+                
+        \end{itemize}
+        
+    Finally, every gradient will end with
+        
+        \begin{itemize}
+                
+            \item The derivative that directly connects to a \textbf{weight}, again using the \vocab{linear function}:
+            
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {w^{\ell}}
+                \end{equation}
+                
+                The linear function is the same:
+            
+                \begin{equation}
+                    \red{z^\ell} = w^\ell \blu{ a^{\ell-1} } + w_0^\ell
+                \end{equation}
+                
+                But with a different \textbf{variable}, the \textbf{derivative} comes out different:
+                
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {w^{\ell}}
+                    =
+                    a^{\ell-1} 
+                \end{equation}
+                
+        \end{itemize}
+        
+    \begin{notation}
+        Our \vocab{derivatives} for the \purp{chain rule} in a \vocab{1-D neural network} take the form:
+        
+        \begin{equation}
+            \pderiv {\pur{\loss}} {\blu{a^L}}
+        \end{equation}
+        
+        \begin{equation}
+            \pderiv {\blu{a^\ell}}   {\red{z^\ell}} = (f^\ell)'(\red{z^\ell})
+        \end{equation}
+        
+        \begin{equation}
+            \pderiv {\red{z^\ell}}   {\blu{a^{\ell-1}}}
+            =
+            w^{\ell}
+        \end{equation}
+        
+        \begin{equation}
+            \pderiv {\red{z^\ell}}   {w^{\ell}}
+            =
+            a^{\ell-1} 
+        \end{equation}
+    \end{notation}
+
+    Now, we can rewrite our generalized expression for gradient:
+    
+    
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w^\ell} 
+            =
+            \overbrace{
+                \Bigg(
+                    \pderiv {\pur{\loss}} {\blu{a^L}} 
+                \Bigg)
+            }^{\text{Loss unit}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    (f^L)'(\red{z^L})
+                        \cmul
+                    w^L
+                \Bigg) 
+            }^{\text{Layer $L$}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    (f^{L-1})'(\red{z^{L-1}})
+                        \cmul
+                    w^L
+                \Bigg) 
+            }^{\text{Layer $L-1$}}
+            \cmul
+            \Bigg(
+                \cdots 
+            \Bigg)
+            \cmul
+            \overbrace{
+                \Bigg(
+                    (f^\ell)'(\red{z^\ell})
+                        \cmul
+                    a^{\ell-1}
+                \Bigg) 
+            }^{\text{Layer $\ell$}}
+        \end{equation}
+        
+        Our expressions are more concrete now. It's still pretty visually messy, though.
+        

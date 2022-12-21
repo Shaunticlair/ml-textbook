@@ -1,0 +1,81 @@
+\section*{Minimization Notation}
+
+\subsection*{Functions $\min$ and $\argmin$}
+    
+    Our goal in \textbf{regression} is to minimize $J$ by adjusting $\Theta$. If we accomplish this, there are two questions we can ask ourselves, and some corresponding \textbf{notation}.
+    
+    To show our point, we'll use the following example:
+    
+    \miniex Take $f(x)=(x-1)^2$. The minimum output is 0, which happens at $x=1$. So, we have a minimum at $(1, 0)$.
+    
+    \begin{itemize}
+        \item What is the \textbf{minimium} value of $J$ we can find \textbf{by adjusting $\Theta$}?
+    \end{itemize}
+    
+    \begin{notation}
+        The \vocab{min function} gives you the \gren{minimum output} of a function we get by adjusting one chosen \purp{variable}.
+        
+        \begin{equation*}
+            \min_{ \pur{ \Theta } }{ \grn{ J(\Theta) } }
+        \end{equation*}
+        
+        The \gren{function we want to minimize} is written to the right, while the \purp{variable we adjust} is written below.
+    
+    \end{notation}
+    
+    \miniex 
+    
+    \begin{equation}
+        \min_x{ \red{(x-1)^2} } = \red{0}
+    \end{equation}
+    
+    \begin{itemize}
+        \item What \textbf{value} of $\Theta$ gives us \textbf{minimum} $J$?
+    \end{itemize}
+    
+    \begin{notation}
+        The \vocab{argmin function} tells you the value of the \purp{input variable} that gives the \gren{minimum output}.
+        
+        \begin{equation*}
+            \argmin{ \pur{ \Theta } }{ \grn{ J(\Theta) } }
+        \end{equation*}
+        
+        The \gren{function we want to minimize} is written to the right, while the \purp{variable we adjust} is written below.
+    
+    \end{notation}
+    
+    \miniex
+    
+    \begin{equation}
+        \argmin{\red{x}}{ (x-1)^2 } = \red{1}
+    \end{equation}
+    
+    Why is it called "argmin"? Well, "argument" is used as another word for "input variable". And our argmin function returns the \textbf{argument} with the \textbf{minimum} output.
+    
+\subsection*{Optimal Value Notation}
+    
+    So, we want to know what the best model we want get is, where this model is represented by $\Theta$.\\
+    
+    \begin{notation}
+        We add a \vocab{star} $^*$ to indicate the \purp{optimal} variable choice.
+        
+        If that variable is $z^*$, you would say it as "$z$-star".
+    \end{notation}
+    
+    \miniex 
+    
+    \begin{equation}
+        x^* = 1 \text{ for the above example.}
+    \end{equation}
+    
+    So, if we want optimal $\Theta$, we're looking for:\\
+    
+    \begin{kequation}
+    
+        Our \vocab{optimal parameter} vector is written as 
+        
+        \begin{equation*}
+            \Theta^* = \argmin{ \Theta  }{  J(\Theta)  }
+        \end{equation*}
+    \end{kequation}
+        

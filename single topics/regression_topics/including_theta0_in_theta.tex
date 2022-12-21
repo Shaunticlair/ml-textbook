@@ -1,0 +1,86 @@
+    
+\section*{Including $\theta_0$ in $\theta$}
+    
+    \subsection*{Trying to Simplify}
+        
+        Our approach will involve a lot of \textbf{algebra}. Because of that, it's worth it to \textbf{simplify} our formula as much as possible beforehand.
+        
+        \begin{equation}
+            J(\theta,\theta_0) = 
+                        \frac{1}{n}  \sum_{i=1}^n 
+                        \left( 
+                            \underbrace{
+                                \red{ (\theta^T} \blu{\ex{x}{i}} \red{ + \theta_0) } 
+                            }_{guess}
+                            - \underbrace{
+                                \blu{\ex{y}{i}}
+                            }_{answer}
+                        \right)^2 
+        \end{equation}
+        
+        Most parts of this equation can't really be \textbf{simplified}: $y$ and $x$ are just variables, and we can't do anything with the \textbf{sum} without knowing our data points.
+        
+        But, one thing that was strange is that we \textbf{separated} $\theta_0$ from our other $\theta_k$ terms. Maybe we can \textbf{fix} that.
+        
+    \subsection*{Combining $\theta$ and $\theta_0$}
+        
+         Let's go back to our \textbf{original} equation for $\red{ (\theta^T} x \red{ + \theta_0) } $, before we switched to \textbf{vectors}.
+         \note{We drop the $\ex{}{i}$ notation whenever it isn't necessary, to de-clutter the equations. We only do this when we don't care which data point we're using.}
+        
+        \begin{equation}
+            h(x) = \red{\theta_0} + \red{\theta_1}x_1 + \red{\theta_2}x_2 + \red{\theta_3}x_3 + ... + \red{\theta_d}x_d
+        \end{equation}
+        
+        We converted this into a \textbf{dot product} because each $\theta_n$ term is \textbf{multiplied} by an $x_k$ term, except $\theta_0$.
+        
+        But if we \textbf{really} want to include $\theta_0$, then could we? We know what's missing: "$\theta_0$ is \textbf{not} multiplied by an $x_k$ term". So... could we get one? Is there a $x_0$ factor we could \textbf{find}?
+        
+        We need $\theta_0$ to be \textbf{multiplied} by something. Is there something we could "\textbf{factor} out"? How about: $x_0=1$?
+        \note{You can always factor out 1 without changing the value!}
+        
+        \begin{equation}
+            h(x) = \red{\theta_0}\blu{x_0} + \red{\theta_1}x_1 + \red{\theta_2}x_2 + \red{\theta_3}x_3 + ... + \red{\theta_d}x_d
+        \end{equation}
+        
+        So, this means we just have to \textbf{append} a 1 to our vector $x$. At the \textbf{same time}, we'll append $\theta_0$ to $\theta$!
+        
+        \begin{equation}
+            x = 
+            \begin{bmatrix}
+              \red{1} \\ x_1 \\ x_2 \\ x_3 \\ \vdots \\ x_d
+            \end{bmatrix},
+            \;\;\;\;\;\;\;\;\;\;\;\;\;\;\;
+            \theta = 
+            \begin{bmatrix}
+              \red{\theta_0} \\ \theta_1 \\ \theta_2 \\ \theta_3 \\ \vdots \\ \theta_d
+            \end{bmatrix},
+            \;\;\;\;\;\;\;\;\;\;\;\;\;\;\;
+            h(x) = 
+            \begin{bmatrix}
+              \red{\theta_0} \\ \theta_1 \\ \theta_2 \\ \theta_3 \\ \vdots \\ \theta_d
+            \end{bmatrix}
+            \cdot
+            \begin{bmatrix}
+              \red{1} \\ x_1 \\ x_2 \\ x_3 \\ \vdots \\ x_d
+            \end{bmatrix}
+        \end{equation}
+
+        We'll write that symbolically, and then apply a transpose.
+        
+        \begin{equation}
+            h(x) = \red{\theta} \cdot x = \blu{ \theta^T x }
+        \end{equation}
+        
+        \begin{concept}
+            Sometimes, to simplify our algebra, we can \purp{append} $\theta_0$ to $\theta$. 
+            
+            In order to do this, we have to \purp{append} a value of 1 to $x$ as well.
+            
+            Once we do this, we can \gren{write} 
+            
+            \begin{equation*}
+                h(x)=\theta^T x
+            \end{equation*}
+        \end{concept}
+        
+        We \textbf{have} to append this 1 to every single $\ex{x}{i}$ in order for this to \textbf{work}. But, now we can treat our parameters as \textbf{one vector}.

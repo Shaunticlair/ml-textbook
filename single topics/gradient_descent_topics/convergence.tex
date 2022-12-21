@@ -1,0 +1,45 @@
+\subsection*{Convergence}
+
+    If you do this procedure with the above equation, though, you'll often run into \textbf{problems}. Why is that?
+    
+    Well, because each of your steps is too \textbf{big} or too \textbf{small}: we won't be able to find a \textbf{stable} answer, i.e. \textbf{converge}!
+    
+    What does it mean to \textbf{converge}? 
+    
+    It means we get a \textbf{single answer} after repeated steps: given enough time, we'll get \textbf{close as we want} to one number, and \textbf{stay there}.\\
+    
+    \begin{definition}
+        If a sequence \vocab{converges}, then our result gets as \purp{close as we want} to a \gren{single number}, without going \purp{further away}.
+    \end{definition}
+    
+    \miniex The numbers $1/n$: $\{ 1, \frac{1}{2}, \frac{1}{3}, \frac{1}{4}, \dots  \}$ converges to 0.
+    
+    If our answer \textbf{doesn't} converge, then it \textbf{diverges}. We can see why this might be bad: if we never \textbf{approach} a single answer, how do we know what value to \textbf{pick}?
+    
+\subsection*{Convergence: A little more formally (Optional)}
+    
+    Let's be more specific. Our sequence $S$ will converge to $r$.
+    
+    \begin{equation}
+        S = \{ s_1, s_2, s_3, s_4, \dots \} 
+    \end{equation}
+    
+    "As close as we want": let's say we want the maximum distance to be $\epsilon$. That means, no matter what $\epsilon>0$, we'll get closer at some point: $\abs{m-s_i}<\epsilon$
+    
+    \begin{equation}
+        \abs{m-s_i}<\epsilon \text{ for some } i
+    \end{equation}
+    
+    "And stay there": at some time $k$, we never move further away again:\\
+    
+    \begin{definition}
+        If a sequence $S$ \vocab{converges} to $m$, then for all $\epsilon>0$, we can say
+        
+        \begin{equation}
+            \abs{m-s_i}<\epsilon \text{ for all } i>k
+        \end{equation}
+    
+    \end{definition}
+    
+    This is a "formal" definition of convergence.
+    

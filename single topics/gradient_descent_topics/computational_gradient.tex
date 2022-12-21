@@ -1,0 +1,125 @@
+    \subsection*{Computational Gradient}
+    
+        Sometimes, we \textbf{can't} easily find the \textbf{equation} for our gradient: maybe our loss isn't a simple \textbf{equation}, or we have some \textbf{other} kind of problem. So, rather than getting the \textbf{exact} gradient, we \textbf{approximate} it.
+        
+        But how do we \textbf{approximate} the gradient? Well, first, we could \textbf{reference} how we approximate a \textbf{simple derivative}.
+            \note{A derivative is just a 1-D gradient, after all!}
+            
+        The definition of the \textbf{derivative} can be gotten as 
+        
+        \begin{equation}
+            f'(x) = \lim_{h \rightarrow 0} \frac{f(x+h)-f(x)}{h}
+        \end{equation}
+        
+        But, what if we can't take the \textbf{limit}? Or, we just don't \textbf{want} to? 
+        
+        We can \textbf{approximate} by taking $h$ to be a small, \textbf{finite} number.
+        
+        Instead of $h$, we'll call this $\delta$.
+        
+        \begin{concept}
+            When \vocab{approximating} the derivative, we can choose a \purp{small} finite width to measure, called $\delta$, so that
+            
+            \begin{equation}
+                \deriv{f}{x} \approx
+                \frac{f(x+\delta)-f(x)}{\delta} , \qquad \delta << 1
+            \end{equation}
+        \end{concept}
+        
+        So, let's \textbf{extend} that to the \textbf{gradient}:
+        
+        \begin{equation}
+            \nabla_\theta J 
+            = 
+            \begin{bmatrix}
+                  \pderivslash{J}{ \blu{\theta_1} } \\ 
+                  \pderivslash{J}{ \blu{\theta_2} } \\
+                  \vdots \\
+                  \pderivslash{J}{ \blu{\theta_d} } \\
+            \end{bmatrix}
+        \end{equation}
+        
+        Luckily, the \textbf{gradient} is just a bunch of derivatives \textbf{stacked} in a \textbf{vector}! 
+        
+        So, we can just \textbf{compute} each of them \textbf{separately}, and then put them together.
+        
+        Let's show how we'd \textbf{write} that in \textbf{vector} form, for just one of them. We want something like
+        
+        \begin{equation}
+            \underbrace{
+                J'(\theta) \approx
+                \frac{J(\theta+\delta)-f(\theta)}{\delta} 
+            }_{\text{Not correct, but closer}}
+        \end{equation}
+        
+        This isn't quite right, because a \textbf{scalar} $\delta$ would \textbf{add} to \textbf{every term}.
+        
+        We \textbf{only} want to shift \textbf{one} variable at a time, so we can do a \textbf{simple} derivative.
+        
+        Let's say we want $\derivslash{J}{\theta_1}$. We would \textbf{only} want to add $\delta$ to $\theta_1$: the other parameters are \textbf{unchanged}.
+        
+        So, we \textbf{can't} add a \textbf{scalar}. Instead, we need a $(d \times 1)$ vector: one term to \textbf{separately} add to each $\theta_k$ term.
+        
+        \begin{equation}
+            \Delta \theta 
+            = 
+            \begin{bmatrix}
+                \Delta \theta_1 \\ \Delta \theta_2 \\ \vdots \\ \Delta \theta_d
+            \end{bmatrix}
+        \end{equation}
+        
+        We want most terms \textbf{unchanged}, so we'll \textbf{add 0} to each of them, and we'll add $\delta$ to the one term we want to \textbf{edit}.
+        
+        \begin{equation}
+            \Delta \theta 
+            = 
+            \begin{bmatrix}
+                \delta \\ 0 \\ \vdots\\ 0 \\ 0
+            \end{bmatrix}
+        \end{equation}
+        
+        We'll \textbf{create} one of these vectors for each \textbf{dimension}. We'll give them a special \textbf{name}: $\delta_k$, for the $\nth{k}$ dimension.
+        
+        \begin{equation}
+            \delta_1 
+            = 
+            \begin{bmatrix}
+                \delta \\ 0 \\ \vdots\\ 0 \\ 0
+            \end{bmatrix}
+            \qquad
+            \delta_2 
+            = 
+            \begin{bmatrix}
+                0 \\ \delta \\ \vdots\\ 0 \\ 0
+            \end{bmatrix}
+            \qquad
+            \delta_{d-1} 
+            = 
+            \begin{bmatrix}
+                0 \\ 0 \\ \vdots\\ \delta \\ 0
+            \end{bmatrix}
+            \qquad
+            \delta_{d} 
+            = 
+            \begin{bmatrix}
+                0 \\ 0 \\ \vdots\\ 0 \\ \delta
+            \end{bmatrix}
+        \end{equation}
+        
+        Finally, we'll \textbf{divide} by $\delta$. We have what we need for our full equation:\\
+        
+        \begin{kequation}
+            In order to \vocab{computationally find the gradient}, you need to find the \purp{partial derivative} for each term $\theta_k$.
+            
+            \begin{equation*}
+                \deriv{J}{\theta_k} \approx
+                \frac{J(\theta+\delta_k)-f(\theta)}{\delta}
+            \end{equation*}
+            
+            Where 
+            
+            \begin{itemize}
+                \item $\delta$ is a small positive number
+                \item $\delta_k$ is the $(d \times 1)$ \gren{column vector} with a $\delta$ in the $\nth{k}$ row, and a 0 in every other row.
+            \end{itemize} 
+        \end{kequation}

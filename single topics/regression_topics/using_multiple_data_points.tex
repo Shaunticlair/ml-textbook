@@ -1,0 +1,152 @@
+\section*{Multiple Data Points in a Matrix}
+
+
+
+
+    \subsection*{Summing over data points}
+    
+        Currently, when using our \textbf{objective} function, we have to \textbf{sum} over \textbf{every} single data point. For the 1D case, this means we have to do:
+        
+        \begin{equation}
+            J = 
+            \frac{1}{n}  \sum_{i=1}^n \red{(\theta \ex{x}{i}  - \ex{y}{i} )^2} 
+        \end{equation}
+        
+        This is a bit of a hassle - it \textbf{forces} us to use $\ex{x}{i}$ notation, and we have to be conscious of that \textbf{sum}.
+        
+        By using \textbf{vectors} above, we were able to work with \textbf{many} variables $\theta_k$ at the same time, making it easier to \textbf{represent} and \textbf{work} with them in the future. 
+        
+        Can we do the \textbf{same} here - combining many \textbf{data points} into one object, rather than many \textbf{variables}?
+    
+    \subsection*{Summing with Vectors: Row Vectors}
+        
+        We want to represent \textbf{addition} using \textbf{vectors}. We did that when we were adding $x_k\theta_k$ terms with a \textbf{dot product}.
+        
+        \begin{equation}
+            \red{\theta_0} + \red{\theta_1}x_1 + \red{\theta_2}x_2 + \red{\theta_3}x_3 + ...
+            =
+            \begin{bmatrix}
+              \red{\theta_0} \\ \theta_1 \\ \theta_2 \\ \theta_3 \\ \vdots \\ \theta_d
+            \end{bmatrix}
+            \cdot
+            \begin{bmatrix}
+              \red{1} \\ x_1 \\ x_2 \\ x_3 \\ \vdots \\ x_d
+            \end{bmatrix}
+        \end{equation}
+        
+        But, dot products also include \textbf{multiplication}. Above, our terms are \textbf{squared}. So, we can multiply $(\theta \ex{x}{i} - \ex{y}{i} )$ times itself!
+        
+        \begin{equation}
+            J = 
+            \frac{1}{n}  \sum_{i=1}^n 
+            (\theta \ex{x}{i}  - \ex{y}{i} ) (\theta \ex{x}{i}  - \ex{y}{i} )  
+        \end{equation}
+        
+        We'll write $\ex{r}{i} = \theta \ex{x}{i}  - \ex{y}{i}$ to simplify our work. 
+        \begin{equation}
+            J = \frac{1}{n}  \sum_{i=1}^n
+            \ex{r}{i}*\ex{r}{i}
+        \end{equation}
+        
+        In a dot product, we \textbf{add} the \textbf{dimensions} together. So, we'll give each term in our sum its own \textbf{dimension}.
+        
+        \begin{equation}
+            J = \frac{1}{n}  \sum_{i=1}^n
+            \ex{r}{i}*\ex{r}{i}
+            =
+            \frac{1}{n}
+            \begin{bmatrix}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+            \end{bmatrix}
+            \cdot
+            \begin{bmatrix}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+            \end{bmatrix}
+        \end{equation}
+        
+        We've got a single vector we could call $R$.
+        
+        We could make it a \textbf{column vector}, but we already use the \textbf{rows} to indicate the \textbf{dimensions}. 
+        
+        \begin{equation}
+            \begin{drcases}
+                \theta =
+                \begin{bmatrix}
+                  \red{\theta_0} \\ \theta_1 \\ \theta_2 \\ \theta_3 \\ \vdots \\ \theta_d
+                \end{bmatrix}
+            \end{drcases}
+            \text{dimensions as rows...}
+        \end{equation}
+        
+        So, let's use \textbf{columns} instead: each \textbf{column} will be a \textbf{data point}: we'll use a \textbf{row vector} $(1 \times n)$. 
+        
+        \begin{equation}
+            R =
+            \overbrace{
+            \begin{bmatrix}
+              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{d} 
+            \end{bmatrix}
+            }^{\text{data points as columns!}}
+        \end{equation}
+        
+    \subsection{Going from $x$ to $X$}
+    
+        We can do the same for our input data $\ex{x}{i}$:\\
+        
+        \begin{notation}
+            We can store all of our 1-D \vocab{data points} in a \vocab{row vector}:
+            
+            \begin{equation*}
+                X =
+                \begin{bmatrix}
+                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{d}
+                \end{bmatrix}
+            \end{equation*}
+            \begin{equation*}
+                Y =
+                \begin{bmatrix}
+                  \ex{y}{1} & \ex{y}{2} & \ex{y}{3} & \cdots & \ex{y}{d}
+                \end{bmatrix}
+            \end{equation*}
+        \end{notation}
+        
+        Since we had $\ex{r}{i} = (\theta \ex{x}{i} - \ex{y}{i} )$, we can write 
+        
+        \begin{equation}
+            R = \theta X - Y
+        \end{equation}
+        \note{Still in the 1D case!}
+        
+        We can write our \textbf{objective function} as
+        
+        \begin{equation}
+            J = 
+            \frac{1}{n}
+            \begin{bmatrix}
+              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{d}
+            \end{bmatrix}
+            \begin{bmatrix}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+            \end{bmatrix}
+        \end{equation}
+        
+        So, we can write compactly:
+        
+        \begin{equation}
+            J = \frac{1}{n} RR^T
+        \end{equation}
+        
+        Let's expand this back out with $R = \theta X - Y$:\\
+        
+        \begin{concept}
+            In 1-D, we can use row vectors to sum our data points as
+            
+            \begin{equation*}
+                J = \frac{1}{n} (\theta X - Y)(\theta X - Y)^T
+            \end{equation*}
+        \end{concept}
+        
+        We've successfully \textbf{removed} the \textbf{sum}!
+        
+        This format \textbf{stores} all of our \textbf{data points} in \textbf{one object}, just like how we wanted.
+        

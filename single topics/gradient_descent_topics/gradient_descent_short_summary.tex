@@ -1,0 +1,78 @@
+        
+    \subsection*{Gradient Descent in n-D}
+    
+        This idea can be built up in \textbf{any number} of dimensions: each variable $\theta_k$ creates a \textbf{different} line we can use to \textbf{approximate}.
+        
+        And, we can combine them into a \textbf{flat} hyperplane: so, we can \textbf{add up} all of the different \textbf{derivatives}.\\
+        
+        \begin{kequation}
+            In \vocab{n-D}, you can optimize your function $J$ using this rule:
+            
+            \begin{equation*}
+                \red{ \theta_{new} } =  \blu{ \theta_{old} } 
+                - \grn{ \eta } 
+                \underbrace{
+                    \begin{bmatrix}
+                          \pderivslash{J}{ \blu{\theta_1} } \\ 
+                          \pderivslash{J}{ \blu{\theta_2} } \\
+                          \vdots \\
+                          \pderivslash{J}{ \blu{\theta_d} } \\
+                    \end{bmatrix}
+                }_{ \text{Using } \blu{ \theta_{old} } }
+            \end{equation*}
+            
+            This is our \vocab{generalized gradient descent} rule.
+        \end{kequation}
+
+    \subsection*{The Gradient}
+    
+        We call this \textbf{gradient} descent because that right term \textbf{is} the gradient!\\
+        
+        \begin{definition}
+            
+            The gradient can be written as
+            
+            \begin{equation*}
+                \nabla_\theta J 
+                = 
+                \begin{bmatrix}
+                      \pderivslash{J}{ \blu{\theta_1} } \\ 
+                      \pderivslash{J}{ \blu{\theta_2} } \\
+                      \vdots \\
+                      \pderivslash{J}{ \blu{\theta_d} } \\
+                \end{bmatrix}
+                =
+                \deriv{J}{\theta}
+            \end{equation*} 
+        \end{definition}
+        
+        So, our rule can be rewritten (for the last time) as:\\
+        
+        \begin{kequation}
+            The \vocab{gradient descent} rule can be generally written as:
+            
+            \begin{equation*}
+                \red{ \theta_{new} } =  \blu{ \theta_{old} } 
+                - \grn{ \eta } 
+                \nabla_\theta J ( \blu{ \theta_{old} } )
+            \end{equation*}
+            
+            $\blu{ \theta_{old} }$ is the input to $\nabla_\theta J$, not multiplication!
+            
+            \begin{equation*}
+                \red{ \theta_{new} } =  \blu{ \theta_{old} } 
+                - \grn{ \eta } 
+                J'( \blu{ \theta_{old} } )
+            \end{equation*}
+        \end{kequation}
+        
+        In fact, the gradient is the best direction we could choose!
+            \note{Check one of the other "topics" documents for a proof, or just check the full explanatory notes!}
+        
+        \begin{concept}
+            The \vocab{gradient} $\nabla J$ is the \vocab{direction of greatest increase} for $J$.
+            
+            That means means the opposite direction $-\nabla J$ is the \vocab{direction of greatest decrease} in $J$.
+        \end{concept}
+        
+        This is the single \textbf{most important concept} in this entire chapter!

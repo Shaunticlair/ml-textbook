@@ -1,0 +1,256 @@
+\section{Matrix derivative common cases}
+
+What are some conventions for derivatives of matrices and vectors?  It
+will always work to explicitly write all indices and treat everything
+as scalars, but we introduce here some shortcuts that are often faster
+to use and helpful for understanding.
+
+There are at least two consistent but different systems for describing
+shapes and rules for doing matrix derivatives.  In the end, they all
+are correct, but it is important to be consistent.
+
+\newcommand{\av}{{\bf a}}
+\newcommand{\xv}{{\bf x}}
+\newcommand{\yv}{{\bf y}}
+\newcommand{\uv}{{\bf u}}
+\newcommand{\vv}{{\bf v}}
+\newcommand{\fv}{{\bf f}}
+\newcommand{\gv}{{\bf g}}
+\newcommand{\am}{{\bf A}}
+\newcommand{\xm}{{\bf X}}
+\newcommand{\ym}{{\bf Y}}
+
+We will use what is often called the `Hessian' or denominator layout,
+in which we say that 
+for $\xv$ of size $n\times 1$ and $\yv$ of size $m\times 1$,
+  $\partial \yv/\partial \xv$ is a matrix of size $n\times m$ with the
+  $(i, j)$ entry $\partial \yv_j/\partial \xv_i$.  The discussion
+  below closely follows the Wikipedia on matrix derivatives.
+
+\subsection{The shapes of things}
+Here are important special cases of the rule above:
+
+\begin{itemize}
+
+\item For $x$ of size $1\times 1$ and $y$ of size $1\times 1$,
+  $\partial y/\partial x$ is the (scalar) partial derivative of $y$
+  with respect to $x$.  
+
+\item For $\xv$ of size $n\times 1$ and $y$ of size $1\times 1$,
+  $\partial y/\partial \xv$ (also written $\nabla_\xv y$) is a vector of
+  size $n\times 1$ with the $i^{\rm th}$ entry $\partial y/\partial
+  \xv_i$. 
+
+\item For $x$ of size $1\times 1$ and $\yv$ of size $m\times 1$,
+  $\partial \yv/\partial x$ is a vector of size $1 \times m$ with the
+  $j^{\rm th}$ entry $\partial \yv_j/\partial x$.
+
+\item For $\xv$ of size $n\times 1$ and $\yv$ of size $m\times 1$,
+  $\partial \yv/\partial \xv$ is a matrix of size $n\times m$ with the
+  $(i, j)$ entry $\partial \yv_j/\partial \xv_i$.
+  
+\item For $\xm$ of size $n\times m$ and $y$ of size $1\times 1$,
+  $\partial y/\partial \xm$ is a matrix of size $n\times m$ with the
+  $(i, j)$ entry $\partial y/\partial \xm_{i, j}$.
+
+\item For $x$ of size $1 \times 1$ and $\ym$ of size $n \times m$,
+  $\partial \ym /\partial x$ is a matrix of size $n \times m$ with the
+  $(i, j)$ entry $\partial \ym_{i,j} / \partial x$.
+
+\end{itemize}
+
+
+\subsection{Some vector-by-vector identities}
+Here are some examples of $\partial \yv / \partial \xv$.  In each case,
+assume $\xv$ is $n \times 1$, $\yv$ is $m \times 1$, $a$ is a scalar
+constant, $\av$ is a vector that does not depend on $\xv$ and $\am$ is a matrix that does
+not depend on $\xv$, $u$ and $v$ are scalars that do depend on $\xv$, and
+$\uv$ and $\vv$ are vectors that do depend on $\xv$.  We also have
+vector-valued functions $\fv$ and $\gv$.
+
+(In the discussion below, the words are relevant to the {\em
+  preceding} formula.)
+
+\begin{equation}\frac{\partial \av}{\partial \xv} = {\bf 0}
+  \label{eq:const}
+\end{equation}
+  This is an $n \times m$ matrix of 0s.
+\begin{equation}\frac{\partial \xv}{\partial \xv} = {\bf I}\end{equation}
+  This is the $n \times n$ identity matrix, with 1's along the
+  diagonal and 0's elsewhere.  It makes sense, because $\partial \xv_j /
+  \xv_i$ is 1 for $i = j$ and 0 otherwise.
+  \begin{equation}\frac{\partial \am \xv}{\partial \xv} = \am^T
+      \label{eq:Ax}
+\end{equation}
+  The dimension of $\am$ here would be $m \times n$.  Each element of
+  the derivative is $\partial (\am \xv)_j / \partial \xv_i$ which is
+  $\partial \sum_k \am_{jk}\xv_k / \partial \xv_i$.  This is only non-zero
+  when $i = k$ and in that case it's $\am_{ji}$.  So, this gives us $\am^T$. 
+
+  \begin{equation}
+    \frac{\partial \xv^T \am}{\partial \xv} = \am
+    \label{eq:xTA}
+  \end{equation}
+
+\begin{equation}\frac{\partial a \uv}{\partial \xv} = a \frac{\partial \uv}{ \partial \xv}\end{equation}
+  The dimension of $\uv$ is $m \times 1$.
+  
+\begin{equation}\frac{\partial v \av}{\partial \xv} = \frac{\partial
+      v}{\partial \xv}\av^T\end{equation}
+  First, checking dimensions, $\partial v/\partial \xv$ is $n \times
+  1$ and $\av$ is $m \times 1$ so $\av^T$ is $1 \times m$ and our
+  answer is $n \times m$ as it should be.  Now, checking a value,
+  element $ij$ of the answer is $\partial v \av_j / \partial x_i$ =
+  $(\partial v / \partial x_i) \av_j$ which corresponds to element
+  $ij$ of $(\partial v / \partial \xv)\av^T$.
+
+\begin{equation}\frac{\partial v \uv}{\partial \xv} = v\frac{\partial
+      \uv}{\partial \xv} + \frac{\partial v}{\partial \xv} \uv^T\end{equation}
+
+\begin{equation}\frac{\partial \am \uv}{\partial \xv} = \frac{\partial
+      \uv}{\partial \xv}\am^T\end{equation}
+
+  \begin{equation}
+    \frac{\partial (\uv + \vv)}{\partial \xv} = \frac{\partial
+      \uv}{\partial \xv} + \frac{\partial \vv}{\partial \xv}
+    \label{eq:uplusv}
+  \end{equation}
+
+\begin{equation}\frac{\partial \gv(\uv)}{\partial \xv} = \frac{\partial
+      \uv}{\partial \xv}\frac{\partial \gv(\uv)}{\partial
+      \uv}\end{equation}
+  This is the basic chain rule.  Assume $\uv$ is $d \times 1$.  Then
+  $\partial \uv / \partial \xv$ is $n \times d$ and $\partial \gv(\uv)
+  / \partial \uv$ is $d \times m$, where element $ij$ is $\partial
+  \gv(\uv)_j / \partial \uv_i$.
+
+\begin{equation}\frac{\partial \fv(\gv(\uv))}{\partial \xv} = \frac{\partial
+      \uv}{\partial \xv}\frac{\partial \gv(\uv)}{\partial \uv}
+    \frac{\partial \fv(\gv)}{\partial \gv}\end{equation}
+  Even more chain rule!
+
+  \subsection{Some other identities}
+  You can get many scalar-by-vector and vector-by-scalar cases as special
+  cases of the rules above, making one of the relevant vectors just be
+  1 x 1.  Here are some other ones that are handy.  For more, see the
+  Wikipedia article on Matrix derivatives (for consistency, only use
+  the ones in {\em denominator layout}).
+
+  \begin{equation}
+    \frac{\partial \uv^T \vv}{\partial \xv} = \frac{\partial
+      \uv}{\partial \xv} \vv + \frac{\partial \vv}{\partial \xv} \uv
+    \label{eq:uTv}
+    \end{equation}
+
+  \begin{equation}
+    \frac{\partial \uv^T}{\partial x} = \big(\frac{\partial
+      \uv}{\partial x}\big)^T
+    \label{eq:uT}
+    \end{equation}
+    
+
+
+    \subsection{Derivation of gradient for linear regression}
+
+\newcommand{\xmt}{\tilde{\bf X}}
+\newcommand{\ymt}{\tilde{\bf Y}}
+
+    
+Applying identities \ref{eq:xTA},\ref{eq:uTv}, \ref{eq:uplusv}, \ref{eq:Ax}
+\ref{eq:const}
+\begin{align*}
+   \frac{\partial (\xmt \theta - \ymt)^T(\xmt \theta - \ymt)/n}{\partial
+  \theta} & = \frac{2}{n} \frac{\partial(\xmt \theta - \ymt)}{\partial
+            \theta}(\xmt \theta - \ymt)\\
+    & = \frac{2}{n} \big(\frac{\partial\xmt \theta}{\partial
+            \theta}-\frac{\partial \ymt}{\partial
+            \theta}\big)(\xmt \theta - \ymt)\\
+    & = \frac{2}{n} \big(\xmt^T -{\bf 0}\big)(\xmt \theta - \ymt)\\
+    & = \frac{2}{n} \xmt^T (\xmt \theta - \ymt)\\
+ \end{align*}
+
+
+\section{Matrix derivatives using Einstein summation}
+\label{app:einstein}
+
+{\em You do not have to read or learn this!  But you might find it
+  interesting or helpful.}
+
+\def\bea{\begin{eqnarray}}
+\def\eea{\end{eqnarray}}
+\def\Xt{\tilde{X}}
+\def\Yt{\tilde{Y}}
+
+Consider the objective function for linear regression, written out as products of matrices:
+\bea
+J(\theta) = \frac{1}{n} (\Xt\theta - \Yt)^T (\Xt\theta-\Yt)
+\,,
+\eea
+where $\Xt = X^T$ is $n\times d$, $\Yt=Y^T$ is $n\times 1$, and $\theta$ is $d\times 1$.  How does one show, with no shortcuts, that
+\bea
+	\nabla_{\theta}J = \frac{2}{n} {\Xt^T} {(\Xt\theta - \Yt)} \;\;?
+\eea
+One neat way, which is very explicit, is to simply write all the
+matrices as variables with row and column indices, e.g. $\Xt_{ab}$ is
+the row $a$, column $b$ entry of the matrix $\Xt$.  Furthermore, let
+us use the convention that in any product, all indices which appear
+more than once get summed over; this is a popular convention in
+theoretical physics, and lets us suppress all the summation symbols
+which would otherwise clutter the following expresssions.  For
+example, $\Xt_{ab} \theta_b$ would be the implicit summation notation
+giving the element at the $a^{\rm th}$ row of the matrix-vector
+product $\Xt \theta$.
+
+Using implicit summation notation with explicit indices,
+we can rewrite $J(\theta)$ as
+\bea
+	J(\theta) = \frac{1}{n} \left( \Xt_{ab} \theta_b - \Yt_a \right)  \left( \Xt_{ac}\theta_c - \Yt_a \right) \,.
+\eea
+Note that we no longer need the transpose on the first term, because
+all that transpose accomplished was to take a dot product between the
+vector given by the left term, and the vector given by the right term.
+With implicit summation, this is accomplished by the two terms sharing
+the repeated index $a$.
+
+Taking the derivative of $J$ with respect to the $d^{\rm th}$ element
+of $\theta$ thus gives, using the chain rule for (ordinary scalar)
+multiplication:
+\bea
+\frac{dJ}{d\theta_d} &=& \frac{1}{n} \left[
+  \Xt_{ab} \delta_{bd} \left( \Xt_{ac}\theta_c-\Yt_a \right)
+  + \left(\Xt_{ab}\theta_b - \Yt_a \right) \Xt_{ac} \delta_{cd}
+  \right]
+\\
+&=& \frac{1}{n} \left[
+  \Xt_{ad} \left( \Xt_{ac}\theta_c-\Yt_a \right)
+  + \left(\Xt_{ab}\theta_b - \Yt_a \right) \Xt_{ad}
+  \right]
+\\
+&=& \frac{2}{n} \Xt_{ad} \left( \Xt_{ab}\theta_b-\Yt_a \right)
+\,,
+\eea
+where the second line follows from the first, with the definition that
+$\delta_{bd} = 1$ only when $b=d$ (and similarly for $\delta_{cd}$).
+And the third line follows from the second by recognizing that the two
+terms in the second line are identical.  Now note that in this
+implicit summation notation, the $a, b$ element of the matrix product
+of $A$ and $B$ is $(AB)_{ac} = A_{ab}B_{bc}$.  That is, ordinary
+matrix multiplication sums over indices which are adjacent to each
+other, because a row of $A$ times a column of $B$ becomes a scalar
+number.  So the term in the above equation with $\Xt_{ad} \Xt_{ab}$ is
+not a matrix product of $\Xt$ with $\Xt$.  However, taking the
+transpose $\Xt^T$ switches row and column indices, so $\Xt_{ad} = \Xt^T_{da}$. 
+And $\Xt^T_{da} \Xt_{ab}$ {\em is} a matrix product of $\Xt^T$ with $\Xt$!
+Thus, we have that
+\bea
+\frac{dJ}{d\theta_d} &=& \frac{2}{n} \Xt^T_{da} \left( \Xt_{ab}\theta_b-\Yt_a \right)
+\\
+&=& \frac{2}{n} \left[ \Xt^T \left( \Xt\theta-\Yt \right) \right]_{d}
+\,,
+\eea
+which is the desired result.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "top"
+%%% End:

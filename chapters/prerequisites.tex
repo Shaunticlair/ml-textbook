@@ -1,0 +1,455 @@
+
+\setcounter{chapter}{-1} %Makes the prereq chapter chapter 0
+
+\chapter{Prerequisites - Explanatory Notes}
+\label{prerequisites}
+
+
+
+    
+This course assumes knowledge of several topics. Here, we'll outline them: hopefully, this will make it easier to get up to speed if you have a gap in your background, and to know what you're looking for.
+
+This is designed to be somewhat comprehensive, so if you've taken a class, you can likely skip the corresponding section.
+
+If a class has its own prerequisite, then we assume the understanding of that class as well. For example, we assume you know multi-variable calculus, so single-variable is assumed as well.
+    
+\section{Multi-variable Calculus (MIT's 18.02)}
+
+    You will need most of the differential aspects of multi-variable calculus: 
+    
+    \begin{itemize}
+        \item The concept of partial derivatives and how to find them
+        \item The \textbf{multivariable} chain rule
+        \item An intuition for the gradient as the \textbf{direction} of greatest increase in a function, and the \textbf{magnitude} of that increase.
+    \end{itemize}
+    
+    It is helpful to able to visualize a surface created by a function. You won't need to memorize the shapes of specific surfaces; just the 3D intuition in general.
+    
+    You should also be able to imagine "zooming in" to that surface, and seeing it "locally" as a \textbf{plane}, just like how we zoom in to a one-variable function, and see the \textbf{tangent line}.
+    
+    Sometimes, in this class, we will also do derivatives \textbf{numerically}, where we approximate the derivative with finite steps, of the form
+    
+    \begin{equation}
+        \deriv{y}{x} \approx \frac{ \Delta y}{ \Delta x}
+    \end{equation}
+    
+    You should also be comfortable with some basic ideas of "infinity": what happens in the "limit as we approach infinity", for example.
+    
+    %Might want to add a visual for this
+    
+    You will not need double/triple/line integrals, curl, divergence, or greens/stokes theorem.
+    
+\section{Vectors and Matrices (MIT's 18.02)}
+
+    You will need an understanding of vectors:
+    \begin{itemize}
+        \item You need to know what a vector is, with two interpretations:
+            \begin{itemize}
+                \item an \textbf{ordered list} of numbers
+                \item an object in some "space" with \textbf{magnitude} and \textbf{direction}
+            \end{itemize}
+        
+        \item You should know that the \textbf{length} or \textbf{dimension} of a vector is just how many numbers(or \textbf{elements}) that vector contains.
+        
+        \item You should know that a \textbf{scalar} is just a number, or in some perspectives, a 1-element vector.
+        
+        \item You need to be able to \textbf{add} or \textbf{subtract} pairs of vectors. You should also be able to \textbf{scale} them (in other words, multiply by a \textbf{scalar}).
+        
+        \item You should know how to take the \textbf{derivative} of a vector $\vec{v}$, with respect to a scalar $x$, in the form
+        
+        \begin{equation}
+            \deriv{\vec{v}}{x}
+        \end{equation}
+    \end{itemize}
+    
+    You will also need to understand the \textbf{dot product}, and its intuition as the \textbf{similarity} between vectors.
+    
+    You will need to understand matrices:
+    
+    \begin{itemize}
+        \item You should know what a matrix is, with three perspectives: 
+        %Pictures, maybe?
+            \begin{itemize}
+                \item a 2D grid of numbers (in a "rectangle")
+                \item an \textbf{ordered list} of equal-length vectors.
+                \item a \textbf{transformation} of vectors.
+            \end{itemize}
+        
+        \item You should understand the \textbf{dimensions} of a matrix, and the common notation  (\# of rows $\cross$ \# of columns)
+        
+        \item You need to be able to multiply two matrices, or a matrix times a vector.
+            \begin{itemize}
+                \item You need to understand when you are able to multiply matrices, based on dimensions.
+                \item The dimensions of the new matrix after multiplication.
+                \item How to do the calculation of multiplying matrices by hand.
+            \end{itemize}
+    \end{itemize}
+    
+    You should understand the \textbf{determinant}: both how to calculate it, and the intuition behind it.
+    
+    Finally, you should know what a matrix \textbf{inverse} is, and that a \textbf{zero-determinant} matrix has \textbf{no inverse}.
+    
+    
+\section{Linear Algebra (18.06)}
+
+    Currently, linear algebra is a \textbf{new} prerequisite.
+    
+    You need all of the concepts mentioned in the "vectors and matrices" segment.
+
+    You should also understand \vocab{independence} between vectors, the \vocab{rank} of a matrix, and how to take the \vocab{transpose} of a matrix. 
+    
+    \vocab{Linearity} is a really nice (and important!) property , where a function doesn't get in the way of some simple operations: \textbf{addition} or \textbf{scalar multiplication}. The order doesn't matter.\\
+    
+        \begin{definition}
+            For \vocab{linear} function/operator $\mathbb{L}$,
+            
+            \purp{Addition} (of any kind) has the same effect, before or after the function.
+            
+            \begin{equation*}
+                \mathbb{L}(x+y) = \mathbb{L}(x) + \mathbb{L}(y)
+            \end{equation*}
+            
+            \purp{Multiplication} by a \textbf{scalar} also has the same effect.
+            
+            \begin{equation*}
+                \mathbb{L}(3z) = 3\mathbb{L}(z)
+            \end{equation*}
+            
+        \end{definition}
+    
+    \miniex The \textbf{derivative} is \textbf{linear}: 
+    
+        \begin{equation}
+            \deriv{}{x}[f+g] = \deriv{}{x}[f]+\deriv{}{x}[g]
+        \end{equation}
+        \begin{equation}
+            \deriv{}{x}[10h]=10\deriv{}{x}[h]
+        \end{equation}
+    
+    Often, we talk about \vocab{operators}. They're like functions, where they have an input and an output. But sometimes, we use this word when we have \textbf{another} function as an input.\\
+    
+        \begin{definition}
+            An \vocab{operator} \textit{often} takes in a \purp{function} as an input, and gives another \purp{function} as an output.
+        \end{definition}
+        
+        
+        \note{An operator doesn't have a really "unique" definition in math: it's used for convenience.} 
+    
+    \miniex The \textbf{derivative} is also an \textbf{operator}. If you input $f(x) = x^2$, the output is $\deriv{}{x}[f(x)]=2x$: another \textbf{function}.
+    
+    Thus, we can call the derivative a \textbf{linear operator}.
+    
+    
+    The \textbf{visual} intuition of a matrix as a spatial transformation is useful in this class. 
+    \note{A good reference for intuition is the linear algebra series by YouTube channel, 3blue1brown! Each video averages 11 minutes, and has been helpful for many past students.}
+    
+    It would be helpful to understand \textbf{nullspace}, \textbf{column space}, and \textbf{vector spaces} in general.
+    
+\section{Programming (6.100A, 6.1010)}
+    
+    \textbf{For 6.100A:}
+    
+    You should be familiar with object-oriented programming in \textbf{Python}: you will be implementing various classes and simple algorithms in this class.
+    
+    You should have a basic understanding of \textbf{time complexity} and big-O notation. Ease with reading basic pseudocode would be helpful as well.
+    
+    
+    
+    \textbf{For 6.1010:}
+    
+    Either 6.1010 or 6.1210 are counted as a prereq: they are not equivalent, and neither is individually required to understand the course, but either will make your work in this class much easier.
+    
+    6.1010 offers more coding experience, which makes the process of implementation much smoother.
+    
+    \textbf{Misc:}
+    
+    Prior understanding of numpy is not mandatory, but would be very helpful. Pytorch would also be helpful, but is not used until much later in the course.
+    
+\section{Algorithms (6.1210)}
+    
+    Either 6.1010 or 6.1210 are counted as a prereq: they are not equivalent, and neither is individually required to understand the course, but either will make your work in this class much easier.
+    
+    6.1210 is about \textbf{algorithms}, and thus makes it easier to understand our discussions of different algorithms thoroughout this class.
+    
+    Concepts of dynamic programming, complexity, and reading/writing pseudocode are all helpful for this course.
+
+\section{Probability}
+
+    You don't need to have taken a full probability course, but there are some core concepts you must understand:
+    
+    \begin{itemize}
+        \item \vocab{Probability} (or chance) is the relative \textbf{frequency} of a particular outcome, if you were to run many trials - specifically, it is the proportion of those trials that gave this particular outcome.
+        
+        For example, if $p=.4$, then you should expect to have that event occur 40 times for every 100, on average.
+        
+        \item Probabilities $p$ are between 0 and 1: 
+            \begin{itemize}
+                \item If $p=0$, the event \textbf{will not} occur%\note{In most cases. There are some strange exceptions.}
+                \item If $p=1$, the event \textbf{will definitely} occur.
+                \item If $p=.5$, the event has a 50\% chance of happening if you try once.
+                \item Any other probability between 0 and 1 will give some corresponding percentile chance of occurring ($100*p\%$)
+            \end{itemize}
+            
+        \item You can represent probability of event $A$ as
+        
+            \begin{equation}
+                P(A)
+            \end{equation}
+            
+            Treating $P$ as a function that returns the \textbf{probability}.
+        
+        \item If you want two events to both occur, you can write that with an \vocab{and} statement:
+        
+            \begin{equation}
+                P(A \text{ and } B) = P(A \cap B)
+            \end{equation}
+            
+        \item If you want at least one of two events to occur, you can write that with an \vocab{or} statement:
+        
+            \begin{equation}
+                P(A \text{ or } B) = P(A \cup B)
+            \end{equation}
+            
+        \item The \vocab{conditional probability} is the probability of an event \vocab{given} that another event has already occured:
+        % If you know one event has occurred, and you want the chance of the other event, you can write that as a \vocab{given} statement:
+        
+            \begin{equation}
+                P(B|A)
+            \end{equation}
+            
+        This is read as "The probability of B \textbf{given} A".
+        % , meaning, the probability of event B \textbf{if} event A is already known to have happened.
+        
+        \item Two events are \vocab{independent} if knowing the outcome of one event does not affect the odds of another. You can write this as 
+        
+            \begin{equation}
+                P(A|B)P(B)=P(A \text{ and } B)
+            \end{equation}
+            
+            You can equivalently use the next bullet point's definition.
+        
+        \item The chance of two \textbf{independent} events both happening is their odds multiplied.
+            \begin{equation}
+                P(A \text{ and } B) = P(A)P(B)
+            \end{equation}
+            
+            
+        \item The \vocab{sum} of the probabilities of all outcomes \textbf{must add} to 1: otherwise, there's a chance of getting none of the listed outcomes.
+        
+        \item The chance of a particular event not occurring is called the \vocab{complement}, and has a chance of $1-p$.
+        
+        
+            
+    \end{itemize}
+    
+\section{Notation: Sets}
+
+    There are some common definitions and notations you should be familiar with (though they may be introduced if necessary).
+    
+    If you understand an equation, move on to the next one: each explanation is mostly basic.\\
+    
+    \begin{definition}
+        An \vocab{element} is a single object in a collection of objects.
+    \end{definition}
+    
+    This definition is often linked to \textbf{sets}.\\
+    
+    \begin{definition}
+        A \vocab{set} is a collection of distinct elements with no given order: if you shuffle the elements in a different order, you have the same set.
+    \end{definition}
+    
+    
+    \begin{itemize}
+        \item We can \vocab{define} a set by listing out its elements. For example, this says, "The set A contains the numbers 1, 2, and 3"
+            \begin{equation}
+                A = \{1, 2, 3\}
+            \end{equation}
+            
+            
+            
+        \item Shows that an element is \vocab{in} a set. The following says "x is an element of the set $A$".
+            \begin{equation}
+                x \in A
+            \end{equation}
+            
+        \item Shows that an element is \vocab{ not in} a set. The following says "x is \textbf{not} an element of the set $A$".
+            \begin{equation}
+                x \notin A
+            \end{equation}
+            
+        \item \vocab{Natural numbers}, or the counting numbers. 
+            \begin{equation}
+                \mathbb{N} = \{ 1, 2, 3, 4, 5... \}
+            \end{equation}
+            
+        \item \vocab{Real numbers}, or all of the numbers on the number line (include those between integers).
+        
+            \begin{equation}
+                \mathbb{R}
+            \end{equation}
+            
+        \item We can also define a set by starting with another set, and then listing a \vocab{restriction}:
+        
+            The following says, "Include each natural number $n$".
+            
+            \begin{equation}
+                \{ n \in \n \}
+            \end{equation}
+            
+            This seems redundant, but now, we can choose to only include natural numbers \textbf{larger than 10}:
+            
+            \begin{equation}
+                \{ n \in \n \,|\, n > 10 \} = \{11, 12, 13, 14...\}
+            \end{equation}
+            
+        % \item \vocab{Subsets} are used when one set contains every element of another set. 
+        \item A set $A$ is a \vocab{subset} of $B$ if all elements in $A$ are contained in $B$.
+        $B$ is then said to be a \vocab{superset} of $A$.
+        
+        For example, the set of natural numbers is a \textbf{subset} of the set of real numbers: every natural number is also a real number.\note{Notice that this symbol looks similar to $\leq$: that's intentional! This is because the two sets could be the same set, while one is a subset of the other.}
+        
+        Here, this says "$\n$ is a subset of $\RR$".
+        
+            \begin{equation}
+                \n \subseteq \RR
+            \end{equation}
+            
+        \item The previous symbol allowed for the two sets to be the same. But if we know they aren't, we can use a \vocab{proper subset}.
+        
+        Here, this says "$\n$ is a \textbf{proper} subset of $\RR$".\note{Since we know that some real numbers are not natural numbers, they can't be the same.}
+        
+            \begin{equation}
+                \n \subset \RR
+            \end{equation}
+            
+        \
+    \end{itemize}
+
+\section{Notation: Numbers and functions}
+
+    \begin{itemize}
+    
+        \item \vocab{Sum notation}: adding up elements in a sequence. For example:
+            \begin{equation}
+                \sum_{n=1}^{6} n^2 = 1^2+2^2+3^2+4^2+5^2+6^2
+            \end{equation}
+        
+        \item \vocab{Product notation}: multiplying elements in a sequence. For example:
+            \begin{equation}
+                \prod_{n=1}^{5} n = 1 \times 2 \times 3 \times 4 \times 5
+            \end{equation}
+            
+        \item \vocab{Rounding up}: round up real numbers. The following says, "round 2.5 up to the nearest whole number"
+            \begin{equation}
+                \ceiling{2.5} = 3
+            \end{equation}
+            
+        \item \vocab{Rounding down}: round down real numbers. The following says, "round 2.5 down to the nearest whole number"
+            \begin{equation}
+                \floor{2.5} = 2
+            \end{equation}
+        
+        \item \vocab{Function} notation: shows the name of the function, the set of inputs, and the set of outputs. 
+        
+        For example, this below says, "the function f takes real numbers as inputs, and outputs natural numbers."
+            \begin{equation}
+                f: \R \longrightarrow \n
+            \end{equation}
+            
+        \item If you want to get the \vocab{maximum} or \vocab{minimum} output of a function, you use the function with the corresponding name: $\max$ or $\min$.
+        
+        For example:
+        
+            \begin{equation}
+                \min_{x \in \RR} x^2=0
+            \end{equation}
+            
+            \begin{equation}
+                \max_{x \in \RR} \sin{x}  = 1
+            \end{equation}
+        
+        Below the $\max$ or $\min$ declaration you can denote the domain over which to find the maximum or minimum, respectively.
+
+        \item Sometimes, you don't want the minimum or maximum output: you want to know the \textbf{input} that gives you the minimum or maximum output.
+        If the domain can be inferred from context, it may be omitted.
+
+        So, you pick an \vocab{argument} (input variable) and get the \textbf{argmax} or \textbf{argmin}
+        
+        The following says, "$x=1$ \textbf{gives you} the minimum output for $f(x)=(x-1)^2$".
+        
+            \begin{equation}
+                \argmin{x}{ (x-1)^2 } = 1
+            \end{equation}
+            
+        The following says, "$f(x)=0$ \textbf{is} the minimum output for $f(x)=(x-1)^2$".
+        
+            \begin{equation}
+                \min_x{ (x-1)^2 } = 0
+            \end{equation}
+            
+        \textbf{Make sure} to keep track of the \textbf{difference} between min and argmin, or max and argmax!
+            
+        
+            
+            
+    
+    \end{itemize}
+    
+\section{Notation: Vectors Spaces}
+
+    Here, we'll build up some notation for representing sets of vectors, by representing them as ordered sequences.
+
+    \begin{itemize}
+    
+        \item Often, we care about \vocab{ordered sequence} of numbers. Maybe you want to return the entire sequence.
+        
+        We start with ordered pairs of numbers: you can represent every pair of elements from two sets with $\cross$.
+        
+        For example, here we have "every pair of two natural numbers":
+        
+            \begin{equation}
+                \n \cross \n = \{(1,1), (1,2), (2,1), (2,2)...\}
+            \end{equation}
+            
+        Notice that this can be used to fill in an grid of numbers: with real numbers, you can fill in the whole space with no gaps.
+        Note that since sets do not contain duplicate elements, $(1,1)$ is not included twice. 
+
+        \item If you want \vocab{more than two} elements, you can simply use more \textbf{crosses} $\cross$.
+        
+        For example, here is every trio of natural numbers:
+        
+            \begin{equation}
+                \n \cross \n \cross \n = \{(1,1,1), (1,1,2), (1,2,1)...\}
+            \end{equation}
+            
+        \item Here, we introduce a shorthand, because writing every cross (example: $\RR \cross \RR \cross \RR \cross \RR $) can get tiring.
+        
+        We can compress multiplication with \vocab{exponents}, so we'll do the same here:
+        
+            \begin{equation}
+                \RR^5 = \RR \cross \RR \cross \RR \cross \RR \cross \RR
+            \end{equation}
+            
+        \item Because one of our perspectives on \vocab{vectors} is as "an ordered list of numbers", we can represent all of our desired vectors using this notation.
+        
+        In general, the set of all length-n vectors can be represented as 
+        
+            \begin{equation}
+                \RR^{n}
+            \end{equation}
+    \end{itemize}
+    
+    
+\section{Optional}
+
+    Here, we list concepts that could be \textbf{helpful} for understanding this course more easily, but are entirely \textbf{not required}, as we'll be teaching what we need.
+    
+    \begin{itemize}
+        \item Tensors
+        \item Convolution
+        \item Examples of Optimization (Least-Squares, etc.)
+        \item Markov Models
+        \item Probability and Statistics (Expectation, Variance, Distributions...)
+        \item Mathematical maturity (from upper-level math courses, etc.)
+        \item Matrix Calculus
+    \end{itemize}

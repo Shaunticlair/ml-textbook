@@ -1,0 +1,65 @@
+    \subsection*{NLLM}
+    
+        One loose end left to tie up: our \textbf{loss function}. We need to evaluate our hypothesis, and be able to improve it.
+        
+        For \textbf{binary classification}, we did \textbf{NLL}:
+    
+        \begin{equation*}
+            \loss_{nll}
+            (\red{g} , \blu{y})
+            =
+            -
+            \Bigg(
+                \blu{y} \log{\red{g}}
+                +
+                \left( 1 - \blu{y} \right)
+                \log
+                \left( 1-\red{g} \right) 
+            \Bigg)
+        \end{equation*}
+        
+        How do we make this work in \textbf{general}? Well, we want to make our two terms have a \textbf{similar} form, so we can generalize to more classes.
+        
+        \begin{itemize}
+            \item $g$ and $1-g$ are both probabilities: we can think of them as $g_1$ and $g_2$, respectively.
+            \item If $g=g_1$, then we would expect $y=y_1$. And indeed: it gives a 1 if we're in the first class (+1).
+                \begin{itemize}
+                    \item Similarly, $1-y=y_2$.
+                \end{itemize}
+        \end{itemize}
+        
+        \begin{equation*}
+            \loss_{nll}
+            (\red{g} , \blu{y})
+            =
+            -
+            \Bigg(
+                \blu{y_1} \log{\red{g_1}}
+                +
+                \left( \blu{y_2} \right)
+                \log
+                \left( \red{g_2} \right) 
+            \Bigg)
+        \end{equation*}
+        
+        They have the \textbf{same} format now! Much tidier. And it tracks: when one \textbf{label} is correct, the other term is $y_j=0$, and \textbf{vanishes}.
+        
+        Does this \textbf{generalize} well? It turns out it does: with \textbf{one-hot encoding}, the correct label is \textbf{always} $y_j=1$, and the incorrect labels are \textbf{all} $y_j=0$. 
+        
+        So, we'll write it out:\\
+        
+        \begin{kequation}
+            The \gren{loss} function for \purp{multi-class} classification, \vocab{Negative Log Likelihood Multiclass (NLLM)}, is written as:
+            
+            \begin{equation*}
+                \loss_{NLLM}
+                (\red{g} , \blu{y})
+                =
+                -\sum_{j=1}^k
+                y_j \log(g_j)
+            \end{equation*}
+            
+            Because of \purp{one-hot encoding}, all terms except one have $y_j=0$, and thus \gren{vanish}.
+        \end{kequation}
+        
+        Using all of these functions, we can finally do gradient descent on our multi-class classifier. However, we won't go through that work in these notes.

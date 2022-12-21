@@ -1,0 +1,23 @@
+    \subsection*{Applications: Downstream Tasks}
+    
+        Finally, there's one more way to think about clustering that is more \textbf{practical}, and closer to \textbf{objective}.
+        
+        We use clustering to \textbf{sort} different data points that need \textbf{different} processing: this can make our model more \textbf{effective}, since different parts of the dataset may work \textbf{better} with different \textbf{treatment}.
+        
+        \miniex We could train a different regression model on each cluster: this can create a more accurate model.
+        
+        We call this next problem a \textbf{downstream application}.\\
+        
+        \begin{definition}
+            A \vocab{downstream application} is a \gren{problem} that relies on a \purp{different} process to make its work better or easier.
+            
+            In this case, \gren{clustering} has \purp{downstream applications} that can \gren{take advantage} of the \purp{structure} it reveals.
+        \end{definition}
+        
+        If our clustering is \textbf{good}, we would expect it to \textbf{improve} the performance of downstream tasks.\\
+        
+        \begin{concept}
+            We can indirectly \vocab{evaluate} a \purp{clustering algorithm} based on how \gren{successful} the \vocab{downstream application} is.
+            
+            If it \gren{improves} the performance of a downstream application, we could say it works \purp{well}.
+        \end{concept}
