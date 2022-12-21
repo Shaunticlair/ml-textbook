@@ -1,6 +1,6 @@
 # ml-textbook
 
-If you are looking for the textbook itself, you will find it in the "chapters pdfs" folder. Source .tex files are stored in the "chapters" folder.
+If you are looking for the textbook itself, you will find it in the "chapter pdfs" folder. Source .tex files are stored in the "chapters" folder.
 
 ---------------
 
