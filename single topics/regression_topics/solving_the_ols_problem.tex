@@ -34,7 +34,7 @@
         Note that we aren't taking $\deriv{}{x}$: we want to change our \textbf{model}, not our \textbf{data}! So, since $\theta$ represents our \textbf{model}, we'll take $\deriv{}{\theta}$.
         
         \begin{equation}
-            J'(\theta) = 2(\theta x - y ) = 0
+            J'(\theta) = 2x(\theta x - y ) = 0
         \end{equation}
         
         We just find where the slope is 0, and solve for $\theta$!
@@ -71,8 +71,8 @@
         \note{Check the prerequisites chapter, chapter 0, for a full definition of linearity.}
         
         \begin{equation}
-            J'(\theta) = \frac{1}{n}  \sum_{i=1}^n \red{2(\theta \ex{x}{i}  
-            - \ex{y}{i} )} = 0
+            J'(\theta) = \frac{1}{n}  \sum_{i=1}^n \red{2 \ex{x}{i} \cdot 
+            (\theta \ex{x}{i}  - \ex{y}{i} )} = 0
         \end{equation}
         
         And we can \textbf{solve} this just the same way.

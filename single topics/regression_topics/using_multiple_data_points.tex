@@ -56,11 +56,11 @@
             =
             \frac{1}{n}
             \begin{bmatrix}
-              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{n}
             \end{bmatrix}
             \cdot
             \begin{bmatrix}
-              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{n}
             \end{bmatrix}
         \end{equation}
         
@@ -84,12 +84,12 @@
             R =
             \overbrace{
             \begin{bmatrix}
-              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{d} 
+              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{n} 
             \end{bmatrix}
             }^{\text{data points as columns!}}
         \end{equation}
         
-    \subsection{Going from $x$ to $X$}
+    \subsection*{Going from $x$ to $X$}
     
         We can do the same for our input data $\ex{x}{i}$:\\
         
@@ -99,23 +99,16 @@
             \begin{equation*}
                 X =
                 \begin{bmatrix}
-                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{d}
+                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{n}
                 \end{bmatrix}
             \end{equation*}
             \begin{equation*}
                 Y =
                 \begin{bmatrix}
-                  \ex{y}{1} & \ex{y}{2} & \ex{y}{3} & \cdots & \ex{y}{d}
+                  \ex{y}{1} & \ex{y}{2} & \ex{y}{3} & \cdots & \ex{y}{n}
                 \end{bmatrix}
             \end{equation*}
         \end{notation}
-        
-        Since we had $\ex{r}{i} = (\theta \ex{x}{i} - \ex{y}{i} )$, we can write 
-        
-        \begin{equation}
-            R = \theta X - Y
-        \end{equation}
-        \note{Still in the 1D case!}
         
         We can write our \textbf{objective function} as
         
@@ -123,10 +116,10 @@
             J = 
             \frac{1}{n}
             \begin{bmatrix}
-              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{d}
+              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{n}
             \end{bmatrix}
             \begin{bmatrix}
-              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{n}
             \end{bmatrix}
         \end{equation}
         
@@ -135,6 +128,13 @@
         \begin{equation}
             J = \frac{1}{n} RR^T
         \end{equation}
+
+        Since we had $\ex{r}{i} = (\theta \ex{x}{i} - \ex{y}{i} )$, we can write 
+        
+        \begin{equation}
+            R = \theta X - Y
+        \end{equation}
+        \note{Still in the 1D case!}
         
         Let's expand this back out with $R = \theta X - Y$:\\
         

@@ -813,11 +813,11 @@
             =
             \frac{1}{n}
             \begin{bmatrix}
-              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{n}
             \end{bmatrix}
             \cdot
             \begin{bmatrix}
-              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{n}
             \end{bmatrix}
         \end{equation}
         
@@ -841,7 +841,7 @@
             R =
             \overbrace{
             \begin{bmatrix}
-              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{d} 
+              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{n} 
             \end{bmatrix}
             }^{\text{data points as columns!}}
         \end{equation}
@@ -856,23 +856,16 @@
             \begin{equation*}
                 X =
                 \begin{bmatrix}
-                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{d}
+                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{n}
                 \end{bmatrix}
             \end{equation*}
             \begin{equation*}
                 Y =
                 \begin{bmatrix}
-                  \ex{y}{1} & \ex{y}{2} & \ex{y}{3} & \cdots & \ex{y}{d}
+                  \ex{y}{1} & \ex{y}{2} & \ex{y}{3} & \cdots & \ex{y}{n}
                 \end{bmatrix}
             \end{equation*}
         \end{notation}
-        
-        Since we had $\ex{r}{i} = (\theta \ex{x}{i} - \ex{y}{i} )$, we can write 
-        
-        \begin{equation}
-            R = \theta X - Y
-        \end{equation}
-        \note{Still in the 1D case!}
         
         We can write our \textbf{objective function} as
         
@@ -880,20 +873,27 @@
             J = 
             \frac{1}{n}
             \begin{bmatrix}
-              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{d}
+              \ex{r}{1} & \ex{r}{2} & \ex{r}{3} & \cdots & \ex{r}{n}
             \end{bmatrix}
             \begin{bmatrix}
-              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{d}
+              \ex{r}{1} \\ \ex{r}{2} \\ \ex{r}{3} \\ \vdots \\ \ex{r}{n}
             \end{bmatrix}
         \end{equation}
         
-        So, we can write compactly:
+        Or more compactly:
         
         \begin{equation}
             J = \frac{1}{n} RR^T
         \end{equation}
+
+        Since we had $\ex{r}{i} = (\theta \ex{x}{i} - \ex{y}{i} )$, we can write 
         
-        Let's expand this back out with $R = \theta X - Y$:\\
+        \begin{equation}
+            R = \theta X - Y
+        \end{equation}
+        \note{Still in the 1D case!}
+        
+        Let's use this to expand our objective function:\\
         
         \begin{concept}
             In 1-D, we can use row vectors to sum our data points as
@@ -924,7 +924,7 @@
         \begin{equation}
             X =
                 \begin{bmatrix}
-                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{d}
+                  \ex{x}{1} & \ex{x}{2} & \ex{x}{3} & \cdots & \ex{x}{n}
                 \end{bmatrix}
         \end{equation}
         
@@ -975,7 +975,8 @@
             \end{equation*}
         \end{kequation}
         
-        All we have to do is combine our \textbf{equations}: We can use the one in the last section, but because $\theta$ is a matrix, we have to \textbf{transpose} it.\\
+        All we have to do is combine our \textbf{equations}: We can use the one in the last section, but because $\theta$ is a matrix, we have to \textbf{transpose} it.
+            \note{There was no point in transposing it when it was just a constant!}\\
         
         \begin{kequation}
             Using our \purp{appended} matrix, we can write our \gren{objective function} for \purp{multiple} variables and \purp{multiple} data points as
@@ -1063,7 +1064,7 @@
         Note that we aren't taking $\deriv{}{x}$: we want to change our \textbf{model}, not our \textbf{data}! So, since $\theta$ represents our \textbf{model}, we'll take $\deriv{}{\theta}$.
         
         \begin{equation}
-            J'(\theta) = 2(\theta x - y ) = 0
+            J'(\theta) = 2x(\theta x - y ) = 0
         \end{equation}
         
         We just find where the slope is 0, and solve for $\theta$!
@@ -1100,8 +1101,8 @@
         \note{Check the prerequisites chapter, chapter 0, for a full definition of linearity.}
         
         \begin{equation}
-            J'(\theta) = \frac{1}{n}  \sum_{i=1}^n \red{2(\theta \ex{x}{i}  
-            - \ex{y}{i} )} = 0
+            J'(\theta) = \frac{1}{n}  \sum_{i=1}^n \red{2 \ex{x}{i} \cdot
+            (\theta \ex{x}{i}  - \ex{y}{i} )} = 0
         \end{equation}
         
         And we can \textbf{solve} this just the same way.
