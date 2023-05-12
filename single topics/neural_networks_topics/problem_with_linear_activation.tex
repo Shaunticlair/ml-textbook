@@ -150,7 +150,7 @@
         
         \begin{equation}
             (\pur{W^L})^T (\org{ {W^{L-1}} })^T \cdots (\blu{W^2})^T (\red{W^1})^T
-            = W^{X}
+            = W
         \end{equation}
         
         And so, we can't just use linear layers: we \textbf{need} a \textbf{nonlinear} activation function.\\
@@ -160,8 +160,32 @@
             
             This means that we do not expand our \purp{hypothesis} class by using more linear layers: we have to use \gren{nonlinear} activation functions.
         \end{concept}
+
+        This problem is even worse than it seems: let's see why. Since we can \textbf{combine} $n$ linear layers together into one, what happens if we only have \textbf{one} linear layer?
+
+        Suppose layer $\ell$ is linear. The next layer contains a \textbf{linear} component and a non-linear \textbf{activation} component. We'll focus on just the linear part.
+            \note{Activation comes after this step, so we would just use $f(z^{\ell+1})$.}
+
+        \begin{equation}
+            z^{\ell+1} = (\blu{W^{\ell+1}})^T\red{x^{\ell+1}} = 
+            (\blu{W^{\ell+1}})^T \red{ (W^{\ell})^T } \pur{ x^{\ell} } 
+        \end{equation}
+
+        Wait: we have \textbf{two} consecutive \textbf{linear} components. We can combine layer $\ell$ with the linear component of the next layer! 
+
+        \begin{equation}
+            (\blu{W^{\ell+1}})^T \red{ (W^{\ell})^T } \pur{ x^{\ell} }  = W \pur{ x^{\ell} }
+        \end{equation}
         
-        If we use something \textbf{nonlinear}...
+        Now, we've removed layer $\ell$ entirely: it makes no difference to have even just one \textbf{hidden} linear layer!\\
+
+        \begin{concept}
+            Even having one hidden \vocab{linear layer} is \purp{redundant}: it's \purp{equivalent} to not having that layer at all.
+
+            Since this requires \gren{more computation} for no benefit, we \purp{almost never} make linear hidden layers.
+        \end{concept}
+
+        So, linear models are out. What if we use something \textbf{nonlinear}?
         
         \begin{equation}
             A^2 = 
@@ -172,7 +196,7 @@
             \Bigg)
         \end{equation}
         
-        We get something that doesn't \textbf{simplify}:
+        We get something that doesn't seem to \textbf{simplify}:
             \note{This is ugly, but we don't have to worry about the details.}
         
         \begin{equation}
@@ -190,6 +214,7 @@
                 }^{A^1}
             \Bigg)
         \end{equation}
+
+        If we choose our function right (and avoid linearity), this cannot be simplified to a single layer! That means, this function is \textbf{different} (and likely more \textbf{complex}) than a one-layer model. 
         
-        Which is what we want!
-        
+        And this kind of \textbf{expressiveness} is exactly what we're looking for.

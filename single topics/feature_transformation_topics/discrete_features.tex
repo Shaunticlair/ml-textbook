@@ -1,0 +1,508 @@
+        \subsection*{Discrete Features}
+
+            One of the most common issues with data types is figuring out what to do with \textbf{discrete} features: ones that are broken up into categories.
+
+            These categories may or may not have an order, or some other important information. We need to use the right data type to keep as much information as possible. This will allow our model to more easily discover patterns.
+
+            We'll make the following assumption:\\
+
+            \begin{clarification}
+                In this textbook/course, we assume that all \purp{input vectors} $x$ should be \gren{real-valued vectors} (or: $x \in \R^d$)
+            \end{clarification}
+
+
+            And now, we go through some common examples of feature transformations:
+
+            \subsubsection*{Numeric}
+
+                First, we consider the case where our pre-processing \textbf{feature} is "\textit{almost}" in a number format: each class could reasonably correspond to a \textbf{number}.\\
+    
+                \begin{definition}
+                    In the \vocab{numeric} transformation, we convert each of our $k$ classes into a \purp{number}. 
+    
+                    \begin{itemize}
+                        \item This approach is only appropriate if each class is roughly "numeric": it fits appropriately into the \gren{real numbers}.
+                            \begin{itemize}
+                                \item We have a clear \purp{ordering}, and
+                                \item The numbers have the \purp{structure} of real numbers: \gren{distance} between points, or the idea of \gren{adding/multiplying}, makes sense.
+                            \end{itemize}
+                    \end{itemize}
+                \end{definition}
+
+                \miniex There are many ways to do this. Here, we evenly distribute values evenly between 0 and 1:
+                    \note{Remember: which way you transform should reflect the nature of your data!}
+    
+                    \begin{equation}
+                        \begin{bmatrix}
+                            \frac{1}{k} & \frac{2}{k} & \cdots & \frac{k-1}{k} & 1
+                        \end{bmatrix},
+                        \qquad 
+                        \text{Class } i \longrightarrow \frac{i}{k}
+                    \end{equation}
+
+            \subsecdiv
+            \subsubsection*{Thermometer Code}
+
+                Next, we'll relax how number-like our feature is. This time, we don't need our data to behave like a number, but it does have an \textbf{ordering}.
+                    \note{By "relax", we mean we'll remove some requirements for our feature, like being able to add them together.}
+
+                Some examples:
+
+                \begin{itemize}
+                    \item Results of an opinion poll:
+                        \begin{itemize}
+                            \item "Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"
+                        \end{itemize}
+                    
+                    \item Education level: 
+                        \begin{itemize}
+                            \item "Below High School", "High School Degree", "Associates Degree", "Bachelors" "Advanced Degree"
+                        \end{itemize}
+                    
+                    \item Ranking of athletes
+                \end{itemize}
+
+                In this case, we can't just use numbers $\{1,2,3,...\}$. Why not?
+
+                Because that implies that there's a specific "scaling" between points: Is the \#1 athlete twice as good as the \#2 athlete? Maybe, but that's not what the ranking tells us!\\
+
+                \begin{concept}
+                    Data that is \vocab{ordered} but not \purp{numerical} cannot be represented with \gren{a single real number}.
+
+                    Otherwise, we might consider one element to be a certain amount "larger" or "smaller" than another, when that's not what \gren{ordering} means.
+                \end{concept}
+
+                \miniex Suppose we assign $\{1,2,3\}$ for $\{Disagree, Neutral, Agree\}$. The person who writes 'agree' is doesn't "agree three times as much" as the person who writes 'disagree'!
+
+                But, we still want to keep that ordering: counting up from one element to the next. How do create an order without creating an exact, numeric difference?
+
+                Just now, we tried to count by increasing a single variable. But, there's another way to count: counting up using multiple different variables!
+                    \note{This approach is more similar to counting on your fingers.}
+
+                \begin{equation*}
+                    \text{Class 1} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \text{Class 2} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \text{Class 3} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \text{Class 4} \longrightarrow
+                    \begin{bmatrix}
+                        \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                \end{equation*}
+                
+                This version allows us to avoid the problems we had before: this doesn't behave the same way as a \textbf{numerical} value.
+
+                To better understand what's going on, here's another way to frame it:
+                    \note{Class$(x)$ is just shorthand for, "which class is $x$ in?"}
+
+                \begin{equation}
+                    \phi(x) =
+                    \begin{bmatrix}
+                        \text{Class}(x)\geq 4 \\
+                        \text{Class}(x)\geq 3\\
+                        \text{Class}(x)\geq 2\\
+                        \text{Class}(x)\geq 1
+                    \end{bmatrix}
+                \end{equation}
+
+                \miniex Suppose $x$ is in class 3. The bottom three statements are all true, the top one is false: so we get $[0, 1, 1, 1]^T$. 
+
+                This helps us understand why this encoding is so useful:
+                
+                \begin{itemize}
+                    \item We aren't directly "adding" variables to each other: they stay separated by \textbf{index}.
+                    
+                    \item When using a linear model $\theta^T\phi(x)$, each class  matches a different $\theta_i$.
+                        \note{$\theta_i$ scales the $\nth{i}$ variable. So, each class can be scaled differently!}
+                        
+                    \item Despite not behaving like numbers, "higher" classes in the order still keep track of all of the classes below them.
+                        \begin{itemize}
+                            \item \miniex Class 2-4 all share the feature $\text{Class}(x)\geq 2$ (equivalent to $\text{Class}(x)>1$).
+                        \end{itemize}
+                \end{itemize}
+
+                This technique is called \textbf{thermometer encoding}.\\
+
+                \begin{definition}
+                    \vocab{Thermometer encoding} is a \purp{feature transform} where we take each class and turn it into a feature vector $\phi(x)$ where
+
+                    \begin{equation*}
+                    \text{Class 1} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix},
+                    \qquad 
+                    \text{Class 2} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class 3} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class } k \longrightarrow
+                    \begin{bmatrix}
+                        \red{1} \\ \vdots \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                \end{equation*}
+
+                    \begin{itemize}
+                        \item The \purp{length of the vector} is the \gren{number of classes} $k$ we have.
+                        \item The $\nth{i}$ class has $i$ \purp{ones}.
+                    \end{itemize}
+
+                    \phantom{}
+
+                    \begin{itemize}
+                        \item This transformation is only appropriate if the data 
+                            \begin{itemize}
+                                \item Is \purp{ordered},
+                                \item But not \gren{real number-compatible}: we can't add the values, or compare the "amount" of each feature.
+                            \end{itemize}
+                    \end{itemize}
+                \end{definition}
+
+                \miniex We reuse our example from earlier: 
+
+                \begin{equation*}
+                    \phi(x_{\text{Class 1}}) =
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix},
+                    \qquad \;\;
+                    \phi(x_{\text{Class 2}}) =
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \phi(x_{\text{Class 3}}) =
+                    \begin{bmatrix}
+                        \blu{0} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \phi(x_{\text{Class 4}}) =
+                    \begin{bmatrix}
+                        \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                \end{equation*}
+
+            \subsecdiv
+            \subsubsection*{One-hot Code}
+
+                We introduced this technique in the \textbf{previous} chapter:
+                
+                When there's no clear way to \textbf{simplify} our data, we accept the current discrete classes, and \textbf{convert} them to a number-like form.
+
+                \begin{itemize}
+                    \item Examples:
+                    \begin{itemize}
+                        \item Colors: $\{Red, Orange, Yellow, Green, Blue, Purple\}$
+                        \item Animals: $\{Dog, Cat, Bird, Spider, Fish, Scorpion\}$
+                        \item Companies: $\{Walmart, Costco, McDonald's, Twitter\}$
+                    \end{itemize}
+                \end{itemize}
+
+                We can't use thermometer code, because that suggests a natural \textbf{order}. And we definitely can't use real numbers.
+
+                \miniex $\{Brown, Pink, Green\}$ doesn't necessarily have an obvious order: you could force one, but there's no reason to.
+
+                But, we can use one idea from thermometer code: each class in a different variable.
+        
+                \begin{equation}
+                    \begin{bmatrix}
+                      C_1\\C_2\\ \vdots \\ C_k
+                    \end{bmatrix}
+                \end{equation}
+
+                But in this case, we don't "build up" our vector: we replace $\text{Class}(x)\geq 4$ with $\text{Class}(x)= 4$.
+
+                \begin{equation}
+                    \phi(x) =
+                    \begin{bmatrix}
+                        \text{Class}(x) = 4 \\
+                        \text{Class}(x) = 3\\
+                        \text{Class}(x) = 2\\
+                        \text{Class}(x) = 1
+                    \end{bmatrix}
+                \end{equation}
+                
+            This approach is called \textbf{one-hot encoding}.\\
+            
+            \begin{definition}
+                \vocab{One-hot encoding} is a way to represent \vocab{discrete} information about a data point.
+                
+                Our $k$ classes are stored in a length-$k$ column \gren{vector}. For \purp{each} variable in the vector, 
+                
+                \begin{itemize}
+                    \item The value is \gren{0} if our data point is \purp{not in that class}.
+                    \item The value is \gren{1} if our data point is \purp{in that class}.
+                \end{itemize}
+
+                 \begin{equation*}
+                    \text{Class 1} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix},
+                    \qquad 
+                    \text{Class 2} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \red{1} \\ \blu{0}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class 3} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \red{1} \\ \blu{0} \\ \blu{0}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class } k \longrightarrow
+                    \begin{bmatrix}
+                        \red{1} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \blu{0}
+                    \end{bmatrix}
+                \end{equation*}
+                
+                In one-hot encoding, items are \purp{never} labelled as being in \purp{two} classes at the \gren{same time}.
+
+                \begin{itemize}
+                    \item This transformation is only appropriate if the data is
+                        \begin{itemize}
+                            \item Does not have another \purp{structure} we can reduce it to: it's neither like a \gren{real number} nor \gren{ordered}
+                            
+                            \item We don't have an \gren{alternative} representation that contains more (accurate) information.
+                        \end{itemize}
+                \end{itemize}
+            \end{definition}
+            
+            \miniex Suppose that we want to classify \textbf{furniture} as table, bed, couch, or chair.
+            
+            \begin{equation}
+                \begin{bmatrix}
+                  \text{table} \\ \text{bed} \\ \text{couch} \\ \text{chair} 
+                \end{bmatrix}
+            \end{equation}
+            
+            For each class:
+            
+            \begin{equation}
+                y_{chair} = 
+                \begin{bmatrix}
+                  0\\0\\0\\ \red{1}
+                \end{bmatrix}
+                \qquad
+                y_{table} = 
+                \begin{bmatrix}
+                  \red{1}\\0\\0\\0
+                \end{bmatrix}
+                \qquad
+                y_{couch} = 
+                \begin{bmatrix}
+                  0\\0\\\red{1}\\0
+                \end{bmatrix}
+                \qquad
+                y_{bed} = 
+                \begin{bmatrix}
+                  0\\\red{1}\\0\\0
+                \end{bmatrix}
+            \end{equation}
+
+            \subsecdiv
+            \subsubsection*{One-hot versus Thermometer}
+
+                One common question is, "why can't we use one-hot for ordered data? We could sort the indices so they're in order".
+
+                However, there's a problem with this logic: the computer \textbf{doesn't care} about the order of the variables in an array: it contains no information!
+
+                Why is that? If the vector has an order, shouldn't that \textbf{affect} the model?
+                
+                Well, remember that our model is represented by 
+
+                \begin{equation}
+                    \theta^T x = \sum_i \theta_i x_i
+                \end{equation}
+
+                The vector format $\theta^Tx$ is just a way to \textbf{condense} our equation: the ordering goes away when we compute the sum.\\
+
+                \begin{concept}
+                    \vocab{Order} of elements in a vector \purp{don't} affect the behavior of our model.
+
+                    This is because a linear model is a \gren{sum}, and sums are the same regardless of \purp{order}.
+                \end{concept}
+
+                If our model has the same math regardless of order, then it can't use order information.
+
+                \miniex We'll take a vector, and rearrange it.
+                    \note{Despite shuffling, these two equations are equivalent!}
+
+                \begin{equation*}
+                    \theta^T \phi(x) = 
+                    \begin{bmatrix}
+                        \theta_1 & \theta_2 & \theta_3 & \theta_4
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        0\\1\\0\\0
+                    \end{bmatrix}
+                    \qquad\longrightarrow\qquad
+                    (\theta^T)^* (\phi(x))^* = 
+                    \begin{bmatrix}
+                        \theta_3 & \theta_1 & \theta_4 & \theta_2
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        0 \\ 0 \\ 0 \\ 1
+                    \end{bmatrix}
+                \end{equation*}
+
+                The math is the same, despite changing order: our model knows nothing about ordering.\\
+
+                \begin{clarification}
+                    \vocab{One hot encoding} \purp{cannot} encode information about ordering.
+
+                    \vocab{Thermometer encoding} is required to \gren{represent ordered objects}.
+                \end{clarification}
+
+                Why is thermometer encoding able to of representing ordering? Let's try shuffling it, too.
+
+                \begin{equation}
+                    \theta^T \phi(x) = 
+                    \begin{bmatrix}
+                        \theta_1 & \theta_2 & \theta_3 & \theta_4
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        0\\1\\1\\1
+                    \end{bmatrix}
+                \end{equation}
+
+                \begin{equation}
+                    (\theta^T)^* (\phi(x))^* = 
+                    \begin{bmatrix}
+                        \theta_3 & \theta_1 & \theta_4 & \theta_2
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        1 \\ 0 \\ 1 \\ 1
+                    \end{bmatrix}
+                \end{equation}
+
+                Even though we've changed the order, we still know this is the \textbf{third} in the order, because we have \textbf{three} 1's!\\
+
+                \begin{concept}
+                    Even though the \gren{order of elements} in a vector \purp{doesn't matter}, we can retrieve the order of \vocab{thermometer coding} based on the \purp{number of 1's in the vector}.
+                \end{concept}
+            
+            \subsecdiv
+            \subsubsection*{Factored Code}
+
+                Now, we move away from number-like properties. Instead, what other patterns of our feature could be \textbf{useful}?
+
+                Sometimes, a single feature will contain multiple pieces of information. Separating those pieces (or \textbf{factors}) from each other can make it easier for our machine to understand.
+
+                \begin{itemize}
+                    \item A \textbf{car} is often described by the "make" (brand) and "model" (which exact type of car by that brand). 
+                        \begin{itemize}
+                            \item These could be broken into two \textbf{features}: "make" is one feature, "model" is another.
+                            \item \miniex "Nissan Altima" becomes "Make: Nissan" and "Model: Altima".
+                        \end{itemize}
+                        
+                    \item Most \textbf{blood types} are in the following categories: $\{A+, A-, B+, B-, AB+, AB-, O+, O-\}$. 
+                    \begin{itemize}
+                        \item You could factor this based on the letter, and positive/negative: $\{A,B,AB,O\}$ and $\{+,-\}$.
+                        \item Since "O" means we contain neither $A$ nor $B$, we could factor the first feature further: $\{A, \text{not } A\}$, $\{B, \text{not } B\}$
+                        \item Example: Using the first factoring, $A-$ becomes $[A, -]$. Using the second it becomes $[A, \text{not } B, -]$. 
+                    \end{itemize}
+
+                    \item \textbf{Addresses} have many parts: street number, zip code, state, etc.
+                        \begin{itemize}
+                            \item Each of these can be given their own factor.\\
+                        \end{itemize}
+                \end{itemize}
+
+                \begin{definition}
+                    \vocab{Factored code} is a \purp{feature transformation} where we take one \gren{discrete class} and break it up into other discrete classifications, called \purp{factors}.
+
+                    \begin{equation}
+                        \text{Class } m \text{ and } n \longrightarrow \text{Class } m, \text{Class } n
+                    \end{equation}
+
+                    \begin{itemize}
+                        \item This transformation is only appropriate if
+                            \begin{itemize}
+                                \item We have some feature(s) that can be \purp{broken up} into \gren{simpler}, meaningful parts.
+                            \end{itemize}
+                    \end{itemize}
+
+                    Often, we apply \gren{other} feature transformations after factored coding. 
+                \end{definition}
+
+                Note the final comment: often, we turn a discrete class into multiple new discrete classes. 
+
+                But, we still need to convert these into a usable, numeric-vector form!
+
+                \miniex We can re-use our blood type example from above.
+
+                \begin{equation}
+                    \phi(x) = 
+                    \begin{bmatrix}
+                        x \text{ contains } A \\
+                        x \text{ contains } B \\
+                        x \text{ is } +
+                    \end{bmatrix}
+                \end{equation}
+
+                Each of these are binary features. For example:
+
+                \begin{equation}
+                    \phi(AB-) =
+                    \begin{bmatrix}
+                        \text{True} \\
+                        \text{True} \\
+                        \text{False}
+                    \end{bmatrix}
+                    =
+                    \begin{bmatrix}
+                        1 \\ 1 \\ 0
+                    \end{bmatrix}
+                \end{equation}
+
+            \subsubsection*{Binary Code}
+
+                One possible way to encode data is to \textbf{compress} data using a \textbf{binary code}.
+
+                This might be tempting, because $k$ values can be represented by $\log_2(k)$ values.
+
+                \miniex Suppose you have the one-hot code for $6$, and want to represent it with binary:
+
+                \begin{equation}
+                    \text{Class 6} 
+                    \;\;\overbrace{\longrightarrow}^{\text{One-hot}}\;\;
+                    \begin{bmatrix}
+                        0 & 1 & 0 & 0 & 0 & 0 & 0
+                    \end{bmatrix}^T
+                    \;\;\overbrace{\longrightarrow}^{\text{Binary}}\;\;
+                    \begin{bmatrix}
+                        1 & 1 & 0
+                    \end{bmatrix}^T
+                \end{equation}
+
+                \begin{equation*}
+                    \mathlarger{\mathlarger{\mathlarger{\mathlarger{
+                        \mathfrak{Please\;do\;not\;do\;this}
+                    }}}}
+                \end{equation*}
+
+                \begin{concept}
+                    Using \vocab{binary code} to compress your features is usually a \purp{bad idea}.
+
+                    This forces your model to spend resources learning how to \gren{decode} the binary code, before it can do the task you want it to!
+                \end{concept}
+
+            \subsecdiv

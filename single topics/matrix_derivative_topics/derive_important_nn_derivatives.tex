@@ -1,0 +1,564 @@
+    \subsection*{X.19 \quad The loss derivative}
+    
+        Finally, we apply this to our common derivatives in section 7.5.
+        
+        \begin{equation}
+            \overbrace{
+                \pderiv {\pur{\loss}}{\org{A^L}}
+            }^{(n^{L} \times 1)}
+        \end{equation}
+        
+        Loss is not given, so we can't compute it. But, we can get the shape: we have a scalar/vector derivative, so the shape matches $\blu{A^L}$.\\
+        
+        \begin{notation}
+            Our derivative
+            
+            \begin{equation}
+                \pderiv {\pur{\loss}}{\org{A^L}}
+            \end{equation}
+        
+            Is a scalar/vector derivative, and thus the shape \blu{$(n^{L} \times 1)$}.
+        \end{notation}
+            
+    \secdiv
+            
+    \subsection*{X.20 \quad The weight derivative}
+        
+        \begin{equation}
+            \overbrace{
+                \pderiv {\red{Z^\ell}}   {\blu{W^{\ell}}} 
+            }^{ (m^{\ell} \times 1) ?}
+        \end{equation}
+        
+        This derivative is difficult - it's a derivative in the form vector/matrix. With \textbf{three} axes, we might imagine representing as a 3-tensor.
+        
+        In fact, this can be manipulated into multiple different interesting \textbf{shapes} based on your \textbf{interpretation}: as we mentioned, there's no consistent rule for these variables.
+            
+        But, our goal is to use this for the \textbf{chain rule}: so, we need to make the shapes \textbf{match}. This is why we do that strange transposing for our complete derivative.
+        
+            \begin{equation}
+                \pderiv {\pur{\loss}} {\blu{W^{\ell}}} 
+                =
+                \overbrace{
+                    \pderiv {\red{Z^\ell}}   {\blu{W^{\ell}}}
+                }^{\text{Weight link}} 
+                    \cmul
+                \overbrace{
+                    \Bigg(
+                        \pderiv {\pur{\loss}} {\red{Z^\ell}}
+                    \Bigg)^T
+                }^{\text{Other layers}}
+            \end{equation}
+            
+        \subsecdiv
+        
+        Our problem is we have \textbf{too many axes}: the easiest way to resolve this to \textbf{break up} our matrix. So, for now, we focus on only \textbf{one neuron} at a time: it has a column vector $\blu{W_i}$.
+            \note{For simplicity, we're gonna ignore the $\ell$ notation: just be careful, because $Z$ and $A$ are from two different layers!}
+        
+        \begin{equation}
+            \blu{W}
+            =
+            \begin{bmatrix}
+                \blu{W}_1 & \blu{W}_2 & \cdots & \blu{W}_n
+            \end{bmatrix}
+        \end{equation}
+        
+        Notice that, this time, we broke it into \textbf{column vectors}, rather than row vectors: each neuron's \textbf{weights} are represented by a column vector.
+        
+        We'll ignore everything except $\blu{W_i}$.
+        
+        \begin{equation}
+            \blu{W_i} = 
+            \begin{bmatrix}
+                \blu{w}_{1i} \\ \blu{w}_{2i} \\ \vdots \\ \blu{w}_{mi}
+            \end{bmatrix}
+        \end{equation}
+        
+        Finally, we get into our equation: notice that a \textbf{single} neuron has only \textbf{one} pre-activation $z_i$, so we don't need the whole vector.
+        
+        \begin{equation}
+            \red{z_i} = \blu{W_i^T}\org{A}
+        \end{equation}
+        
+        Wait: there's something to notice, right off the bat. $\red{z_i}$ is \textbf{only} a function of $\blu{W_i}$: that means the derivative for every other term $\pderivslash{}{\blu{W_k}}$ is \textbf{zero}!
+            \note{For example, changing $\blu{W_2}$ would have \textbf{no} effect on $\red{z_1}$.}\\
+        
+        \begin{concept}
+            The $\nth{i}$ neuron's \vocab{weights}, $W_i$, have \gren{no effect} on a different neuron's \purp{pre-activation} $z_j$.
+            
+            So, if the \purp{neurons} don't match, then our derivative is zero:
+            
+            \begin{itemize}
+                \item $i$ is the neuron for pre-activation $\red{z_i}$
+                \item $j$ is the $\nth{j}$ \blu{weight} in a neuron.
+                \item $k$ is the neuron for weight vector $\blu{W_k}$
+            \end{itemize}
+            
+            \begin{equation*}
+                \pderiv{ \red{z}_i }{ \blu{W}_{jk} } = 0 
+                \qquad
+                \text{if } i \neq k
+            \end{equation*}
+            
+            So, our only nonzero derivatives are
+            
+            \begin{equation*}
+                \pderiv{ \red{z}_i }{ \blu{W}_{ji} }
+            \end{equation*}
+        \end{concept}
+        
+        \subsecdiv
+        
+        With that done, let's substitute in our values:
+        
+        \begin{equation}
+            \red{z_i} 
+            =
+            \begin{bmatrix}
+                \blu{w}_{1i} & \blu{w}_{2i} & \cdots & \blu{w}_{mi}
+            \end{bmatrix}
+            \begin{bmatrix}
+                \org{a_1}\\\org{a_2}\\ \vdots \\ \org{a_m}
+            \end{bmatrix}
+        \end{equation}
+        
+        And we'll do our \textbf{matrix multiplication}:
+        
+        \begin{equation}
+            \red{z_i} 
+            =
+            \sum_{j=1}^n
+            \blu{W_{ji} }\org{a_j}
+        \end{equation}
+        
+        Finally, we can get our derivatives:
+        
+        \begin{equation}
+            \pderiv{ \red{z_i} }{  \blu{W_{ji} }} = \org{a_j}
+        \end{equation}
+        
+        So, if we combine that into a vector, we get:
+        
+        \begin{equation}
+            \pderiv{ \red{z_i} }{  \blu{W_{i} }} =
+            \begin{bmatrix}
+                \bigpderiv{ \red{z_i} }{  \blu{W_{1i} }}
+                \\\\
+                \bigpderiv{ \red{z_i} }{  \blu{W_{2i} }}
+                \\\\
+                \vdots
+                \\\\
+                \bigpderiv{ \red{z_i} }{  \blu{W_{mi} }}
+            \end{bmatrix}
+        \end{equation}
+        
+        We can use our equation:
+        
+        \begin{equation}
+            \pderiv{ \red{z_i} }{  \blu{W_{i}} } =
+            \begin{bmatrix}
+                \org{a_1}
+                \\
+                \org{a_2}
+                \\
+                \vdots
+                \\
+                \org{a_m}
+            \end{bmatrix}
+            =
+            \org{A}
+        \end{equation}
+        
+        We get a result!
+        
+        \subsecdiv
+        
+        What if the pre-activation $\red{z_i}$ and weights $\blu{W_{k}}$ don't match? We've already seen: the derivative is 0: weights don't affect different neurons.
+        
+        \begin{equation}
+            \pderiv{ \red{z}_i }{ \blu{W}_{jk} } = 0 
+            \qquad
+            \text{if } i \neq k
+        \end{equation}
+        
+        We can combine these into a \textbf{zero vector}:
+        
+        \begin{equation}
+            \pderiv{ \red{z}_i }{ \blu{W}_{k} } = 
+            \begin{bmatrix}
+                0\\0\\ \vdots \\ 0
+            \end{bmatrix}
+            =
+            \vec{0}
+            \qquad
+            \text{if } i \neq k
+        \end{equation}
+        
+        So, now, we can describe all of our vector components:
+        
+        \begin{equation}
+            \pderiv{ \red{z}_i }{ \blu{W}_{k} } = 
+            \begin{cases}
+              \org{A} & \text{if } i = k\\
+              \vec{0} & \text{if } i \neq k
+            \end{cases}
+        \end{equation}
+        
+        These are all the elements of our matrix $\pderivslash{ \red{z}_i }{ \blu{W}_{k} }$: so, we can get our result.
+        
+        \begin{equation}
+            \pderiv{ \red{Z} }{ \blu{W} } 
+            =
+            \begin{bmatrix}
+                \org{A} & \vec{0} & \cdots  & \vec{0} \\
+                \vec{0} & \org{A} & \cdots  & \vec{0} \\
+                \vdots  & \vdots  & \ddots  & \vec{0} \\
+                \vec{0} & \vec{0} & \vec{0} & \org{A}
+            \end{bmatrix}
+        \end{equation}
+        
+        We have our result: it turns out, despite being stored in a \textbf{matrix}-like format, this is actually a \textbf{3-tensor}! Each entry of our \textbf{matrix} is a \textbf{vector}: 3 axes.
+        
+        \subsecdiv
+        
+        But, we don't really... \textit{want} a tensor. It doesn't have the right shape, and we can't do matrix multiplication.
+        
+        We'll solve this by \textbf{simplifying}, without losing key information.\\
+
+        \begin{concept}
+            For many of our "tensors" resulting from matrix derivatives, they contain \purp{empty} rows or \gren{redundant} information. 
+            
+            Based on this, we can \vocab{simplify} our tensor into a fewer-dimensional (fewer axes) object.
+        \end{concept}
+        
+        We can see two types of \textbf{redundancy} above:
+        
+        \begin{itemize}
+            \item Every element \textbf{off} the diagonal is 0.
+            \item Every element \textbf{on} the diagonal is the same.
+        \end{itemize}
+        
+        Let's fix the first one: we'll go from a diagonal matrix to a column vector.
+        
+        \begin{equation}
+            \begin{bmatrix}
+                \org{A} & \vec{0} & \cdots  & \vec{0} \\
+                \vec{0} & \org{A} & \cdots  & \vec{0} \\
+                \vdots  & \vdots  & \ddots  & \vec{0} \\
+                \vec{0} & \vec{0} & \vec{0} & \org{A}
+            \end{bmatrix}
+            \longrightarrow
+            \begin{bmatrix}
+                \org{A} \\ \org{A} \\ \vdots \\ \org{A} 
+            \end{bmatrix}
+        \end{equation}
+        
+        Then, we'll combine all of our redundant $A$ values.
+        
+        \begin{equation}
+            \begin{bmatrix}
+                \org{A} \\ \org{A} \\ \vdots \\ \org{A} 
+            \end{bmatrix}
+            \longrightarrow
+            \org{A}
+        \end{equation}
+        
+        We have our big result!\\
+        
+        \begin{notation}
+            Our derivative
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\red{Z^\ell}}   { \blu{W^{\ell}} } 
+                }^{ (m^{\ell} \times 1) }
+                = 
+                \org{A^{\ell-1}}
+            \end{equation*}
+        
+            Is a vector/matrix derivative, and thus should be a 3-tensor.
+            
+            But, we have turned it into the shape \blu{$(m^{\ell} \times 1)$}.
+        \end{notation}
+        
+        This is as \textbf{condensed} as we can get our information: if we compress to a scalar, we lose some of our elements.
+        
+        Even with this derivative, we still have to do some clever \textbf{reshaping} to get the result we need (transposing, changing derivative order, etc.)
+        
+        However, at the end, we get the right shape for our chain rule!
+        
+    \secdiv
+            
+    \subsection*{X.21 \quad Linking Layers}
+                
+        \begin{equation}
+            \pderiv{\red{Z^\ell}} {\org{A^{\ell-1}}}
+        \end{equation}
+        
+        This derivative is much more manageable: it's just the derivative between a vector and a vector. Let's look at our equation again:
+            \note{Ignoring superscripts $\ell$, as before.}
+        
+        \begin{equation}
+            \red{Z} = \blu{W}^T\org{A}
+        \end{equation}
+        
+        We'll use the same approach we did last time: $\blu{W}$ is a vector, and we'll focus on $\blu{W_i}$. This will allow us to break it up \textbf{element-wise}, and get all of our \textbf{derivatives}.
+        
+        We could treat $\blu{W}$ as a whole matrix, but this will give us our results without as much clutter: the only \textbf{difference} is that we would have to depict every $\blu{W_i}$ at \textbf{once}.
+        
+        \begin{equation}
+            \blu{W}
+            =
+            \begin{bmatrix}
+                \blu{W}_1 & \blu{W}_2 & \cdots & \blu{W}_n
+            \end{bmatrix}
+            \qquad\qquad
+            \blu{W_i} = 
+            \begin{bmatrix}
+                \blu{w}_{1i} \\ \blu{w}_{2i} \\ \vdots \\ \blu{w}_{mi}
+            \end{bmatrix}
+        \end{equation}
+        
+        Here's our equation:
+        
+        \begin{equation}
+            \red{z_i} 
+            =
+            \begin{bmatrix}
+                \blu{w}_{1i} & \blu{w}_{2i} & \cdots & \blu{w}_{mi}
+            \end{bmatrix}
+            \begin{bmatrix}
+                \org{a_1}\\\org{a_2}\\ \vdots \\ \org{a_m}
+            \end{bmatrix}
+        \end{equation}
+        
+        We matrix multiply:
+        
+        \begin{equation}
+            \red{z_i} 
+            =
+            \sum_{j=1}^n
+            \blu{W_{ji} }\org{a_j}
+        \end{equation}
+        
+        The derivative can be gotten from here -
+        
+        \begin{equation}
+            \pderiv{ \red{z_i} }{ \org{a_j}  } =  \blu{W_{ji}}
+        \end{equation}
+        
+        We look at our whole matrix derivative:
+            \note{This notation looks a bit weird, but it's just a way to represent that all of our elements follow this pattern.}
+
+        
+        \begin{equation}
+            \pderiv{ \red{Z} }{ \org{A} } 
+            =
+            \overbrace{
+                \begin{bmatrix}
+                    \ddots &  \vdots                               & \iddots \\
+                    \cdots & \bigpderiv{ \red{z_i} }{ \org{a_j}  } & \cdots \\
+                    \iddots& \vdots                                & \ddots
+                \end{bmatrix}
+                }^{ \text{\small Column $j$ matches $\red{z_i}$} }
+            \bigggrB{60pt} \text{\small Row $i$ matches $\org{a_j}$} 
+        \end{equation}
+        
+        Wait. 
+        \begin{itemize}
+            \item The derivative $\pderivslash{ \red{z_i} }{ \org{a_j}  }$ is in the $\nth{j}$ row, $\nth{i}$ column.
+            
+            \item $\blu{W}_{ji}$ represents the element in the $\nth{j}$ row, $\nth{i}$ column.
+        \end{itemize}
+        
+        They're the same matrix!
+            \note{If two matrices have exactly the same shape and elements, they're the same matrix.}
+            
+        We get our final result:\\
+        
+        
+        \begin{notation}
+            Our derivative
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv{\red{Z^\ell}} {\org{A^{\ell-1}}}
+                }^{ (m^{\ell} \times n^{\ell}) }
+                =
+                \blu{W^\ell}
+            \end{equation*}
+        
+            Is a vector/vector derivative, and thus a matrix.
+            
+            But, we have turned it into the shape \blu{$(m^{\ell} \times n^{\ell})$}.
+        \end{notation}
+            
+           
+    \secdiv  
+         
+    \subsection*{X.22 \quad Activation Function}
+        
+        \begin{equation}
+            \pderiv {\org{A^\ell}}   {\red{Z^\ell}}
+        \end{equation}
+    
+        The last derivative is less unusual than it looks.
+        
+        \begin{equation}
+            \org{A^\ell} = f( \red{Z^\ell} ) 
+            \longrightarrow
+            \begin{bmatrix}
+                \org{a_1}\\ \org{a_2}\\ \vdots \\ \org{a_n}
+            \end{bmatrix}
+            =
+            f
+            \Bigg(
+            \begin{bmatrix}
+                \red{z_1}\\\red{z_2}\\ \vdots \\ \red{z_n}
+            \end{bmatrix}
+            \Bigg)
+        \end{equation}
+        
+        We can apply our function element-wise:
+        
+        \begin{equation}
+            \begin{bmatrix}
+                \org{a_1}\\ \org{a_2}\\ \vdots \\ \org{a_n}
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+                f(\red{z_1})\\ f(\red{z_2}) \\ \vdots \\ f(\red{z_n})
+            \end{bmatrix}
+        \end{equation}
+        
+        As we can see, each activation is a function of only \textbf{one} pre-activation.\\
+        
+        \begin{concept}
+            Each \vocab{activation} is only affected by the \purp{pre-activation} in the \gren{same neuron}. 
+            
+            So, if the \purp{neurons} don't match, then our derivative is zero:
+            
+            \begin{itemize}
+                \item $i$ is the neuron for pre-activation $\red{z_i}$
+                \item $j$ is the neuron for activation $\org{a_j}$
+            \end{itemize}
+            
+            \begin{equation*}
+                \pderiv { \org{a_j} }   { \red{z_i} } = 0
+                \qquad
+                \text{if } i \neq j
+            \end{equation*}
+            
+            So, our only nonzero derivatives are
+            
+            \begin{equation*}
+                \pderiv { \org{a_j} }   { \red{z_i} }
+            \end{equation*}
+            
+        \end{concept}
+        
+        As for our remaining term, we'll describe any row of the above vectors:
+        
+        \begin{equation}
+            \org{a_i} = f(\red{z_i})
+        \end{equation}
+        
+        Our derivative is:
+        
+        \begin{equation}
+            \pderiv { \org{a_i} }{ \red{z_i} }  = f'(\red{z_i})
+        \end{equation}
+        
+        In general, including the non-diagonals:
+        
+        \begin{equation}
+            \pderiv { \org{a_i} }{ \red{z_i} }
+            = 
+            \begin{cases}
+              f'(\red{z_i}) & \text{if } i = j\\
+              0 & \text{if } i \neq j
+            \end{cases}
+        \end{equation}
+        
+        This gives us our result:\\
+
+        \begin{notation}
+            Our derivative
+            
+            \begin{equation}
+                \overbrace{
+                    \pderiv {\org{A^\ell}}   {\red{Z^\ell}}
+                }^{ (n^{\ell} \times n^{\ell}) }
+                =
+                \overbrace{
+                    \begin{bmatrix}
+                        f'({\red{z_1^\ell}})&0                   &0                   &\cdots  & 0 \\
+                        0                   &f'({\red{z_2^\ell}})&0                   &\cdots  & 0 \\
+                        0                   &0                   &f'({\red{z_3^\ell}})&\cdots  & 0 \\
+                        \vdots              &\vdots              &\vdots              &\ddots  & 0 \\
+                        0                   &0                   &0                   &0   &f'({\red{z_n^\ell}})
+                    \end{bmatrix}
+                }^{ \text{\small Column $j$ matches $a_j$} }
+                \bigggrB{100pt} \text{\small Row $i$ matches $z_i$} 
+            \end{equation}
+        
+            Is a vector/vector derivative, and thus a matrix.
+            
+            But, we have turned it into the shape \blu{$(n^{\ell} \times n^{\ell})$}.
+        \end{notation}
+    
+    
+    \subsection*{X.23 \quad Element-wise multiplication}
+
+        Notice that, in the previous section, we would've compressed this matrix down to remove the unnecessary 0's:
+        
+        \begin{equation}
+            \begin{bmatrix}
+                f'({\red{z_1^\ell}})\\
+                f'({\red{z_2^\ell}})\\
+                \vdots \\
+                f'({\red{z_n^\ell}})
+            \end{bmatrix}
+        \end{equation}
+        
+        This is a valid way to interpret this matrix! The only thing we need to be careful of: if we were to use this in a chain rule, we couldn't do normal matrix multiplication.
+        
+        However, because of how this matrix works, you can just do \textbf{element-wise} multiplication instead!
+            \note{You can check it for yourself: each index is separately scaled.}
+            
+        \begin{concept}
+            When multiplying two vectors $R$ and $Q$, if they take the form
+            
+            \begin{equation*}
+                R = 
+                \begin{bmatrix}
+                    r_1     &0      &0      &\cdots & 0 \\
+                    0       &r_2    &0      &\cdots & 0 \\
+                    0       &0      &r_3    &\cdots & 0 \\
+                    \vdots  &\vdots &\vdots &\ddots & 0 \\
+                    0       &0      &0      &0      & r_n 
+                \end{bmatrix}
+                \qquad
+                Q =
+                \begin{bmatrix}
+                    q_1 \\ q_2\\ q_3 \\ \vdots \\q_n
+                \end{bmatrix}
+            \end{equation*}
+            
+            Then we can write their product each of these ways:
+            
+            \begin{equation}
+                RQ = 
+                \overbrace{
+                    R * Q
+                }^{\text{Element-wise multiplication}}
+                =
+                \begin{bmatrix}
+                    r_1q_1 \\ r_2q_2\\ r_3q_3 \\ \vdots \\r_nq_n
+                \end{bmatrix}
+            \end{equation}
+        \end{concept}
+        
+        So, we can substitute the chain rule this way.
+
+        

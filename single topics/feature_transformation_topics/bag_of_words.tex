@@ -1,0 +1,51 @@
+        \subsection*{Text: Bag of Words}
+
+
+            Another very common data type we work with is \textbf{language}: bodies of text, online articles, corpora, etc.
+
+            Later in this course, we will discuss more powerful ways to analyze text, such as \textbf{sequential models}, and \textbf{transformers}.
+                \note{Obligatory chatgpt reference.}
+
+            There's a very simple encoding that we'll focus on here: the \textbf{bag of words} approach.
+
+            This approach is meant to be as simple as possible: for each word, we ask ourselves, "if this word in the text?", and answer yes (1) or no (0) for every single word.\\
+
+            \begin{definition}
+                The \vocab{bag of words} feature transformation takes a body of text, and creates a \purp{feature} for every \gren{word}: is that word in the text, or not?
+
+                \begin{equation}
+                    \phi(x) = 
+                    \begin{bmatrix}
+                        \text{Word 1 in } x \\
+                        \text{Word 2 in } x \\
+                        \vdots \\
+                        \text{Word k in } x \\
+                    \end{bmatrix}
+                \end{equation}
+
+                This approach is used for \purp{bodies of text}.
+            \end{definition}
+
+            \miniex Consider the following sentence: "She read a book."
+
+            With the words: $\{She, he, a, read, tired, water, book\}$
+
+            We get:
+
+            \begin{equation}
+                \phi(\text{"She read a book."}) =
+                \begin{bmatrix}
+                    1& 0& 1& 1& 0& 0& 1
+                \end{bmatrix}
+            \end{equation}
+
+            A couple weaknesses to this approach:
+
+            \begin{itemize}
+                \item Ignores the order of words and syntax of the sentence.
+                \item Doesn't encode meaning directly.
+                \item Duplicate words are only included once.
+                \item It doesn't create much structure for our model to use.
+            \end{itemize}
+
+            But, it's very easy to implement.

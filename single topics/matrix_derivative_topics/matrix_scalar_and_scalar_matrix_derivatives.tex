@@ -1,0 +1,288 @@
+    \subsection*{X.14 \quad Derivative: matrix/scalar}
+    
+        Now, we have our general form for creating derivatives.
+        
+        We'll get our derivative of the form 
+        
+        \begin{equation}
+            \pderiv{ \text{(Matrix)} } { \text{(Scalar) } }
+            =
+            \pderiv{ \blu{M} }{ \red{s} } 
+        \end{equation}
+        
+        We have a matrix $\blu{M}$ in the shape $(r \times k)$ and a scalar $\red{s}$. Our \textbf{input} is a \textbf{scalar}, and our \textbf{output} is a \textbf{matrix}.
+        
+        \begin{equation}
+            \blu{M}
+            =
+            \begin{bmatrix}
+                \blu{m}_{11} & \blu{m}_{12} & \cdots & \blu{m}_{1r} \\ 
+                \blu{m}_{21} & \blu{m}_{22} & \cdots & \blu{m}_{2r} \\ 
+                \vdots       & \vdots       & \ddots & \vdots     \\
+                \blu{m}_{k1} & \blu{m}_{k2} & \cdots & \blu{m}_{kr} \\ 
+            \end{bmatrix}
+        \end{equation}
+        
+        This may seem concerning: before, we divided \textbf{inputs} across \textbf{rows}, and \textbf{outputs} across \textbf{columns}. But in this case, we have \textbf{no} input axes, and \textbf{two} output axes. 
+        
+        Well, let's try to make this work anyway. 
+        
+        What did we do before, when we didn't know how to handle a \textbf{new} derivative? We compared it to \textbf{old} versions: we built our vector/vector case using the vector/scalar case and the scalar/vector case.
+        
+        We did this by \textbf{compressing} one of our \textit{vectors} into a \textit{scalar} temporarily: this works, because we want to treat each of these objects the \textbf{same way}.
+        
+        We don't know how to work with Matrix/Scalar, but what's the \textbf{closest} thing we do know? \textbf{Vector/Scalar}.
+        
+        How do we accomplish that? As we saw above, a matrix is a \textbf{vector} of \textbf{vectors}. We could turn it into a \textbf{vector} of \textbf{scalars}.\\
+        
+        \begin{concept}
+            A \vocab{matrix} can be thought of as a \orgg{column vector} of \purp{row vectors} (or vice versa).
+            
+            So, we can use our earlier technique and convert the \purp{row vectors} into \redd{scalars}.
+        \end{concept}
+        
+        We'll replace the \textbf{row vectors} in our matrix with \textbf{scalars}. 
+        
+        \begin{equation}
+            \blu{M}
+            =
+            \begin{bmatrix}
+                \blu{M}_1 \\ \blu{M}_2 \\ \vdots \\ \blu{M}_k
+            \end{bmatrix}
+        \end{equation}
+    
+        Now, we can pretend our matrix is a vector! We've got a derivative for that:
+        
+        \begin{equation}
+            \pderiv{ \blu{M} }{ \red{s} } 
+            =
+            \begin{bmatrix}
+                \bigpderiv{ \blu{M_1} }{ \red{s} } &
+                \bigpderiv{ \blu{M_2} }{ \red{s} } &
+                \cdots &
+                \bigpderiv{ \blu{M_r} }{ \red{s} } 
+            \end{bmatrix}
+        \end{equation}
+        
+        Aha - we have the same form that we did for our vector/vector derivative! Each derivative is a column vector. Let's expand it out:
+        
+        \begin{equation}
+            \pderiv{ \blu{M} }{ \red{s} } 
+            =
+            \overbrace{
+                \begin{bmatrix}
+                    \begin{bmatrix}
+                        \bigpderiv{ \blu{m}_{11} }   { \red{s} }\\ 
+                        \\
+                        \bigpderiv{ \blu{m}_{12} }   { \red{s} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \blu{m}_{1r} }   { \red{s} }
+                    \end{bmatrix}, &
+                    \begin{bmatrix}
+                        \bigpderiv{ \blu{m}_{21} }   { \red{s} }\\ 
+                        \\
+                        \bigpderiv{ \blu{m}_{22} }   { \red{s} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \blu{m}_{2r} }   { \red{s} }
+                    \end{bmatrix}, &
+                    \cdots &
+                    \begin{bmatrix}
+                        \bigpderiv{ \blu{m}_{k1} }   { \red{s} }\\ 
+                        \\
+                        \bigpderiv{ \blu{m}_{k2} }   { \red{s} }\\ 
+                        \\
+                        \vdots \\ 
+                        \\
+                        \bigpderiv{ \blu{m}_{kr} }   { \red{s} }
+                    \end{bmatrix}
+                \end{bmatrix}
+            }^{ \text{\small Column $j$ matches $\blu{m}_{j?}$} }
+            \bigggrB{125pt} \text{\small Row $i$ matches $\blu{m}_{?i}$} 
+        \end{equation}
+        
+        \begin{definition}
+            If $\blu{M}$ is a matrix in the shape $\blu{ (r \times k) }$ and $\red{s}$ is a scalar,
+            
+            Then we define the \vocab{matrix derivative} $\pderivslash{ \blu{M} }{ \red{s} }$ as the $\blu{ (k \times r) }$ matrix:
+            
+            \begin{equation*}
+                \pderiv{ \blu{M} }{ \red{s} } 
+                =
+                \overbrace{
+                    \begin{bmatrix}
+                        \begin{matrix}
+                            \bigpderiv{ \blu{m}_{11} }   { \red{s} }\\ 
+                            \\
+                            \bigpderiv{ \blu{m}_{12} }   { \red{s} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \blu{m}_{1r} }   { \red{s} }
+                        \end{matrix} 
+                        &
+                        \begin{matrix}
+                            \bigpderiv{ \blu{m}_{21} }   { \red{s} }\\ 
+                            \\
+                            \bigpderiv{ \blu{m}_{22} }   { \red{s} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \blu{m}_{2r} }   { \red{s} }
+                        \end{matrix}
+                        &
+                        \begin{matrix}
+                            \cdots\\\\ \cdots \\\\ \ddots \\\\ \cdots
+                        \end{matrix} 
+                        &
+                        \begin{matrix}
+                            \bigpderiv{ \blu{m}_{k1} }   { \red{s} }\\ 
+                            \\
+                            \bigpderiv{ \blu{m}_{k2} }   { \red{s} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \blu{m}_{kr} }   { \red{s} }
+                        \end{matrix}
+                    \end{bmatrix}
+                }^{ \text{\small Column $j$ matches $\blu{m}_{j?}$} }
+                \bigggrB{125pt} \text{\small Row $i$ matches $\blu{m}_{?i}$} 
+            \end{equation*}
+            
+            This matrix has the transpose of the shape of $\blu{M}$.
+        \end{definition}
+        
+    \subsection*{X.15 \quad Derivative: scalar/matrix}
+    
+        We'll get our derivative of the form 
+        
+        \begin{equation}
+            \pderiv{ \text{(Scalar)} } { \text{(Matrix)} } 
+            =
+            \pderiv{ \red{s} }{ \blu{M} } 
+        \end{equation}
+        
+        We have a matrix $\blu{M}$ in the shape $(r \times k)$ and a scalar $\red{s}$. Our \textbf{input} is a \textbf{matrix}, and our \textbf{output} is a \textbf{scalar}.
+        
+        Let's do what we did last time: break it into \textbf{row vectors}.
+        
+        \begin{equation}
+            \blu{M}
+            =
+            \begin{bmatrix}
+                \blu{M}_1 \\ \blu{M}_2 \\ \vdots \\ \blu{M}_k
+            \end{bmatrix}
+        \end{equation}
+        
+        The gradient for this "vector" gives us a \textbf{column vector}:
+        
+        \begin{equation}
+            \pderiv{ \red{s} }{ \blu{M} }  
+            =
+            \begin{bmatrix}
+                \bigpderiv{ \red{s} }{ \blu{M_1} } \\
+                \\
+                \bigpderiv{ \red{s} }{ \blu{M_2} } \\
+                \\
+                \vdots \\
+                \\
+                \bigpderiv{ \red{s} }{ \blu{M_k} }
+            \end{bmatrix}
+        \end{equation}
+        
+        This time, each derivative is a \textbf{row vector}. Let's \textbf{expand}:
+        
+        \begin{equation}
+            \pderiv{ \red{s} }{ \blu{M} }  
+            =
+            \begin{bmatrix}
+                \begin{bmatrix}
+                    \bigpderiv{ \red{s} }{ \blu{m}_{11} }    
+                    & 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{12} } 
+                    & 
+                    \cdots 
+                    & 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{1r} } 
+                \end{bmatrix}
+                \\\\
+                \begin{bmatrix}
+                    \bigpderiv{ \red{s} }{ \blu{m}_{21} }    
+                    & 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{22} } 
+                    & 
+                    \cdots 
+                    & 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{2r} } 
+                \end{bmatrix}
+                \\\\
+                \vdots
+                \\\\
+                \begin{bmatrix}
+                    \bigpderiv{ \red{s} }{ \blu{m}_{k1} }    
+                    & 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{k2} } 
+                    & 
+                    \cdots 
+                    & 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{kr} } 
+                \end{bmatrix}
+            \end{bmatrix}
+        \end{equation}
+        
+        
+        \begin{definition}
+            If $\blu{M}$ is a matrix in the shape $\blu{ (r \times k) }$ and $\red{s}$ is a scalar,
+            
+            Then we define the \vocab{matrix derivative} $\pderivslash{ \red{s} }{ \blu{M} }$ as the $\blu{ (r \times k) }$ matrix:
+            
+            \begin{equation*}
+                \pderiv{ \red{s} }{ \blu{M} }
+                =
+                \overbrace{
+                    \begin{bmatrix}
+                        \begin{matrix}
+                            \bigpderiv{ \red{s} } { \blu{m}_{11} }\\ 
+                            \\
+                            \bigpderiv{ \red{s} } { \blu{m}_{21} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \red{s} } { \blu{m}_{k1} }
+                        \end{matrix} 
+                        &
+                        \begin{matrix}
+                            \bigpderiv{ \red{s} } { \blu{m}_{12} }\\ 
+                            \\
+                            \bigpderiv{ \red{s} } { \blu{m}_{22} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \red{s} } { \blu{m}_{k2} }
+                        \end{matrix}
+                        &
+                        \begin{matrix}
+                            \cdots\\\\ \cdots \\\\ \ddots \\\\ \cdots
+                        \end{matrix} 
+                        &
+                        \begin{matrix}
+                            \bigpderiv{ \red{s} } { \blu{m}_{1r} }\\ 
+                            \\
+                            \bigpderiv{ \red{s} } { \blu{m}_{2r} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \red{s} } { \blu{m}_{kr} }
+                        \end{matrix}
+                    \end{bmatrix}
+                }^{ \text{\small Column $j$ matches $\blu{m}_{?j}$} }
+                \bigggrB{125pt} \text{\small Row $i$ matches $\blu{m}_{i?}$} 
+            \end{equation*}
+            
+            This matrix has the same shape as $\blu{M}$.
+        \end{definition}
+        
+        

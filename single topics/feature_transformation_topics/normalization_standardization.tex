@@ -1,0 +1,160 @@
+        \subsection*{Numeric values}
+
+            Now, on to the (typically) more manageable data type:\\
+
+            \begin{concept}
+                Typically, if your feature is \vocab{already a numeric value}, then we usually want to \purp{keep it as a data value}.
+            \end{concept}
+
+            \miniex Heart rate, stock price, distance, reaction time, etc.
+
+            However, this may not be true if there is some difference between different ranges of numbers:
+
+            \begin{itemize}
+                \item Being below or above the age of 18 (or 21) for legal reasons
+                \item Temperature above or below boiling
+                \item Different age ranges of children might need different range sizes: the difference between ages 1-2 is very different from ages 7-8.\\
+            \end{itemize}
+
+            \begin{concept}
+                Sometimes, if there are distinct \vocab{breakpoints}/boundaries between different values of a numerical feature, we might use \purp{discrete} features to represent those.
+            \end{concept}
+
+            \subsecdiv
+            \subsubsection*{Standardizing Values}
+    
+                We still aren't done, if our data is numeric. We likely want to \textbf{scale} our features, so that they all tend to be in similar ranges.
+    
+                Why is that? If some features are much \textbf{larger} than others, then they will have a much larger impact on the answer.
+
+                For example, suppose we have $x_1=4000$, $x_2=7$:
+
+                \begin{equation}
+                    h(x) = \theta^Tx = 4000\theta_1 + 7\theta_2
+                \end{equation}
+
+                The first term is going to have a way bigger impact on $h(x)$. If we change $x_1$ by 10\%, that's going to be bigger than if we changed $x_2$ by 100\%!
+                    \note{$4000*10\%=400$\\ $7*100\%=7$}\\
+    
+                \begin{concept}
+                    If one \vocab{feature} is much \purp{larger} than \gren{another} feature, it will tend to have a much \purp{larger} effect on the result.
+
+                    This is often a bad thing: just because one feature is \gren{larger}, doesn't mean it's more \purp{important}!
+                \end{concept}
+
+                \miniex Income might be in the range of tens of thousands (10,000-100,000), while age is a two-digit number(20-100). Income will be weighed more heavily.
+
+                How do we solve that problem? We need to do two things:
+
+                \begin{itemize}
+                    \item \textbf{Shift} the data so that our range is not too high/low. Our goal is to have it centered on 0.
+                        \begin{itemize}
+                            \item We want it centered on 0 so we can distinguish between the above-average and below-average data points.
+                                \note{Plus, it's easier to get all of our data to 0, rather than picking some arbitrary value.}
+                                
+                            \item We do this by subtracting the \textbf{mean}, or the \textbf{average} of all of our data points.
+                        \end{itemize}
+                        
+                    \begin{equation}
+                        \phi_1(x) = x - \overline{x}
+                    \end{equation}
+
+                    \item Scale the \textbf{range} of possible values, so they all vary by roughly the same amount.
+                    
+                    \item: So, if one variable tends to vary by a \textbf{larger} amount, it doesn't have a bigger impact on the result.
+
+                    \begin{equation}
+                        \phi(x_i) = \frac{x_i - \overline{x}_i}{\sigma_i}
+                    \end{equation}
+
+                    Where $\sigma$ is the \textbf{standard deviation}.
+                        \note{Note that each feature has its own $\sigma_i$: we have to compute this equation for each feature.}
+                \end{itemize}
+
+                If you are interested, we define \textbf{standard deviation} below.\\
+
+                \begin{definition}
+                    To make sure that all of our data is \purp{on the same size scale}, we \vocab{normalize}/\vocab{standardize} our dataset using the operation
+
+                    \begin{equation*}
+                        \phi(x_i) = \frac{x_i - \overline{x}_i}{\sigma_i}
+                    \end{equation*}
+
+                    For every variable $x_i$ in a data point $x$.
+
+                    \begin{itemize}
+                        \item $\overline{x}_i$ is the \gren{mean} of $x_i$
+                        \item $\sigma_i$ is the \gren{standard deviation} of $x_i$
+                    \end{itemize}
+
+                    This results in a dataset which has 
+    
+                    \begin{itemize}
+                        \item A mean $\overline{x}_i$ of \gren{0}
+                        \item A standard deviation $\sigma_i$ of \gren{1}
+                    \end{itemize}
+                \end{definition}
+
+                So, all of our features have the same \textbf{average}, and \textbf{vary} by the same amount. 
+
+                This prevents some features getting prioritized because they're on different size scales.
+
+                \miniex Suppose we have 1-D data $x=[1,2,3,4,5,6]$
+
+                The mean is 
+
+                \begin{equation}
+                    \overline{x} = \frac{1+2+3+4+5+6}{6} = 3.5
+                \end{equation}
+
+                And the standard deviation is 
+
+                \begin{equation}
+                    \sigma = \sqrt{\frac{2.5^2+1.5^2+.5^2+.5^2+1.5^2+2.5^2}{6}}
+                    = \sqrt{\frac{35}{12}} \approx 1.7078
+                \end{equation}
+
+            \subsecdiv
+
+            \subsubsection*{Variance and Standard Deviation (Optional)}
+
+                This section* describes the origin of $\sigma$ above. Feel free to skip if you're familiar.
+
+                In order to scale our data, we need a measure of how much our data \textbf{varies}. So, if our data varies by more, we can scale it down, and vice versa.
+
+                We can measure this using the \textbf{variance}.\\
+
+                \begin{definition}
+                    We can measure how spread out/varying our data with \vocab{variance}
+
+                    \begin{equation}
+                        \sigma^2 = \sum_i \frac{ (\ex{x}{i} - \overline{x})^2 }{n}
+                    \end{equation}
+
+                    In other words, the \purp{average squared distance} from the \gren{mean}.
+                \end{definition}
+
+                Why do we square the terms? Same reason we square our loss:
+
+                \begin{itemize}
+                    \item We want only positive values, for distance.
+                    \item We don't want to use absolute value, for smoothness.
+                        \note{We also get nicer statistical properties we won't discuss here.}
+                \end{itemize}
+
+                However, this is too large: we want something similar to "average distance from the mean". This is the average \textbf{squared} distance.
+
+                So, we take a square root!\\
+
+                \begin{definition}
+                    A more common way to measure how our data varies is using \vocab{standard deviation} $\sigma$
+
+                    \begin{equation*}
+                        \sigma = \sqrt{\sigma^2}
+                        = \sqrt{ \sum_i \frac{ (x - \overline{x})^2 }{n} }
+                    \end{equation*}
+
+                    This term is \purp{not} the average distance from the mean, but can be used for \gren{scaling} our data in the same way.
+                \end{definition}
+
+                This term allows us to scale our data appropriately. If our data varies by a larger amount, $\sigma$ will be larger. So, $\frac{1}{\sigma}$ will cancel that variance out.

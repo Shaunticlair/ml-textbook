@@ -1,0 +1,184 @@
+    \subsection*{X.8 \quad Vector derivative: a scalar input, vector output}
+    
+        Now, we want to try the flipped version: we swap our vector and our scalar.
+        
+        \begin{equation}
+            \pderiv{ \text{(Vector)} } { \text{(Scalar) } }
+            =
+            \pderiv{ \pur{w} }{ \red{s} } 
+        \end{equation}
+        
+        We'll take $\red{s}$ to be our scalar, and $\pur{w}$ to be our vector. So, our input is a \textbf{scalar}, and our output is a \textbf{vector}.
+            \note{Note that we're using vector $w$ instead of $v$ this time: this will be helpful for our vector/vector derivative: we can use both.}
+        
+        \begin{equation}
+            \Delta \red{s}
+            \longrightarrow
+            \boxed{f}
+            \longrightarrow
+            \Delta \pur{w}
+        \end{equation}
+        
+        Written explicitly, like before:
+        
+        \begin{equation}
+            \Delta \red{s}
+            \longrightarrow 
+            \overbrace{
+                \begin{bmatrix}
+                    \Delta \pur{w_1}\\ \Delta \pur{w_2}\\ \vdots \\ \Delta \pur{w_n}
+                \end{bmatrix}
+            }^{\Delta w}
+        \end{equation}
+        
+        We have 1 \textbf{input}, that can affect $n$ different \textbf{outputs}. So, our derivative needs to have $n$ elements.
+        
+        Again, let's look at our \textbf{approximation} rule:
+        
+        \begin{equation}
+            \Delta \pur{w}
+            \approx
+            \pderiv{ \pur{w} }{ \red{s} }  
+            \star
+            \Delta \red{s}
+                \qquad
+                \text{or}
+                \qquad
+            \overbrace{
+                \begin{bmatrix}
+                    \Delta \pur{w_1}\\ \Delta \pur{w_2}\\ \vdots \\ \Delta \pur{w_n}
+                \end{bmatrix}
+            }^{\Delta w}
+            \approx
+            \pderiv{ \pur{w} }{ \red{s} } 
+            \star
+            \Delta \red{s}
+        \end{equation}
+        
+        Here, we can't do a \textbf{dot product}: we're multiplying our derivative by a \textbf{scalar}. Plus, we'd get the \textbf{same shape} as before: we might \textbf{mix up} our derivatives.
+    
+    \secdiv
+    
+    \subsection*{X.9 \quad Working with the vector derivative}   
+        
+        How do we get each of our terms $\Delta w_i$?
+        
+        Well, each term is \textbf{separately} affected by $\Delta s$: we have our terms $\pderivslash{w_i}{s}$.
+        
+        So, if we take these terms \textbf{individually}, treating it as a scalar derivative, we get:
+            \note{If you're ever confused with matrix math, thinking about individual elements is often a good way to figure it out!}
+            
+        \begin{equation}
+            \Delta \pur{w_i} = \pderiv{\pur{w_i}}{\red{s}} \Delta \red{s}
+        \end{equation}
+        
+        Since we only have \textbf{one} input, we don't have to worry about \textbf{planar} approximations: we only take one step, in the $s$ direction.
+        
+        In our matrix, we get:
+        
+        \begin{equation}
+            \pur{w}
+            =
+            \begin{bmatrix}
+                \Delta \pur{w_1}\\\\ \Delta \pur{w_2}\\\\ \vdots \\\\ \Delta \pur{w_n}
+            \end{bmatrix}
+            \;\;
+            =
+            \;\;
+            \begin{bmatrix}
+                \Delta \red{s} ( \pderivslash{ \pur{w_1} }{ \red{s} } )\\\\
+                \Delta \red{s} ( \pderivslash{ \pur{w_2} }{ \red{s} } )\\\\
+                \vdots \\\\
+                \Delta \red{s} ( \pderivslash{ \pur{w_n} }{ \red{s} } )
+            \end{bmatrix}
+        \end{equation}
+        
+        This works out for our equation above!
+        
+        It could be tempting to think of our derivative $\pderivslash{ \pur{w} }{ \red{s} }$ as a \textbf{column vector}: we just take $w$ and just differentiate each element. Easy!
+        
+        In fact, this \textit{is} a valid convention. However, this conflicts with our previous derivative: they're both column vectors! 
+        
+        Not only is it \textbf{confusing}, but it also will make it harder to do our \textbf{vector/vector} derivative.
+        
+        So, what do we do? We refer back to the equation we used last time:
+        
+        \begin{equation}
+            \Delta \pur{w}
+            =
+            \bigg(
+                \pderiv{ \pur{w} }{ \red{s} } 
+            \bigg)^T
+            \Delta \red{s}
+        \end{equation}
+        
+        We take the \textbf{transpose}! That way, one derivative is a column vector, and the other is a row vector. And, we know that this equation works out from the work we just did.
+        
+        \begin{equation}
+            \Delta \pur{w}
+            =
+                \begin{bmatrix}
+                    \bigpderiv{ \pur{w_1} }{ \red{s} }, &
+                    \bigpderiv{ \pur{w_2} }{ \red{s} }, &
+                    \cdots &
+                    \bigpderiv{ \pur{w_n} }{ \red{s} } 
+                \end{bmatrix}
+            ^T
+            \Delta \red{s}
+        \end{equation}
+        
+        \begin{clarification}
+            We mentioned that it is a valid \vocab{convention} to have that \purp{vector derivative} be a \purp{column vector}, and have our \gren{gradient} be a \gren{row vector}.
+            
+            This is \redd{not} the convention we will use in this class - you will be confused if we try!
+            
+            That means, for whatever \gren{notation} we use here, you might see the \vocab{transposed} version elsewhere. They mean exactly the \purp{same} thing!
+        \end{clarification}
+        
+        \begin{equation}
+            \overbrace{
+                \phantom{\bigg(}
+                    \Delta \pur{w}
+                \phantom{\bigg)^T}
+            }^{ (\org{n} \times \grn{1}) }
+            =
+            \overbrace{
+                \bigg(
+                    \pderiv{ \pur{w} }{ \red{s} } 
+                \bigg)^T
+            }^{ (\org{n} \times \blu{1}) }
+            \overbrace{
+                \phantom{\bigg(}
+                    \Delta \red{s}
+                \phantom{\bigg)^T}
+            }^{ (\blu{1} \times \grn{1}) }
+        \end{equation}
+        
+        As we can see, the dimensions check out.\\
+        
+        \begin{definition}
+            If $\red{s}$ is a \redd{scalar} and $\pur{w}$ is an $(n \times 1)$ \purp{vector}, then we define the \vocab{vector derivative} $\pderivslash{ \pur{w} }{ \red{s} }$ as fulfilling:
+            
+            \begin{equation*}
+                \Delta \pur{w}
+                =
+                \bigg(
+                    \pderiv{ \pur{w} }{ \red{s} } 
+                \bigg)^T
+                \Delta \red{s}
+            \end{equation*}
+            
+            Thus, our derivative must be a \blu{$(1 \times n)$} vector
+            
+            \begin{equation*}
+                \pderiv{ \pur{w} }{ \red{s} } 
+                =
+                \begin{bmatrix}
+                    \bigpderiv{ \pur{w_1} }{ \red{s} }, &
+                    \bigpderiv{ \pur{w_2} }{ \red{s} }, &
+                    \cdots &
+                    \bigpderiv{ \pur{w_n} }{ \red{s} } 
+                \end{bmatrix}
+            \end{equation*}
+        \end{definition}
+    

@@ -1,0 +1,94 @@
+        \subsection*{Radial Basis}
+
+            Finally, we consider an alternative way to create a feature space.
+
+            \begin{itemize}
+                \item With the "polynomial basis" approach, we \textbf{combined features} to create more complex surfaces to \textbf{fit} the structure of the data.
+                
+                \item This "radial basis" approach, on the other hand, \textbf{combines data points} to \textbf{learn} more about the structure of the data.
+            \end{itemize}
+
+            What do we mean by that? Well, let's consider what we mean by "structure": when we're judging data, what sorts of patterns are we looking for?
+
+            Often, we're looking to see, "what data is near/similar to other data?" Similar data is more likely to behave similarly, after all.
+                \note{We'll come back to these ideas when we talk about clustering!}
+
+            So, it might be useful to include distance between data points as a feature: how do we implement this? Well, let's do this one-by-one: we'll create a feature for the distance to a single data point $p$.
+            
+            We start with squared distance, for smoothness reasons.
+
+            \begin{equation}
+                ||p-x||^2
+            \end{equation}
+
+            This feature would \textit{grow} as data points get further apart, though. We want to see what data is \textit{close}: the opposite.
+
+            We could use a function like $\frac{1}{u}$. However, this would explode to infinity as distances shrink: not good.
+
+            $e^{-u}$ is a better fit: it approaches 1 when $u=0$, and, relatedly, it tends to drop off more smoothly and gradually than $1/u$. 
+
+            Finally, we add a coefficient $\beta$ to the exponent to give us more control: it will tell us how quickly our function decays with distance.
+                \note{The word "decay" is used commonly for exponential decrease.}\\
+
+            \begin{definition}
+                We define the \vocab{radial basis function}
+
+                \begin{equation*}
+                    f_{ \red{p} }(x) = e^{-\beta ||\red{p}-x||^2 }
+                \end{equation*}
+
+                As a \purp{feature} in the RBF feature transformation.
+
+                This transformation takes a data point $p$ and provides a feature $f_p(x)$ that represents "\gren{closeness}" of $x$ to $p$.
+            \end{definition}
+
+            Note some useful properties of this transform:
+            \begin{itemize}
+                \item For small distances, this feature creates a \textbf{connection} between $p$ and our data point: representing some local "structure" of \textbf{closeness}.
+                \item If points are far away, this effect gradually \textbf{vanishes}: points which are \textbf{far} away have very little to do with each other.
+                \item $\beta$ controls what is considered "close" and "far": 
+                    \begin{itemize}
+                        \item if $\beta$ is large, points have to be very close for an effect.
+                        \item if $\beta$ is small, we have a larger "neighborhood" of points with a relevant $f_p(x)$.\\
+                    \end{itemize}
+            \end{itemize}
+
+            \begin{definition}
+                The \vocab{radial basis functions (RBF)} transform takes each of the data points in the input, and uses it to create a set of \purp{radial basis function} features. 
+
+                Collectively, they make the \gren{feature space}:
+
+                \begin{equation*}
+                    \phi(x) = 
+                    \Big[
+                    f_{\red{\ex{x}{1}}}(x), \;\; 
+                    f_{\red{\ex{x}{2}}}(x), \;\; 
+                    \cdots, \;\; 
+                    f_{\red{\ex{x}{n}}}(x)
+                    \Big]^T
+                \end{equation*}
+
+                Where:
+
+                \begin{equation*}
+                    f_{\red{p}}(x) = e^{-\beta ||\red{p}-x||^2 }
+                \end{equation*}
+
+                This transform allows us to represent "closeness" within our dataset. With it, we can compare new data points to some "reference" points $\ex{x}{i}$.
+                
+                It's often used to allow us to represent our dataset in a way that is approximate, but still useful.
+            \end{definition}
+
+            This general idea is useful for problems like:
+            \begin{itemize}
+                \item Function approximation,
+                \item Optimization,
+                \item Reducing noise in signals
+                    \note{Reminder that "noise" just refers to anything undesired in the signal. Usually added by randomness or the environment.}
+            \end{itemize}
+
+            This approach is not limited to the "squared distance" idea of closeness, either: if you can come up with another way to define distance, you can use the same approach.
+                \note{These ways to define distance are called "distance metrics".}
+
+            
+    \secdiv

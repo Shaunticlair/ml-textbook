@@ -1,0 +1,143 @@
+
+        
+\chapter{Feature representation}
+\label{chap:features}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Gaining intuition about feature transformations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Systematic feature construction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Hand-constructing features for real domains}
+
+\label{handBuiltFeatures}
+In many machine-learning applications, we are given descriptions of
+the inputs with many different types of attributes, including numbers,
+words, and discrete features.  An important factor in the success of
+an ML application is the way that the features are chosen to be encoded
+by the human who is framing the learning problem.  
+
+\subsection{Discrete features}
+Getting a good encoding of discrete features is particularly
+important.  You want to create ``opportunities'' for the ML system to
+find the underlying regularities.  Although there are machine-learning
+methods that have special mechanisms for handling discrete inputs,
+most of
+the methods we consider in this class will assume the input vectors
+$x$ are in $\R^d$.  So, we have to figure out some reasonable
+strategies for turning discrete values into (vectors of) real numbers.
+
+We'll start by listing some encoding strategies, and then work through
+some examples. Let's assume we have some feature in our raw data that
+can take on one of $k$ discrete values.
+\begin{itemize}
+\item{\bf Numeric:}  Assign each of these values a number, say $1.0/k,
+  2.0/k, \ldots, 1.0$.  We might want to then do some further processing, as
+  described in Section~\ref{realFeatures}.  This is a sensible
+  strategy {\em only} when the discrete values really do signify some
+  sort of numeric quantity, so that these numerical values are meaningful.\index{hand-built features!numeric}
+
+\item{\bf Thermometer code:}  If your discrete values have a natural
+  ordering, from $1, \ldots, k$, but not a natural mapping into real
+  numbers, a good strategy is to use a vector of length $k$ binary
+  variables, where we convert discrete input value $0 < j \leq k$ into
+  a vector in which the first $j$ values are $1.0$ and the rest are
+  $0.0$.  This does not necessarily imply anything about the spacing
+  or numerical quantities of the inputs, but does convey something
+  about ordering.\index{hand-built features!thermometer}
+
+\item{\bf Factored code:}  If your discrete values can sensibly be
+  decomposed into two parts (say the ``make'' and ``model'' of a car),
+  then it's best to treat those as two separate features, and choose
+  an appropriate encoding of each one from this list.\index{hand-built features!factored}
+
+\item{\bf One-hot code:}  If there is no obvious numeric, ordering, or
+  factorial structure, then the best strategy is to use a vector of
+  length $k$, where we convert discrete input value $0 < j \leq k$
+  into a vector in which all values are $0.0$, except for the $j$th,
+  which is $1.0$.\index{hand-built features!one-hot}
+
+\item{\bf Binary code:} It might be tempting for the computer
+  scientists among us to use some binary code, which would let us
+  represent $k$ values using a vector of length $\log k$.  {\em This
+    is a bad idea!}  Decoding a binary code takes a lot of work, and
+  by encoding your inputs this way, you'd be forcing your system to 
+  {\em learn} the decoding algorithm.\index{hand-built features!binary code}
+\end{itemize}
+
+As an example, imagine that we want to encode blood types, that are
+drawn from the set $\{A+, A-, B+, B-, AB+, AB-, O+, O-\}$.  There is
+no obvious linear numeric scaling or even ordering to this set.  But
+there is a reasonable {\em factoring}, into two features: $\{A, B, AB,
+O\}$ and $\{+, -\}$.  And, in fact, we can further reasonably factor
+the first group into $\{A, {\rm not}A\}$, $\{B, {\rm not}B\}$.\note{It
+  is sensible (according to Wikipedia!) to treat $O$ as having neither
+  feature $A$ nor feature $B$.}  So, here are two plausible encodings
+of the whole set:
+\begin{itemize}
+\item Use a 6-D vector, with two components of the vector each encoding the
+  corresponding factor using a one-hot encoding.
+\item Use a 3-D vector, with one dimension for each factor, encoding
+  its presence as $1.0$ and absence as $-1.0$ (this is sometimes
+  better than $0.0$).  In this case, $AB+$ would be $[1.0, 1.0, 1.0]^T$
+  and $O-$ would be $[-1.0, -1.0, -1.0]^T$.
+\end{itemize}
+\question{How would you encode $A+$ in both of these approaches?}
+
+\subsection{Text}
+The problem of taking a text (such as a tweet or a product review, or
+even this document!) and encoding it as an input for a
+machine-learning algorithm is interesting and complicated.  Much later
+in the class, we'll study sequential input models, where, rather than
+having to encode a text as a fixed-length feature vector, we feed it
+into a hypothesis word by word (or even character by character!).
+
+There are some simple encodings that work well for basic
+applications.  One of them is the {\em bag of words} ({\sc bow})
+model. \index{hand-built features!text encoding} The idea is to let $d$ be the number of words in our
+vocabulary (either computed from the training set or some other body
+of text or dictionary).  We will then make a binary vector (with
+values $1.0$ and $0.0$) of length $d$, where element $j$ has value
+$1.0$ if word $j$ occurs in the document, and $0.0$ otherwise.
+
+\subsection{Numeric values}
+\label{realFeatures}
+If some feature is already encoded as a numeric value (heart rate,
+stock price, distance, etc.) then you should generally keep it as a
+numeric value.   An exception might be a situation in which you know
+there are natural ``breakpoints'' in the semantics:  for example,
+encoding someone's age in the US, you might make an explicit
+distinction between under and over 18 (or 21), depending on what kind
+of thing you are trying to predict.   It might make sense to divide
+into discrete bins (possibly spacing them closer together for the very
+young) and to use a one-hot encoding for some sorts of medical situations
+in which we don't expect a linear (or even monotonic) relationship
+between age and some physiological features.
+
+If you choose to leave a feature as numeric, it is typically useful to
+{\em scale} it, so that it tends to be in the range $[-1, +1]$.
+Without performing this transformation, if you have one feature with
+much larger values than another, it will take the learning algorithm a
+lot of work to find parameters that can put them on an equal basis.
+So, we might perform transformation
+$\phi(x) = \dfrac{x - \overline{x}}{\sigma}$, where $\overline{x}$
+is the average of the $\ex{x}{i}$, and $\sigma$ is the standard deviation of
+the $\ex{x}{i}$.  The resulting feature values will have mean $0$ and 
+standard deviation $1$.   This transformation is sometimes called {\em
+  standardizing} a variable \note{Such standard variables are often known as 
+``z-scores,'' for example, in the social sciences.}.
+
+Then, of course, you might apply a higher-order polynomial-basis
+transformation to one or more groups of numeric features.
+
+\question{
+Consider using a polynomial basis of order $k$ as a feature
+transformation $\phi$ on your data.  Would increasing $k$ tend to
+increase or decrease structural error?  What about estimation error?
+}
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "top"
+%%% End:

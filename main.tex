@@ -9,16 +9,17 @@
 
 \usepackage{macros/lindrew}
 \usepackage{subfigure}
+\usepackage{relsize}
 
 \title{Explanatory Notes for 6.390}
 \author{Shaunticlair Ruiz (Current TA)}
-\date{Fall 2022}
+\date{Spring 2023}
 
 \begin{document}
 \maketitle
 
 \setcounter{tocdepth}{1} %Needed or the TOC would be an essay...
-%\tableofcontents
+\tableofcontents
 
 %%First section of course: base concepts
 
@@ -26,16 +27,24 @@
 % \include{chapters/intro}
 % \include{chapters/regression}
 % \include{chapters/gradient_descent}
+
+
 % \include{chapters/classification}
-% \include{feature_representation}
+% \include{chapters/feature_representation}
+%\include{non_parametric}
 
 %Second section of the course: neural networks
 
-% \include{chapters/clustering}
 % \include{chapters/neural_networks_1}
 % \include{chapters/neural_networks_1_5}
 % \include{chapters/neural_networks_2}
+
+% \include{chapters/matrix_derivatives}
+ 
+% \include{chapters/neural_networks_2}
 % \include{chapters/convolutional_neural_networks}
+
+% \include{chapters/clustering}
 
 %%Third section of the course: state machines and MDPs
 
@@ -45,9 +54,8 @@
 %\include{}
 %\include{}
 
-%%Fourth section of the course: data structure
 
-%\include{non_parametric}
+
 
 
 
@@ -80,8 +88,8 @@
 % \include{single topics/regression_topics/including_theta0_in_theta}
 % \include{single topics/regression_topics/using_multiple_data_points}
 % \include{single topics/regression_topics/ols_objective_matrix_form}
- \include{single topics/regression_topics/solving_the_ols_problem}
-% \include{single topics/regression_topics/regularization}
+% \include{single topics/regression_topics/solving_the_ols_problem}
+% \include{single topics/regression_topics/regularization}                    
 % \include{single topics/regression_topics/why_not_regularize_theta0}
 % \include{single topics/regression_topics/estimation_and_structural_error_lambda}
 % \include{single topics/regression_topics/learning_algorithms} 
@@ -110,7 +118,7 @@
 % \include{single topics/classification_topics/llc_gradient}
 % \include{single topics/classification_topics/negative_log_likelihood}
 % \include{single topics/classification_topics/one_hot_encoding}
-% \include{single topics/classification_topics/softmax}
+%\include{single topics/classification_topics/softmax}
 % \include{single topics/classification_topics/nllm}
 
 % \include{single topics/clustering_topics/downstream_tasks}
@@ -126,6 +134,18 @@
 % \include{single topics/clustering_topics/unclusterable_data}
 % \include{single topics/clustering_topics/visualization_and_interpretability}
 % \include{single topics/clustering_topics/what_is_clustering}
+
+% \include{single topics/feature_transformation_topics/bag_of_words}
+% \include{single topics/feature_transformation_topics/discrete_features}
+% \include{single topics/feature_transformation_topics/graphing_feature_transformations}
+% \include{single topics/feature_transformation_topics/intro_feature_transformations}
+% \include{single topics/feature_transformation_topics/normalization_standardization}
+% \include{single topics/feature_transformation_topics/overfitting_polynomial_order}
+% \include{single topics/feature_transformation_topics/polynomial_feature_transform}
+% \include{single topics/feature_transformation_topics/radial_basis}
+% \include{single topics/feature_transformation_topics/thermometer_versus_one_hot}
+
+
  
 % \include{single topics/neural_networks_topics/motivating_neural_networks}
 % \include{single topics/neural_networks_topics/structure_of_a_neuron}
@@ -136,7 +156,18 @@
 % \include{single topics/neural_networks_topics/the_weakness_of_a_single_layer}
 % \include{single topics/neural_networks_topics/a_complete_neural_network}
 % \include{single topics/neural_networks_topics/two_layer_network}
-% \include{single topics/neural_networks_topics/activation_and_loss_functions_nns}
+% \include{single topics/neural_networks_topics/activation_and_loss_functions}
+
+% \include{single topics/matrix_derivative_topics/intro_to_matrix_derivatives}
+% \include{single topics/matrix_derivative_topics/scalar_vector_derivative}
+% \include{single topics/matrix_derivative_topics/vector_scalar_derivative}
+% \include{single topics/matrix_derivative_topics/vector_vector_derivative}
+% \include{single topics/matrix_derivative_topics/matrix_scalar_and_scalar_matrix_derivatives}
+
+% \include{single topics/matrix_derivative_topics/advanced_matrix_derivatives_and_tensors}
+% \include{single topics/matrix_derivative_topics/clarification_types_of_dimensions}
+% \include{single topics/matrix_derivative_topics/derive_important_nn_derivatives}
+% \include{single topics/matrix_derivative_topics/hardest_derivative_weight_derivative}
 
 % \include{single topics/neural_networks_1_5_topics/one_neuron_backprop_llc}
 % \include{single topics/neural_networks_1_5_topics/two_neuron_backprop}
@@ -145,16 +176,9 @@
 % \include{single topics/neural_networks_1_5_topics/activation_and_loss_derivatives}
 % \include{single topics/neural_networks_1_5_topics/useful_matrix_derivative_shapes}
 % \include{single topics/neural_networks_1_5_topics/backprop_chain_rule}
-% \include{single topics/neural_networks_1_5_topics/intro_to_matrix_derivatives}
-% \include{single topics/neural_networks_1_5_topics/scalar_vector_derivative}
-% \include{single topics/neural_networks_1_5_topics/vector_scalar_derivative}
-% \include{single topics/neural_networks_1_5_topics/vector_vector_derivative}
-% \include{single topics/neural_networks_1_5_topics/matrix_scalar_and_scalar_matrix_derivatives}
-% \include{single topics/neural_networks_1_5_topics/advanced_matrix_derivatives_and_tensors}
-% \include{single topics/neural_networks_1_5_topics/clarification_types_of_dimensions}
-% \include{single topics/neural_networks_1_5_topics/derive_important_nn_derivatives}
-% \include{single topics/neural_networks_1_5_topics/hardest_derivative_weight_derivative}
 %  \include{single topics/neural_networks_1_5_topics/training_and_pseudocode}
+
+
 
 \end{document}
 

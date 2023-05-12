@@ -1,4 +1,4 @@
-\setcounter{chapter}{6}
+\setcounter{chapter}{6-1}
 
 \chapter{Neural Networks 1 - Neurons, Layers, and Networks}
 
@@ -782,7 +782,7 @@
             
             This means that \purp{no neuron} has an output that affects its \gren{input}, directly or indirectly.
             
-            We call these \vocab{feed-forward} networks.
+            We call these \vocab{feed-forward} networks: information can only go "forward", not "backward".
         \end{concept}
         
         We'll show how to build up the rest of what we need.
@@ -1213,7 +1213,7 @@
             \end{bmatrix}
         \end{equation}
         
-    \subsection{Summary of layer}
+    \subsection{Summary of a layer}
     
         So, we can now break our our layer up into pieces:\\
         
@@ -1521,11 +1521,13 @@
                 \Bigg)
             \end{equation*}
         \end{kequation}
+
+    \subsubsection{Hidden Layers and the "First Layer"}
         
-        One more comment: a useful definition.\\
+        Now that we have a full network, we introduce some useful vocab.\\
         
         \begin{definition}
-            A \vocab{hidden layer} is any layer except for the \purp{last} one.
+            A \vocab{hidden layer} is any functional layer except for the \purp{output} (last) layer.
             
             It is called a "\gren{hidden}" layer because, if you're viewing the whole neural network based on
             
@@ -1535,12 +1537,45 @@
                 \item \gren{Output} $A^L$ (final output)
             \end{itemize}
             
-            Then you can't see the \gren{output} of any of the layers except for the \purp{last} one.
+            You can't see \purp{hidden layers} from outside the network.
+
+            Based on this definition,the \gren{number of hidden layers} in a network is the layer count, minus one: \grn{$L-1$}.
         \end{definition}
         
-        Sometimes you'll hear someone say that a hidden layer is any except the "\textbf{first} or \textbf{last}": by that, they mean you can view the \textbf{input} for the \textbf{first} layer, as well as the \textbf{output} for the \textbf{last} layer.
+        Note that there's one point of confusion: online, you may see that the hidden layer is "any layer other than the \textbf{input} (first) or \textbf{output} (last) layer".
 
-        But, when we're talking about \textbf{activation} functions (which we often are when we mention hidden layers, see below), we only care about whether the \textbf{output} is hidden!
+        This is because, often, we consider the input itself to be a separate "\textbf{input layer}". 
+        
+        Despite this fact, when someone counts the number of layers in a neural network, they're usually only counting the hidden and output layers: we \textbf{don't count} the input layer.
+            \note{It confused me, too.}\\
+
+        \begin{definition}
+            The \vocab{input layer} is a layer that brings the \gren{input} into the network. It applies \purp{no functions} to the data.
+
+            Because the input layer has \purp{no effect} on our data (it just moves it), we \purp{don't count the input layer} when we're saying how \gren{many layers} a network has.
+        \end{definition}
+
+        \miniex Consider the following network from earlier:
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=100mm,scale=0.4]{images/nn_images/two_layers_input_layer.png}
+        \end{figure}
+
+        In this network, $x$ is passed into the network by the \textbf{input layer}. This layer is \textbf{before} layer 1 (you could think of it as "Layer 0").
+
+        Despite having the input layer, plus layer 1 and 2, we count only
+        
+        \begin{itemize}
+            \item \textbf{Two} layers in our network:
+            \begin{itemize}
+                \item One hidden layer: Layer 1.
+                \item One output layer: Layer 2. 
+            \end{itemize}
+        \end{itemize}
+
+        
+
         
         
     
@@ -1588,6 +1623,7 @@
     \subsection{Linear Layers: An example}
         
         We'll assume \textbf{two} inputs $A_0 = [x_1, x_2]^T$. For our sanity, we'll lump all of the weights in each \textbf{layer}:
+            \note{In each layer, we're "combining" the linear component with the linear activation:\\ linear * linear=linear.}
         
         \begin{figure}[H]
             \centering
@@ -1698,7 +1734,7 @@
         
         \begin{equation}
             (\pur{W^L})^T (\org{ {W^{L-1}} })^T \cdots (\blu{W^2})^T (\red{W^1})^T
-            = W^{X}
+            = W
         \end{equation}
         
         And so, we can't just use linear layers: we \textbf{need} a \textbf{nonlinear} activation function.\\
@@ -1708,8 +1744,32 @@
             
             This means that we do not expand our \purp{hypothesis} class by using more linear layers: we have to use \gren{nonlinear} activation functions.
         \end{concept}
+
+        This problem is even worse than it seems: let's see why. Since we can \textbf{combine} $n$ linear layers together into one, what happens if we only have \textbf{one} linear layer?
+
+        Suppose layer $\ell$ is linear. The next layer contains a \textbf{linear} component and a non-linear \textbf{activation} component. We'll focus on just the linear part.
+            \note{Activation comes after this step, so we would just use $f(z^{\ell+1})$.}
+
+        \begin{equation}
+            z^{\ell+1} = (\blu{W^{\ell+1}})^T\red{x^{\ell+1}} = 
+            (\blu{W^{\ell+1}})^T \red{ (W^{\ell})^T } \pur{ x^{\ell} } 
+        \end{equation}
+
+        Wait: we have \textbf{two} consecutive \textbf{linear} components. We can combine layer $\ell$ with the linear component of the next layer! 
+
+        \begin{equation}
+            (\blu{W^{\ell+1}})^T \red{ (W^{\ell})^T } \pur{ x^{\ell} }  = W \pur{ x^{\ell} }
+        \end{equation}
         
-        If we use something \textbf{nonlinear}...
+        Now, we've removed layer $\ell$ entirely: it makes no difference to have even just one \textbf{hidden} linear layer!\\
+
+        \begin{concept}
+            Even having one hidden \vocab{linear layer} is \purp{redundant}: it's \purp{equivalent} to not having that layer at all.
+
+            Since this requires \gren{more computation} for no benefit, we \purp{almost never} make linear hidden layers.
+        \end{concept}
+
+        So, linear models are out. What if we use something \textbf{nonlinear}?
         
         \begin{equation}
             A^2 = 
@@ -1720,7 +1780,7 @@
             \Bigg)
         \end{equation}
         
-        We get something that doesn't \textbf{simplify}:
+        We get something that doesn't seem to \textbf{simplify}:
             \note{This is ugly, but we don't have to worry about the details.}
         
         \begin{equation}
@@ -1738,14 +1798,44 @@
                 }^{A^1}
             \Bigg)
         \end{equation}
+
+        If we choose our function right (and avoid linearity), this cannot be simplified to a single layer! That means, this function is \textbf{different} (and likely more \textbf{complex}) than a one-layer model. 
         
-        Which is what we want!
+        And this kind of \textbf{expressiveness} is exactly what we're looking for.
         
     \subsection{Example of Activation Functions}
     
         So, let's look at some possible \textbf{activation} functions:
         
         \begin{itemize}
+            \item \vocab{Identity} function $z$:
+
+                \begin{equation}
+                    f(z) = z
+                \end{equation}
+
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=60mm,scale=0.4]{images/nn_images/identity_fn.png}
+                \end{figure}
+                
+
+                \begin{itemize}
+                    \item This function is called an \textbf{identity} function because it "preserves the identity" of the input: the output is the same.
+
+                    \item This is an example of a \textbf{linear} function.
+                        \begin{itemize}
+                            \item As we described in the last section, linear activation can't make our model more \textbf{expressive}.
+                            \item So, we \textbf{almost never} use it (or any other \textbf{linear} function) as an activation for a \textbf{hidden} layer.
+                        \end{itemize}
+                    \item We mainly use this an \textbf{output} activation function: it allows our final output to be any real number.
+                        \begin{itemize}
+                            \item This is a good activation function for a \textbf{regression} model, which returns a \textbf{real} number.
+                            \item It's a simple function, that can return \textbf{any} real number. By constrast, sigmoid and ReLU both have \textbf{limited} output ranges.
+                        \end{itemize}
+                \end{itemize}
+
+            
             \item \vocab{Step} function $\text{step}(z)$:
             
                 \begin{equation}
@@ -1810,9 +1900,14 @@
                 \begin{itemize}
                     \item This is the \textbf{activation} function for our \textbf{LLC} neuron from before.
                     
-                    \item Just like it was then, it's useful for the \textbf{output neuron} in \textbf{binary classification}.
+                    \item Just like LLC, it's useful for the \textbf{output neuron} in \textbf{binary classification}.
                     
                     \item Can be interpreted as the \textbf{probability} of a positive ($+1$) binary classification.
+
+                    \item We can also use this for multiclass when classes are \textbf{NOT} disjoint: we use one sigmoid per class.
+                        \begin{itemize}
+                            \item Each sigmoid tells us how likely the data point is to be in that class.
+                        \end{itemize}
                 \end{itemize}
                 
             \item \vocab{Hyperbolic Tangent} $\tanh(z)$:    
@@ -1849,23 +1944,65 @@
                     \item Appropriately, we use it as the \textbf{output neuron} for \textbf{multi-class} classification.
                     
                     \item Can be interpreted as the \textbf{probability} of our $k$ possible classifications.
+                        \begin{itemize}
+                            \item "Disjoint" probability: each option is separate. Sum of the rows adds up to 1.\\
+                        \end{itemize}
                 \end{itemize}
         \end{itemize}
         
-    \begin{concept}
-        For the different \vocab{activation functions}:
+        \begin{concept}
+            For the different \vocab{activation functions}:
+            
+            \begin{itemize}
+                \item \blu{$f(z)=z$} isn't used for \purp{hidden} layers, but we can use it for regression \gren{output}.
+                
+                \item \blu{sign$(z)$} is \purp{rarely} used.
+                
+                \item \blu{ReLU$(z)$} is often used for "\purp{hidden}" layers.
+                
+                \item \blu{$\sigma(z)$} is often used as the \gren{output} for \purp{binary classification}.
+                
+                \item \blu{softmax$(z)$} is often used as the \gren{output} for \purp{multi-class classification} 
+            \end{itemize}
+            $\tanh(z)$ is useful, but not a focus of this class.
+        \end{concept}
+
+        Remember this caveat, though:
+
+        \begin{clarification}
+            Multi-class depends on whether a \purp{data point} can be in \vocab{multiple classes at the same time}.
+
+            \begin{itemize}
+                \item \blu{softmax$(z)$} assumes our classes are \gren{disjoint}: you can only be in \purp{one} class.
+                    \begin{itemize}
+                        \item This is usually what people mean by \vocab{multi-class}.
+                    \end{itemize}
+
+                \item \blu{$\sigma(z)$} can be used when classes are \gren{not disjoint}: you can be in \purp{multiple} classes.
+                    \begin{itemize}
+                        \item You can think of this as \vocab{binary classification} for each class.
+                    \end{itemize}
+            \end{itemize}
+            
+            When using sigmoids, we need \gren{one} sigmoid for each \gren{class}.
+        \end{clarification}
+
+        \miniex We can compare use cases for each of these:
         
         \begin{itemize}
-            \item \blu{sign$(z)$} is \purp{rarely} used.
-            
-            \item \blu{ReLU$(z)$} is often used for "\purp{hidden}" layers.
-            
-            \item \blu{$\sigma(z)$} is often used as the \gren{output} for \purp{binary classification}.
-            
-            \item \blu{softmax$(z)$} is often used as the \gren{output} for \purp{multi-class classification}.
+            \item Softmax could be used to answer, "which word is the next one in the sentence?"
+                \begin{itemize}
+                    \item Every word in a sentence is only followed by one word: they're mutually exclusive.
+                \end{itemize}
+            \item Sigmoids could be used to answer, "what genre of book is that?" 
+                \begin{itemize}
+                    \item A book is often in more than one genre.
+                \end{itemize}
         \end{itemize}
-        $\tanh(z)$ is useful, but not a focus of this class.
-    \end{concept}
+
+        
+    
+        
     
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
@@ -1883,6 +2020,8 @@
         Each of our \vocab{tasks} requires a different \purp{loss} and output \gren{activation} function.
         
         We emphasize that we specifically mean the \red{output} activation function: the activation function used in \gren{hidden layers} doesn't have to match the loss function.
+
+        \phantom{}
         
         \begin{center}
             \begin{tabular}{c | c c | c c}
@@ -1906,10 +2045,54 @@
                 & NLLM & \pur{$\sum_j y_jlog(g_j)$}\\
                 
                 &&&&\\
+
                 
             \end{tabular}
         \end{center}
+
+        \phantom{}
+
+        \vocab{Special Case}: If we allow \purp{multiple} classes at the \purp{same} time (non-disjoint), we use \gren{binary} classification for each of them, rather than multi-class.
     \end{concept}
+
+    \miniex An example for each type:
+
+    \begin{itemize}
+        \item \textbf{Regression}: Predicting the amount of rainfall in centimeters tomorrow.
+        \item \textbf{Binary Classification}: Will the stock market go up or down tomorrow?
+        \item \textbf{Multi-Class}: What species of tree is this?
+        \item \textbf{Multiple Binary}: What are the themes in this movie?
+    \end{itemize}
+
+    \subsecdiv{}
+
+    \subsection{Other Considerations}
+    
+        You might consider using other functions, based on the needs of a more specialized task. We'll ignore those cases, for the most part.
+        
+        But, if you want to try a new function, the \textbf{data type} is the most important for whether we can use it.\\
+    
+        \begin{concept}
+            If you want to use a new \purp{activation} or \purp{loss} function, you have to pay attention to the \gren{input/output} type.
+        \end{concept}
+    
+        \miniex $\tanh(z)$ outputs over the range $(-1, 1)$. We could use it, if that was the range we wanted.
+    
+        Be careful, though:\\
+    
+        \begin{clarification}
+            It's important to stress that while our \purp{output activation} depends on the task, \vocab{hidden layers} don't have to.
+    
+            Hidden layers can use one of several \gren{different} activation functions, regardless of the \purp{task}.
+
+            However, some activation functions tend to be \gren{better} for making a model than others.
+        \end{clarification}
+    
+        \miniex Often, we use ReLU for hidden layers, but it's rarely used as an output activation function. 
+        
+        We also might use \textbf{sigmoid} as a hidden layer for a regression model, even though regression most commonly uses a \textbf{linear} output.
+
+    
     
 \pagebreak
 

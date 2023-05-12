@@ -1,486 +1,1492 @@
-\chapter{Feature representation}
-
-\label{chap:features}
-
-Linear regression and classification are powerful tools, but in the real world, data often
-exhibit {\em non-linear} behavior, which cannot immediately be
-captured by the linear models which have built so far.  For example,
-suppose the true behavior of a system (with $d=2$) looks like this
-wavelet: \note{This plot is of the {\em jinc}
-  function $J_1(\rho)/\rho$ for $\rho=x_1^2 + x_2^2$}
-%
-% Note rho is radial distance squared, because we don't want to have to use
-% a sqrt in the polynomial basis
-
-\centerline{\includegraphics[width=0.5\textwidth]{figures/regression_features1_sombrero_comp1.pdf}}
-
-\noindent
-Such behavior is actually ubiquitous in physical systems, e.g., in the
-vibrations of the surface of a drum, or scattering of light through an
-aperture.  However, no single hyperplane would be a very good fit to
-such peaked responses!  
-
-% Fortunately, as Chapter~\ref{chap:regression}
-% hinted in its introduction, we may first apply a transformation $\phi$
-% to extract {\em feature representations} before doing the regression.
-% By using non-linear $\phi$, the result can be a model which goes beyond
-% capturing linear behavior.
-
-A richer class of hypotheses can be obtained by performing a
-non-linear feature transformation before doing the regression. That
-is, $\theta^Tx + \theta_0$ is a linear function of $x$, but
-$\theta^T\phi(x) + \theta_0$ is a non-linear function of $x$ if $\phi$
-is a non-linear function of $x$.  
-
-There are many different ways to construct $\phi$.  Some are
-relatively systematic and domain independent.  
-Others are directly related to the semantics (meaning) of the original
-features, and we construct them deliberately with our domain in mind.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Gaining intuition about feature transformations}
-
-\label{sec:features_classifiers}
-
-In this section, we explore the effects of non-linear feature
-transformations on simple classification problems, to gain intuition.
-
-Our favorite illustrative example is the ``exclusive or'' ({\sc xor})
-data set, the drosophila \note{D. Melanogaster is a species of fruit
-  fly, used as a simple system in which to study genetics, since 1910.}
-of machine-learning data sets:
-
-\begin{examplebox}
-\begin{center}
-\begin{tikzpicture}
-  \pic at (-1, -1) {plusblk};
-  \pic at (-1, +1) {minusblk};
-  \pic at (+1, -1) {minusblk};
-  \pic at (+1, +1) {plusblk};
-\end{tikzpicture}
-\end{center}
-\end{examplebox}
-
-There is no linear separator for this two-dimensional dataset!  But, we have a trick
-available:  take a low-dimensional data set and move it, using a
-non-linear transformation into a higher-dimensional space, and look
-for a linear separator there. Let's look at an example data set that
-starts in 1-D:
-
-\begin{examplebox}
-\begin{center}
-\begin{tikzpicture}
-  \draw [<->, gray] (-3,0) -- (3,0)
-    node [black, right] {$x$};
-  \draw [gray] (0,.6) -- (0,-.6)
-    node [black, below] {0};
-
-  \pic at (-1.5, 0) {plusblk};
-  \pic at (-.5, 0) {minusblk};
-  \pic at (.5, 0) {minusblk};
-  \pic at (1.5, 0) {plusblk};
-
-\end{tikzpicture}
-\end{center}
-\end{examplebox}
-
-These points are not linearly separable, \note{What's a linear
-  separator for data in 1D?  A point!}  but consider the
-transformation $\phi(x) = [x,x^2]$. Putting the data in $\phi$ space,
-we see that it is now separable.  There are lots of possible
-separators;  we have just shown one of them here.
-
-\begin{examplebox}
-\begin{center}
-\begin{tikzpicture}
-  \draw [<->, gray] (-3,0) -- (3,0)
-    node [black, right] {$x$};
-  \draw [<->, gray] (0,-.6) -- (0,4)
-    node [black, above] {$x^2$};
-
-  \draw [dashed] (-3, 1.25) -- (3, 1.25)
-    node [below, xshift=-1cm] {separator};
-
-  \pic at (-1.5, 2.25) {plusblk};
-  \pic at (-.5, .25) {minusblk};
-  \pic at (.5, .25) {minusblk};
-  \pic at (1.5, 2.25) {plusblk};
-
-\end{tikzpicture}
-\end{center}
-\end{examplebox}
-
-A linear separator in $\phi$ space is a nonlinear separator in the
-original space!  Let's see how this plays out in our simple example.
-Consider the separator $x^2  - 1 = 0$, which labels the half-plane
-$x^2 -1 > 0$ as positive.  What separator does it correspond to in the
-original 1-D space? 
-We have to ask the question:  which $x$ values have the property that
-$x^2 - 1 = 0$.  The answer is $+1$ and $-1$, so those two points
-constitute our separator, back in the original space.  And we can use
-the same reasoning to find the region of 1D space that is labeled
-positive by this separator.
-
-\begin{examplebox}
-\begin{center}
-\begin{tikzpicture}
-  \draw [<->, gray] (-3,0) -- (3,0)
-    node [black, right] {$x$};
-  \draw [gray] (0,.6) -- (0,-.6)
-    node [black, below] {0};
-  \draw [gray] (1,.2) -- (1,-.2)
-    node [black, below] {1};
-  \draw [gray] (-1,.2) -- (-1,-.2)
-    node [black, below] {-1};
-
-  \fill (1,0) circle (2.5pt);
-  \fill (-1,0) circle (2.5pt);
-
-  \draw[decoration={calligraphic brace,amplitude=5pt}, decorate, line width=1.25pt]
-    (-2.95,0.2) node {} -- (-1.05,0.2);
-  \draw[decoration={calligraphic brace,amplitude=5pt}, decorate, line width=1.25pt]
-    (-.95,0.2) node {} -- (.95,0.2);
-  \draw[decoration={calligraphic brace,amplitude=5pt}, decorate, line width=1.25pt]
-    (1.05,0.2) node {} -- (2.95,0.2);
-
-  \pic at (-2, 0.7) {plus};
-  \pic at (0, 0.7) {minus};
-  \pic at (2, 0.7) {plus};
-
-\end{tikzpicture}
-\end{center}
-\end{examplebox}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Systematic feature construction}
-Here are two different ways to systematically construct features in a
-{\em problem independent} way.
-
-\subsection{Polynomial basis}
-
-\label{polyBasis}
-
-If the features in your problem are already naturally numerical, one
-systematic strategy for constructing a new feature space is to use a
-{\em polynomial basis}.  The idea is that, if you are using the
-$k$th-order basis (where $k$ is a positive integer), you include a
-feature for every possible product of $k$ different dimensions in your
-original input.  
-
-Here is a table illustrating the $k$th order polynomial basis for
-different values of $k$, calling out the cases when $d=1$ and $d>1$:
-
-\begin{center}
-\begin{tabular}{c c c}
-Order & $d=1$ & in general ($d>1$) \\
-\hline
-0 & $[1]$ & $[1]$\\
-1 & $[1,x]$ & $[1,x_1, \ldots, x_d]$\\
-2 & $[1,x,x^2]$ & $[1,x_1, \ldots, x_d,
-                    x_1^2, x_1x_2, \ldots]$\\
-3 & $[1,x,x^2,x^3]$ & $[1,x_1, \ldots,
-                    x_1^2, x_1x_2, \ldots,
-                    x_1x_2x_3, \ldots]$ \\
-\vdots & \vdots & \vdots
-\end{tabular}
-\end{center}
-
-This transformation can be used in combination with linear regression
-or logistic regression (or any other regression or classification
-model).  When we're using a linear regression or classification model,
-the key insight is that a linear regressor or separator in the {\em
-  transformed space} is a non-linear regressor or separator in the
-original space.
-
-
-% (* capture jinc function with features *)
-% 
-% npts = 1000;
-% SeedRandom[1];
-% x1 = RandomReal[{-rm, rm}, {npts}]; 
-% x2 = RandomReal[{-rm, rm}, {npts}]; 
-% r = (x1)^2 + (x2)^2;
-% yv = BesselJ[1, r]/r;
-% pts = Transpose@{x1, x2, yv};
-% model = LinearModelFit[
-%    pts, {  1, 
-%     Subscript[x, 1]^2 + 
-%      Subscript[x, 2]^2, (Subscript[x, 1]^2 + Subscript[x, 2]^2)^2,
-%     (Subscript[x, 1]^2 + Subscript[x, 2]^2)^4}, { Subscript[x, 1], 
-%     Subscript[x, 2]}];
-% 
-% vp = {1.207331108916506`, -3.0537082213398925`, 0.8168339441793491`};
-% 
-% p1 = ListPointPlot3D[ pts, 
-%    AxesLabel -> {Subscript[x, 1], Subscript[x, 2], y}, 
-%    PlotRange -> {0, 0.6}, ViewPoint -> vp ];
-% p3 = Plot3D[
-%    model[Subscript[x, 1], Subscript[x, 2]], {Subscript[x, 1], -rm, 
-%     rm}, {Subscript[x, 2], -rm, rm}, PlotStyle -> Opacity[0.2], 
-%    PlotRange -> {0, 0.6}, PlotPoints -> 100];
-% p4 = Show[{p1, p3}];
-% gr1 = GraphicsRow[{p1, p4}, ImageSize -> Large]
-% Export["regression_features2_fitsombrero.png", gr1, 
-%   ImageResolution -> 1200]; 
- 
-For example, the wavelet pictured at the start of this chapter can be fit much better than with just a hyperplane, using linear regression
-with polynomials
- \anchorednote{up to order $k=8$:}{Specifically, this example uses $[1, x_1^2 + x_2^2, (x_1^2 + x_2^2)^2, (x_1^2 + x_2)^4]$ }
-
-\centerline{\includegraphics[width=0.9\textwidth]{figures/regression_features2_fitsombrero.pdf}}
-
-\noindent
-The raw data (with $n=1000$ random samples) is plotted on the left, and the regression result (curved surface) is on the right.
-
-% \question{
-% What polynomial terms would be needed for a good basis of features, if the wavelet were centered somewhere other than at the origin?
-% }
-
-So, what if we try to solve the {\sc xor} problem using a polynomial
-basis as the feature transformation?  We can just take our
-two-dimensional data and transform it into a higher-dimensional data
-set, by applying $\phi$.  Now, we have a classification problem as
-usual.
-
-Let's try it for $k = 2$ on our {\sc xor} problem.  The feature
-transformation is 
-\[\phi((x_1, x_2)) = (1, x_1, x_2, x_1^2, x_1 x_2, x_2^2)\;\;.\]
-\question{
-If we train a classifier after performing this feature
-transformation, would we lose any expressive
-power if we let $\theta_0 = 0$ (i.e. trained without offset instead of
-with offset)?}
-After logistic regression, e.g. using gradient descent, we might find a separator
-with coefficients $\theta = (0, 0, 0, 0, 4, 0)$ and $\theta_0 =
-0$.  
-This corresponds to 
-\[0 + 0 x_1 + 0 x_2 + 0 x_1^2 + 4 x_1 x_2 + 0x_2^2 + 0 = 0\]
-and is plotted below, with the gray shaded region classified as
-negative and the white region classified as positive:
-\begin{examplebox}
-\begin{center}
-% \includegraphics[scale=0.3]{figures/feature_representation_1.png}
-\includegraphics[scale=0.48]{figures/feature_representation_xor_sign.pdf}
-\end{center}
-\end{examplebox}
-\question{
-Be sure you understand why this high-dimensional hyperplane is a
-separator, and how it corresponds to the figure.}
-
-For fun, we show some more plots below.  Here is another result for a
-linear classifier on {\sc xor} generated with logistic regression and
-gradient descent, using a random initial starting point and second-order
-polynomial basis:
-
-\begin{examplebox}
-\begin{center}
-% \includegraphics[scale=0.3]{figures/feature_representation_2.png}
-\includegraphics[scale=0.48]{figures/feature_representation_xor_order2.pdf}
-\end{center}
-\end{examplebox}
-
-Here is a harder data set.  Logistic regression with gradient descent
-failed to separate it with a second, third, or fourth-order basis feature
-representation.  Shown below are some results after $\sim1000$
-gradient descent iterations (from random starting points) for bases of
-order 2, 3, 4, and 5.
-\begin{examplebox}
-\begin{center}
-% \includegraphics[width=0.48\linewidth]{figures/feature_representation_3.png}
-% \includegraphics[width=0.48\linewidth]{figures/feature_representation_4.png} \\
-% \includegraphics[width=0.48\linewidth]{figures/feature_representation_5.png}
-% \includegraphics[width=0.48\linewidth]{figures/feature_representation_6.png}
-\includegraphics[width=0.48\linewidth]{figures/feature_representation_hard_order2.pdf}
-\includegraphics[width=0.48\linewidth]{figures/feature_representation_hard_order3.pdf} \\
-\includegraphics[width=0.48\linewidth]{figures/feature_representation_hard_order4.pdf}
-\includegraphics[width=0.48\linewidth]{figures/feature_representation_hard_order5.pdf}
-\end{center}
-\end{examplebox}
-
-\question{
-Percy Eptron has a domain with 4 numeric input features, $(x_1,
-\ldots, x_4)$.  He decides to use a representation of the form 
-\[\phi(x) = {\rm PolyBasis}((x_1, x_2), 3) ^\frown
-            {\rm PolyBasis}((x_3, x_4), 3)\]
-where $a^\frown b$ means the vector $a$ concatenated with the vector
-$b$.   What is the dimension of Percy's representation?  Under what
-assumptions about the original features is this a reasonable choice?
-}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\subsection{Radial basis functions}
-
-Another cool idea is to use {\em the training data itself} to
-construct a feature space.  The idea works as follows.  For any
-particular point $p$ in the input space $\mathcal{X}$, we can construct a feature
-$f_p$ which takes any element $x \in \mathcal{X}$ and returns a
-scalar value that is related to how far $x$ is from the $p$ we started
-with.
-
-Let's start with the basic case, in which $\mathcal{X} = \R^d$.  Then
-we can define
-\[f_p(x) = e^{-\beta\norm{p - x}^2}\;\;.\]
-This function is maximized when $p = x$ and decreases exponentially as
-$x$ becomes more distance from $p$.
-
-The parameter $\beta$ governs how
-quickly the feature value decays as we move away from the center point
-$p$.  For large values of $\beta$, the $f_p$ values are nearly 0
-almost everywhere except right near $p$;  for small values of $\beta$,
-the features have a high value over a larger part of the space.
-
-\question{What is $f_p(p)$?}
-
-Now, given a dataset $\data$ containing $n$ points, we can make a
-feature transformation $\phi$ which maps points in our original
-space, $\R^d$, into points in a new space, $\R^n$.  It is defined as
-follows:
-\[\phi(x) = (f_{\ex{x}{1}}(x), f_{\ex{x}{2}}(x), \ldots,
-  f_{\ex{x}{n}}(x))\;\;.\]
-So, we represent a new datapoint $x$ in terms of how far it is from
-each of the datapoints in our training set.
-
-This idea can be generalized in several ways and is the fundamental
-concept underlying {\em kernel methods}, which you should read about
-some time.   This idea of describing objects in terms of their
-similarity to a set of reference objects is very powerful and can be
-applied to cases where $\mathcal{X}$ is not a simple vector space, but
-where the inputs are graphs or strings or other types of objects, as
-long as there is a distance metric defined on it.
-
-%TODO:  Add rbf logistic regression plots
-  
-\section{Hand-constructing features for real domains}
-
-\label{handBuiltFeatures}
-In many machine-learning applications, we are given descriptions of
-the inputs with many different types of attributes, including numbers,
-words, and discrete features.  An important factor in the success of
-an ML application is the way that the features are chosen to be encoded
-by the human who is framing the learning problem.  
-
-\subsection{Discrete features}
-Getting a good encoding of discrete features is particularly
-important.  You want to create ``opportunities'' for the ML system to
-find the underlying regularities.  Although there are machine-learning
-methods that have special mechanisms for handling discrete inputs,
-most of
-the methods we consider in this class will assume the input vectors
-$x$ are in $\R^d$.  So, we have to figure out some reasonable
-strategies for turning discrete values into (vectors of) real numbers.
-
-We'll start by listing some encoding strategies, and then work through
-some examples. Let's assume we have some feature in our raw data that
-can take on one of $k$ discrete values.
-\begin{itemize}
-\item{\bf Numeric}  Assign each of these values a number, say $1.0/k,
-  2.0/k, \ldots, 1.0$.  We might want to then do some further processing, as
-  described in section~\ref{realFeatures}.  This is a sensible
-  strategy {\em only} when the discrete values really do signify some
-  sort of numeric quantity, so that these numerical values are meaningful.
-
-\item{\bf Thermometer code}  If your discrete values have a natural
-  ordering, from $1, \ldots, k$, but not a natural mapping into real
-  numbers, a good strategy is to use a vector of length $k$ binary
-  variables, where we convert discrete input value $0 < j \leq k$ into
-  a vector in which the first $j$ values are $1.0$ and the rest are
-  $0.0$.  This does not necessarily imply anything about the spacing
-  or numerical quantities of the inputs, but does convey something
-  about ordering.
-
-\item{\bf Factored code}  If your discrete values can sensibly be
-  decomposed into two parts (say the ``make'' and ``model'' of a car),
-  then it's best to treat those as two separate features, and choose
-  an appropriate encoding of each one from this list.
-
-\item{\bf One-hot code}  If there is no obvious numeric, ordering, or
-  factorial structure, then the best strategy is to use a vector of
-  length $k$, where we convert discrete input value $0 < j \leq k$
-  into a vector in which all values are $0.0$, except for the $j$th,
-  which is $1.0$.
-
-\item{\bf Binary code} It might be tempting for the computer
-  scientists among us to use some binary code, which would let us
-  represent $k$ values using a vector of length $\log k$.  {\em This
-    is a bad idea!}  Decoding a binary code takes a lot of work, and
-  by encoding your inputs this way, you'd be forcing your system to 
-  {\em learn} the decoding algorithm.
-\end{itemize}
-
-As an example, imagine that we want to encode blood types, which are
-drawn from the set $\{A+, A-, B+, B-, AB+, AB-, O+, O-\}$.  
-There is no obvious linear numeric scaling or even ordering to this
-set.  But there is a reasonable {\em factoring}, into two features:
-$\{A, B, AB, O\}$ and $\{+, -\}$.  And, in fact, we can reasonably
-factor the first group into $\{A, {\rm not}A\}$, $\{B, {\rm not}B\}$
-\note{It is sensible (according to Wikipedia!) to treat $O$ as having
-  neither feature $A$ nor feature $B$.}   So, here are two plausible
-encodings of the whole set:
-\begin{itemize}
-\item Use a 6-D vector, with two components of the vector each encoding the
-  corresponding factor using a one-hot encoding.
-\item Use a 3-D vector, with one dimension for each factor, encoding
-  its presence as $1.0$ and absence as $-1.0$ (this is sometimes
-  better than $0.0$).  In this case, $AB+$ would be $(1.0, 1.0, 1.0)$
-  and $O-$ would be $(-1.0, -1.0, -1.0)$.
-\end{itemize}
-\question{How would you encode $A+$ in both of these approaches?}
-
-\subsection{Text}
-The problem of taking a text (such as a tweet or a product review, or
-even this document!) and encoding it as an input for a
-machine-learning algorithm is interesting and complicated.  Much later
-in the class, we'll study sequential input models, where, rather than
-having to encode a text as a fixed-length feature vector, we feed it
-into a hypothesis word by word (or even character by character!).
-
-There are some simpler encodings that work well for basic
-applications.  One of them is the {\em bag of words} ({\sc bow})
-model.  The idea is to let $d$ be the number of words in our
-vocabulary (either computed from the training set or some other body
-of text or dictionary).  We will then make a binary vector (with
-values $1.0$ and $0.0$) of length $d$, where element $j$ has value
-$1.0$ if word $j$ occurs in the document, and $0.0$ otherwise.
-
-\subsection{Numeric values}
-\label{realFeatures}
-If some feature is already encoded as a numeric value (heart rate,
-stock price, distance, etc.) then you should generally keep it as a
-numeric value.   An exception might be a situation in which you know
-there are natural ``breakpoints'' in the semantics:  for example,
-encoding someone's age in the US, you might make an explicit
-distinction between under and over 18 (or 21), depending on what kind
-of thing you are trying to predict.   It might make sense to divide
-into discrete bins (possibly spacing them closer together for the very
-young) and to use a one-hot encoding for some sorts of medical situations
-in which we don't expect a linear (or even monotonic) relationship
-between age and some physiological features.
-
-If you choose to leave a feature as numeric, it is typically useful to
-{\em scale} it, so that it tends to be in the range $[-1, +1]$.
-Without performing this transformation, if you have one feature with
-much larger values than another, it will take the learning algorithm a
-lot of work to find parameters that can put them on an equal basis.
-So, we might perform transformation
-$\phi(x) = \dfrac{x - \overline{x}}{\sigma}$, where $\overline{x}$
-is the average of the $\ex{x}{i}$, and $\sigma$ is the standard deviation of
-the $\ex{x}{i}$.  The resulting feature values will have mean $0$ and 
-standard deviation $1$.   This transformation is sometimes called {\em
-  standardizing} a variable \note{Such standard variables are often known as 
-``z-scores,'' for example, in the social sciences.}.
-
-Then, of course, you might apply a higher-order polynomial-basis
-transformation to one or more groups of numeric features.
-
-\question{
-Consider using a polynomial basis of order $k$ as a feature
-transformation $\phi$ on your data.  Would increasing $k$ tend to
-increase or decrease structural error?  What about estimation error?
-}
 
+\setcounter{chapter}{5-1}
+
+\chapter{Feature Representation}
+
+    \subsection*{What's still missing?}
+    
+        Last chapter, we used our linear regression model to do classification: we created a "hyperplane" to \textbf{separate} the the data that we placed in each class. 
+    
+        We also mentioned that regularization can increase \textbf{structural error}, by limiting what possible $\theta$ models we're allowed to use. 
+            \note{Our goal was to decrease estimation error, but that's beside the point right now.}
+    
+        But, what if our linear model is already \textbf{too limited}? What if we need a more complicated model? This is true in a lot of real-world problems, like vibration:
+    
+        \begin{figure}[H]
+            \centering
+            
+            \includegraphics[width=70mm,scale=0.5]{images/feature_images/nonlinear_example.png}
+            \caption*{This wave doesn't seem particular friendly to a planar approximation.}
+        \end{figure}
+    
+        These kinds of situations are called, appropriately, \textbf{non-linear}.\\
+    
+        \begin{concept}
+            \vocab{Non-linear} behavior cannot be accurately represented by any \gren{linear} model. 
+    
+            In order to create an accurate model, we have to use some \purp{nonlinear} operation.
+        \end{concept}
+    
+        If we could create effective, non-linear models, we might even be able to deal with data that was previously "\textbf{linearly inseparable}".
+
+    \subsecdiv
+
+    \subsection*{Possible Solutions: Polynomials}
+
+        Let's try to think of ways to approach this problem. We'll start with a 1-D input, for simplicity.
+
+        Upon hearing "non-linear", we might remember the function we introduced last chapter: the \textbf{sigmoid}.
+    
+        \begin{figure}[H]
+            \centering
+            
+            \includegraphics[width=70mm,scale=0.5]{images/feature_images/sigmoid_u.png}
+            \caption*{Your friendly neighborhood sigmoid.}
+        \end{figure}
+    
+        Can we use this to create a new model class? For now, unfortunately not: remember that we used this in the last chapter, and we still got a \textbf{linear} separator. The reasons were discussed there.
+            \note{We'll show ways we can use this kind of approach, when we discuss Neural Networks.}
+    
+        Instead, we can get inspiration from our example of "structural error". For now, let's focus on \textbf{regression} (though classification isn't too different):
+    
+        \begin{figure}[H]
+            
+            \includegraphics[width=70mm,scale=0.5]{images/feature_images/Structural_Linear_Model.png}
+            \includegraphics[width=70mm,scale=0.5]{images/feature_images/Structural_Quad_Model.png}
+    
+            \caption{A linear function can't represent this dataset. However, a parabola can!}
+        \end{figure}
+    
+        We're still using our input variable $x$, but this time, we've "\textbf{transformed}" it: we have squared $x$, giving us a model of the form
+            \note{Remember that $x$ is 1-D right now!}
+    
+        \begin{equation}
+            h(x) = \red{A}x^2+\red{B}x+\red{C}
+        \end{equation}
+    
+        It should be clear that his model is more \textbf{expressive} than the one before: it can create every model that our linear approach could (just by setting $A=0$), and it can create new models in a parabola shape.
+            \note{Reminder: "expressiveness" or "richness" of a hypothesis class is how many models it can represent: a more expressive model can handle more different situations.}\\
+    
+        \begin{concept}
+            We can make our \purp{linear} model more \gren{expressive} by add a squared term, and turning it into a \purp{parabolic} function.
+    
+            This concept can be extended even further, to any \vocab{polynomial}.
+        \end{concept}
+
+    \subsecdiv
+    
+    \subsection*{Transformation}
+    
+        How do we \textit{generalize} this concept? Well, we have a set of constant parameters $A, B, C$. These are similar to our constants $\theta_i$. Let's change our notation:
+    
+        \begin{equation}
+            h(x) = \red{\theta_2} x^2 + \red{\theta_1} x + \red{\theta_0}
+        \end{equation}
+    
+        Now, we've got something more familiar. We could imagine extending this to any number of terms $\theta_i x^i$: if we needed a cubic function, for example, we could include $\theta_3 x^3$.
+
+        This is starting to look pretty similar to our previous model: in fact, we could even separate out $\theta$ as a variable:
+            \note{Notice that $\theta_0$ corresponds to $x^0=1$.}
+
+        \begin{equation}
+            h(x) = 
+            \overbrace{
+                \sum_{i=1}^{k}
+                \theta_i x^i
+            }^{\text{Polynomial sum}}
+            =
+            \overbrace{
+            \begin{bmatrix}
+             \theta_0 \\ \theta_1 \\ \theta_2 \\ \vdots \\ \theta_k
+            \end{bmatrix}
+            \cdot 
+            \begin{bmatrix}
+                1 \\ x \\ x^2 \\ \vdots \\ x^k
+            \end{bmatrix}
+            }^{\text{Store as vectors}}
+            = 
+            \overbrace{
+            \theta^T
+            }^{\text{Simplify}}
+            \begin{bmatrix}
+                1 \\ x \\ x^2 \\ \vdots \\ x^k
+            \end{bmatrix}
+        \end{equation}
+
+        This really \textit{is} starting to look like our linear transformation! That's helpful: we might be able to use the techniques we developed before.
+
+        In fact, we can argue that they're \textbf{equivalent}: we've just changed what our input vector is. Consider our new input $\phi(x)$:
+
+        \begin{equation}
+            \blu{\phi(x)}
+            = 
+            \begin{bmatrix}
+                1 \\ x \\ x^2 \\ \vdots \\ x^k
+            \end{bmatrix}
+            \qquad \qquad
+            h(x) = 
+            \red{\theta^T} 
+            \overbrace{
+            \blu{\phi(x)}
+            }^{\text{New input}}
+        \end{equation}
+        
+        This is called \textbf{transforming} our input.\\
+
+        \begin{definition}
+            A \vocab{transformation} $\phi(x)$ takes our input vector $x$ and converts it into a \gren{new} vector.
+
+            This transformation can be used to:
+
+            \begin{itemize}
+                \item Allow our model to handle new, more \purp{complex} situations (more \gren{expressiveness})
+
+                \item \purp{Pre-process} our data to make it \gren{easier} for our model to find \purp{patterns}.
+                
+                \item Convert our data into a \purp{usable} format (if, say, the original format doesn't fit into our equations)
+                
+            \end{itemize}
+        \end{definition}
+
+        \miniex Taking our input $x$ and converting it into a polynomial is a \textbf{transformation} of our input.
+
+        This chapter will focus on these kinds of transformations. 
+
+    \subsecdiv
+
+    \subsection*{Features}
+        
+        One benefit of only changing out input is that we can continue to use our linear representation: we will be able to optimize a "linear" model $\theta$, over data that has been made \textbf{nonlinear}.
+
+        These transformations can be complex, especially for multi-dimensional inputs. In this first case, we only combined one input with \textbf{itself}. But, often, we can combine multiple together!
+
+        Thus, we should be careful to distinguish each input variable from each other. We often call these "\textbf{features}". However, we need to be careful:\\
+
+        \begin{clarification}
+            We often use the word \vocab{feature} in related (but not identical) contexts:
+
+            \begin{itemize}
+                \item A \vocab{feature} can be one \gren{aspect} of our \purp{original data}: for example, whether or not something is a cat or a dog, or the height of a patient. 
+
+                \item A \vocab{feature} can also be one mathematical \gren{variable} in our \purp{transformed input}. $x_i$ is a feature of the data, while each variable of $\phi(x)$ is a feature of the transformed data.
+            \end{itemize}
+
+            Just like how we have an input space, we call the collection of possible values for our features the \vocab{feature space}.
+        \end{clarification}
+
+        \miniex $x$ in our previous example was a feature of the data, while $x^i$ is a feature of our transformed vector.
+    
+        Combined, this is why we called this technique the \textbf{feature transformation}: we apply some \textit{transform} to the \textit{features} of a data, to create a new set of \textit{features}.
+
+        Since these transforms only apply to our features, we can keep the structure of a linear function:\\
+
+        \begin{definition}
+            \vocab{Feature transformation} allows us to do \gren{linear} regression or classification on a set of \purp{features} we have \gren{non-linearly} \purp{transformed}:
+
+            \begin{equation*}
+                h(x) = 
+            \red{\theta^T} 
+            \blu{\phi(x)}
+            \end{equation*}
+
+            $\phi(x)$ is our (often nonlinear) transformation of our features $x$.
+        \end{definition}
+
+    \secdiv
+
+    \pagebreak
+
+    \section{Gaining intuition about feature transformations}
+
+        Now that we understand the general idea of feature transformations, we can begin work with them, particularly for classification.
+
+        Our goal is often to take data that linear models couldn't handle, and make it \textbf{separable.} 
+
+        So, we'll consider maybe the simplest (solvable) case of a nonlinear data set:
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=120mm,scale=0.5]{images/feature_images/inseparable.png}
+        \end{figure}
+
+        In its current state, there's no one plane that would go through these data points: this is where our transform comes in. We'll try using a polynomial transform with $x^2$. It turns out, $-x^2+2$ works pretty well.
+
+        How do we visualize this? It turns out, there are different perspectives:\\
+
+        \begin{clarification}
+            There are \gren{two} different ways we can \vocab{graph} a transformation:
+            \begin{itemize}
+                \item We transform the \purp{separator}: if our model is $-x^2+2$, we just graph that function over the data.
+                    \begin{itemize}
+                        \item This is the approach we used above: we wanted a line that \gren{fit} to our data.
+                    \end{itemize}
+                \item We transform the \purp{data}: we graph each data point according to our model $-x^2+2$.
+                    \begin{itemize}
+                        \item This model allows us to keep a "\gren{linear} separator": we effectively "shift" the data to be linear.
+                    \end{itemize}
+            \end{itemize}
+
+            These models are mathematically \gren{equivalent}, and we'll switch the approach we're using based on which is easier/more useful to graph.
+        \end{clarification}
+
+        It may seem concerning to transform the data, rather than the model. However, keep in mind that:
+
+        \begin{itemize}
+            \item If you switch perspectives, they're the same: a different model will just "transform" the data when calculating its output.
+            
+            \item Usually, we try to preserve the original structure of the data, so we don't lose information: we just add more.
+                \begin{itemize}
+                    \item For example, $[1,x,x^2]$ still contains the information $x$: we just add $x^2$.
+                \end{itemize}
+        \end{itemize}
+
+        \miniex Let's show both of these in action.
+
+        \subsecdiv
+
+        \subsection{Transforming our separator}
+    
+            First, we transform our linear separator as desired: graphing $-x^2+2=0$ on our plot. 
+    
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=60mm,scale=0.5]{images/feature_images/nonlinear_separator.png}
+                \caption*{In this version, we've taken our hyperplane separator and transformed it nonlinearly.}
+            \end{figure}
+    
+            In this case, we have assigned $-x^2+2<0$ as positive.
+    
+            In this version, we preserve the structure of the data, making it easier to see the original shape. However, it's not as easy to think about the shape and orientation of the "plane" now that it's been deformed. 
+            
+            For example, we don't really have a good "normal" vector, even if we know which side is positive. This is why, to keep our model "linear", we can transform the data, and find the corresponding plane. We'll do that next.
+    
+            \subsecdiv
+
+        \subsection{Transforming our data}
+    
+            In this case, every data point gets plotted on $[x,x^2]$. Our hyperplane is given by 
+    
+            \begin{equation}
+                -x^2+2 = 
+                \overbrace{
+                \begin{bmatrix}
+                    0 \\ -1
+                \end{bmatrix}^T
+                }^{\theta^T}
+                \begin{bmatrix}
+                    x \\ x^2
+                \end{bmatrix}
+                + 2
+            \end{equation}
+    
+            Thus, we get a $\theta$ pointing downward, with an offset of 2.
+    
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=60mm,scale=0.5]{images/feature_images/nonlinear_data.png}
+                \caption*{This time, we've transformed our data: the math is totally the same, but now we can identify our separator more easily.}
+            \end{figure}
+    
+            Note that our transformation makes the data linearly separable!\\
+    
+            \begin{concept}
+                Features transformations allow us to \purp{non-linearly} transform our data, in order to make that data \vocab{linearly separable}, or at least, more \gren{accurate} with a linear separator.
+    
+                Often, we do this by transforming into a \purp{higher dimensional} space.
+            \end{concept}
+    
+            \subsecdiv
+
+        \subsection{Positive vs. Negative}
+
+            While these perspectives are helpful, they can become too complicated with more dimensions/higher-dimensional transformations.
+
+            In an effort to simplify, we might ask ourselves, "what do we really want to know"? In the end, all we typically care about is classification: which data points are positive or negative?
+
+            So, we'll create a third representation to correspond to that.\\
+
+            \begin{concept}
+                A third, \gren{simplified} representation of our transformation doesn't show how it affects our data points or classifier. Instead, we just show the \purp{result}: which regions are classified as positive, and which are classified as negative?
+
+                This allows us to see which points get \gren{classified} in which way, without considering the high-dimensional details of the model itself.
+            \end{concept}
+
+            \miniex We can graph this for our sample data:
+
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=100mm,scale=0.5]{images/feature_images/positive_negative_disp.png}
+                \caption*{This way, we can stay in a 1-D space, while showing the information we need!}
+            \end{figure}
+
+            Note that the points where we switch between positive and negative, $\pm \sqrt{2}$, are the points corresponding to $-x^2+2=0$: they're the only part of the separator surface visible in our 1D plot.
+                \note{They match our nonlinear hyperplane separator from section 5.1.1}
+
+
+        \secdiv
+
+    \pagebreak
+
+    \section{Systematic feature construction}
+
+        Now that we've established feature transformations, let's consider a couple options for how we'd want to do it, and how we can generalize to higher dimensions. 
+
+        Here, we'll present two common ways to construct features, in a way that's consistent across problems, or "systematic".
+            \note{We could also call this "problem independent": it works regardless of what kind of problem you have. Though, that doesn't mean problem time won't affect performance.}
+
+        \subsection{Polynomial Basis}
+
+            At the start of this chapter, we introduced the idea of polynomial transformations. If a linear function isn't "expressive" enough to solve a problem, then we can create a more complex model, based on how many $x^i$ we include. This can be written as:
+
+            \begin{equation}
+                h(x) =
+                \sum_{i=1}^{k}
+                \theta_i x^i
+                =
+                \begin{bmatrix}
+                 \theta_0 \\ \theta_1 \\ \theta_2 \\ \vdots \\ \theta_k
+                \end{bmatrix}
+                \cdot 
+                \begin{bmatrix}
+                    1 \\ x \\ x^2 \\ \vdots \\ x^k
+                \end{bmatrix}
+            \end{equation}
+
+            Another word for this might be a "polynomial \textbf{basis}".\\
+
+            \begin{definition}
+                A "\vocab{basis}" is the set of basic, \gren{distinct} elements where every \purp{linear} combination creates a unique item in the \purp{space}.
+            \end{definition}
+
+            In this case, each term $x^i$ is part of the "basis": we can use any combination $$\sum_i \theta_i x^i$$ to create a unique polynomial. This allows us to cover our "feature space".
+
+
+
+            \subsecdiv
+            
+            \subsubsection{Order}
+            
+                An important question to ask is, "how many terms do we include"?
+
+                We categorize our polynomials based on the highest exponent included: this is called the \textbf{order}.\\
+
+                \begin{definition}
+                    \vocab{Order} $k$, also known as \vocab{degree}, is the \purp{largest} exponent allowed in our \gren{polynomial}. 
+
+                    Every higher exponential $x^{j}$ can be thought of as having a coefficient $\theta_k=0$: as far as we're concerned, it \gren{doesn't exist}.
+                \end{definition}
+
+                \miniex We can compare different orders, by looking at the feature vector they create:
+                    \note{Note that, while we chose every coefficient to be nonzero here, they don't have to be! $-x^2+2$ from before is a valid second-order polynomial.}
+
+                Here's a table of the first few:\\
+
+                \begin{center}
+                    \begin{tabular}{c c c}
+                    Order & $d=1$ & Example \\
+                    \hline
+                    0 & $[1]$ & $3.5$  \\
+                    1 & $[1,x]^T$ & $2.5x-1$ \\
+                    2 & $[1,x,x^2]^T$ & $4.1x^2-10x+1$ \\
+                    3 & $[1,x,x^2,x^3]^T$ & $x^3+8x^2+x-\sqrt{2}$ \\
+                    $\vdots & \vdots & \vdots$
+                    \end{tabular}
+                \end{center}
+
+                \phantom{}
+
+                The order we choose is an important decision choice.
+                
+            \subsecdiv
+
+            \subsubsection{Overfitting with order}
+                It's difficult to know how many terms to include in our polynomial, but we run into two problems if our order is \textbf{too high}:
+
+                \begin{itemize}
+                    \item It becomes time-consuming to calculate, with little benefit
+                    \item We start overfitting more and more.
+                \end{itemize}
+
+                The first part makes sense: with more terms, we have to do more multiplications, more additions, etc.\\
+                
+                \begin{concept}
+                    More \vocab{complex models} tend to be more \purp{expensive} to train, and slower to use. This is a trade-off for more \gren{accuracy}. 
+                    
+                    Usually, there's a point where cost \gren{outweights} benefits. A problem is rarely perfectly solved, even by an excellent model, so you can't just continue until it's "perfect".
+                \end{concept}
+
+                But what about the second part? Why do we increase overfitting? 
+
+                With a higher order, our polynomial becomes more complex: it can take on more shapes, which are increasingly complex and perfectly fit to the data.
+
+                This can cause our data to overlook obvious patterns, and instead create a very precise shape that is paying attention to the noise in our model.\\
+
+                \begin{concept}
+                    \vocab{High-order polynomials} are very vulnerable to \purp{overfitting}.
+
+                    Because they can take on so many different, \gren{complex} functions, they can very very closely \purp{match} the original data set. 
+                    
+                    This can cause the model to "learn" noise, and \gren{miss} broader and simpler patterns that actually exist. In may fail to learn something broad and useful, while \purp{memorizing} the dataset with its expressiveness.
+                \end{concept}
+
+                Let's see this in action: we'll generate some data based on $2x+1$, while applying some random noise to it. We'll see the optimized linear regression model for each.
+                    \note{For ease, we'll exclude regularization: it does help mitigate this problem, but it doesn't totally solve it.}
+
+                Rather than transform the data, we'll transform the separator: this really highlights the overfitting effect.
+
+                \begin{figure}[H]
+                    \centering
+                    
+                    \includegraphics[width=70mm,scale=0.5]{images/feature_images/order_1_soln.png}
+                    \caption*{Here's the 1st order solution: in this case, correct for the underlying distribution. It fits our data fine.}
+                \end{figure}
+
+                \begin{figure}[H]
+                    \centering
+                    
+                    \includegraphics[width=60mm,scale=0.5]{images/feature_images/order_5_soln.png}
+                    \includegraphics[width=60mm,scale=0.5]{images/feature_images/order_15_soln.png}
+                    \caption*{5th and 15th order. The left model looks suspicious, and the right is way overfit. It's very unlikely that we know such an intricate pattern, from so little data.}
+                \end{figure}
+
+                 \begin{figure}[H]
+                    \centering
+                    
+                    \includegraphics[width=70mm,scale=0.5]{images/feature_images/order_20_soln.png}
+                    \caption*{20th order. We have one order for each data point: now, our model is capable of doing regression going through every single data point: as overfit as physically possible, perfectly matching the data.}
+                \end{figure}
+
+            \subsecdiv
+            \subsubsection{Higher dimensions}
+
+                Until now, we've only been focusing on the 1-D case of data. Let's change that. Let's consider a 2D dataset $[x_1,x_2]^T$.
+
+                Our typical model
+
+                \begin{equation}
+                    \theta^Tx + \theta_0 = \theta_1x_1 + \theta_2x_2 + \theta_0
+                \end{equation}
+
+                Is "order 1": the largest exponent is 1. This is still a "linear" model. 
+
+                If we want to move up to order 2, we increase the max exponent, adding $x_1^2$ and $x_2^2$ to the basis.
+
+                However, this doesn't take full advantage of the expressiveness of our model: this only creates parabolas aligned with the $x_1$ and $x_2$ axes. How do we create other options?
+
+                Well, we created these options by multiplying $x_1$ with another $x_1$. It seems like we could logically expand to multiplying $x_1$ by $x_2$.\\
+
+                \begin{definition}
+                    For \vocab{higher dimension} $d>1$ \vocab{polynomials}, we allow for multiplication \purp{between variables} $x_i$ and $x_j$.
+
+                    The \vocab{order} of the polynomial is the maximum number of times you can \purp{multiply variables} together. 
+                    
+                    For order $k$, the \gren{sum of exponents} must be \purp{less than or equal to} the order.
+                \end{definition}
+
+                So, for $d=2$, order=$2$, we get the basis:
+
+                \begin{equation}
+                    \begin{bmatrix}
+                        1 & x_1 & x_1^2 & x_2 & x_2x_1 & x_2^2
+                    \end{bmatrix}^T
+                \end{equation}
+
+                For $d=2$, order=$3$, it starts getting a bit messy: we have 10 different basis terms.
+                    \note{You don't need to memorize these.}
+
+                \begin{equation}
+                    \begin{bmatrix}
+                        1 & x_1 & x_1^2 & x_1^3 &
+                        x_2 & x_2x_1 & x_2x_1^2 & x_2^2 &
+                        x^2x_1 & x^3
+                    \end{bmatrix}^T
+                \end{equation}
+
+            \subsecdiv
+            \subsubsection{Total number of features}
+        
+                How many do we have in general? Well, every term results from multiplying variables \textbf{at most} $k$ times. Or, the exponents \textbf{add up} to at most $k$.
+                
+                If we count 1 as a factor, we can say that the exponents always add up to $k$ (since $1^j$ has no effect). So, we have $d+1$ different numbers, which add up to exactly $k$.
+                    \note{We have $d$ variables, so $d+1$ if we include 1 as a variable.}
+
+                This is a well-known problem in combinatorics: how many ways are there to add up $m$ numbers to total $n$? The solution to this problem gives us:
+                    \note{Explaining the math here is beside the point of this course. If you're curious, search up "stars and bars math", or visit \href{https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)}{here}.}
+
+                \begin{equation}
+                    \binom{(d+1)+k-1}{k} = \binom{d+k}{k} = \frac{(d+k)!}{d!k!}
+                \end{equation}
+
+            \subsecdiv
+            \subsubsection{Summary of Polynomial Basis}
+
+                \phantom{}
+
+                \begin{definition}
+                    The \vocab{polynomial basis} of order $k$ and dimension $d$ includes \purp{every feature}
+
+                    \begin{equation}
+                        \prod_{i=1}^d x_i^{c_i}
+                    \end{equation}
+
+                    Where all of the integer exponents $c_i\geq 0$ add up to \gren{at most} $k$.
+
+                    Creating features such as:
+
+                    \begin{equation}
+                        x_1^k, \;\; x_1x_2, \;\; x_2x_3^3x_6, \;\; 1, \;\; \dots
+                    \end{equation}
+                \end{definition}
+
+                We can represent this in a table:
+                    \note{This table is different from the one we saw earlier!}
+
+                \begin{center}
+                    \begin{tabular}{c c c}
+                    Order & $d=1$ & in general ($d>1$) \\
+                    \hline
+                    0 & $[1]$ & \red{$[1]$}\\
+                    1 & $[1,x]^T$ & \red{$[1,x_1, \ldots, x_d]^T$}\\
+                    2 & $[1,x,x^2]^T$ & \red{$[1,x_1, \ldots, x_d,
+                                        x_1^2, x_1x_2, \ldots]^T$}\\
+                    3 & $[1,x,x^2,x^3]^T$ & \red{$[1,x_1, \ldots,
+                                        x_1^3, x_1x_2, \ldots,
+                                        x_1x_2x_3, \ldots]^T$} \\
+                    $\vdots$ & $\vdots$ & $\vdots$ \\
+                    \end{tabular}
+                \end{center}
+
+            \subsecdiv
+
+        \subsubsection{Polynomial Basis in Action}
+
+            Below, we'll show examples of how polynomial basis being used, to demonstrate just how useful it is.
+
+            But how do we use feature transformations? The best part: remember that we can view it as a linear separator? We can train it just the same way!\\
+
+            \begin{concept}
+                \vocab{Feature transformations} \purp{don't change} how we train our model. We can still treat our model as a \gren{linear} vector $\theta$, even if our data has been \gren{non-linearly} transformed. 
+
+                So, after we transform our data, we can use normal techniques (OLS, gradient descent, SGD) to fit our model.
+            \end{concept}
+
+            In this situation, the benefits of regularization become more clear: by preventing $\theta$ from becoming too large, we discourage a surface that is too "extreme", with larger changes across its surface.
+
+            We'll train our model for various situations, to see what it can do. Different problems require different orders $k$, still.
+            
+            \begin{figure}[H]
+                \centering
+                
+                \includegraphics[width=80mm,scale=0.5]{images/feature_images/vibrations.png}
+                \caption*{We start with the waveform we showed at the start of the chapter: on the left, we see a bunch of datapoints we want to take a regression over. With $k=8$, we get a pretty good result.}
+            \end{figure}
+
+            \begin{figure}[H]
+                \centering
+                
+                \includegraphics[width=70mm,scale=0.5]{images/feature_images/xor.png}
+                \caption*{This is the classic "xor" problem: a typical case of "linearly unseparable". With $k=2$, we can classify it well with the chosen model $4x_1x_2=0$.}
+            \end{figure}
+
+            \begin{figure}[H]
+                \centering
+                
+                \includegraphics[width=70mm,scale=0.5]{images/feature_images/better_xor.png}
+                \caption*{This time we use gradient descent and a random initialization to get a less 'perfect', but still effective classification. }
+            \end{figure}
+
+             \begin{figure}[H]
+                \centering
+                
+                \includegraphics[width=70mm,scale=0.5]{images/feature_images/harder_dataset.png}
+                \caption*{This dataset is pretty brutal: we try with $k=2,3,4,$ and finally $5$. The shapes we get are... complex, to say the least. But, we successfully solve it with $k=5$.}
+            \end{figure}
+
+        \subsecdiv
+        \subsection{Radial Basis}
+
+            Finally, we consider an alternative way to create a feature space.
+
+            \begin{itemize}
+                \item With the "polynomial basis" approach, we \textbf{combined features} to create more complex surfaces to \textbf{fit} the structure of the data.
+                
+                \item This "radial basis" approach, on the other hand, \textbf{combines data points} to \textbf{learn} more about the structure of the data.
+            \end{itemize}
+
+            What do we mean by that? Well, let's consider what we mean by "structure": when we're judging data, what sorts of patterns are we looking for?
+
+            Often, we're looking to see, "what data is near/similar to other data?" Similar data is more likely to behave similarly, after all.
+                \note{We'll come back to these ideas when we talk about clustering!}
+
+            So, it might be useful to include distance between data points as a feature: how do we implement this? Well, let's do this one-by-one: we'll create a feature for the distance to a single data point $p$.
+            
+            We start with squared distance, for smoothness reasons.
+
+            \begin{equation}
+                ||p-x||^2
+            \end{equation}
+
+            This feature would \textit{grow} as data points get further apart, though. We want to see what data is \textit{close}: the opposite.
+
+            We could use a function like $\frac{1}{u}$. However, this would explode to infinity as distances shrink: not good.
+
+            $e^{-u}$ is a better fit: it approaches 1 when $u=0$, and, relatedly, it tends to drop off more smoothly and gradually than $1/u$. 
+
+            Finally, we add a coefficient $\beta$ to the exponent to give us more control: it will tell us how quickly our function decays with distance.
+                \note{The word "decay" is used commonly for exponential decrease.}\\
+
+            \begin{definition}
+                We define the \vocab{radial basis function}
+
+                \begin{equation*}
+                    f_{ \red{p} }(x) = e^{-\beta ||\red{p}-x||^2 }
+                \end{equation*}
+
+                As a \purp{feature} in the RBF feature transformation.
+
+                This transformation takes a data point $p$ and provides a feature $f_p(x)$ that represents "\gren{closeness}" of $x$ to $p$.
+            \end{definition}
+
+            Note some useful properties of this transform:
+            \begin{itemize}
+                \item For small distances, this feature creates a \textbf{connection} between $p$ and our data point: representing some local "structure" of \textbf{closeness}.
+                \item If points are far away, this effect gradually \textbf{vanishes}: points which are \textbf{far} away have very little to do with each other.
+                \item $\beta$ controls what is considered "close" and "far": 
+                    \begin{itemize}
+                        \item if $\beta$ is large, points have to be very close for an effect.
+                        \item if $\beta$ is small, we have a larger "neighborhood" of points with a relevant $f_p(x)$.\\
+                    \end{itemize}
+            \end{itemize}
+
+            \begin{definition}
+                The \vocab{radial basis functions (RBF)} transform takes each of the data points in the input, and uses it to create a set of \purp{radial basis function} features. 
+
+                Collectively, they make the \gren{feature space}:
+
+                \begin{equation*}
+                    \phi(x) = 
+                    \Big[
+                    f_{\red{\ex{x}{1}}}(x), \;\; 
+                    f_{\red{\ex{x}{2}}}(x), \;\; 
+                    \cdots, \;\; 
+                    f_{\red{\ex{x}{n}}}(x)
+                    \Big]^T
+                \end{equation*}
+
+                Where:
+
+                \begin{equation*}
+                    f_{\red{p}}(x) = e^{-\beta ||\red{p}-x||^2 }
+                \end{equation*}
+
+                This transform allows us to represent "closeness" within our dataset. With it, we can compare new data points to some "reference" points $\ex{x}{i}$.
+                
+                It's often used to allow us to represent our dataset in a way that is approximate, but still useful.
+            \end{definition}
+
+            This general idea is useful for problems like:
+            \begin{itemize}
+                \item Function approximation,
+                \item Optimization,
+                \item Reducing noise in signals
+                    \note{Reminder that "noise" just refers to anything undesired in the signal. Usually added by randomness or the environment.}
+            \end{itemize}
+
+            This approach is not limited to the "squared distance" idea of closeness, either: if you can come up with another way to define distance, you can use the same approach.
+                \note{These ways to define distance are called "distance metrics".}
+
+            
+    \secdiv
+    
+            
+    \pagebreak
+    \section{Hand-constructing features for real domains }
+
+        So far, we've focused on transformations that handle two of our main problems (which have a lot of overlap):
+            \note{Borrowed from the transformation definition above.}
+
+        \begin{itemize}
+                \item Allow our model to handle new, more \textbf{complex} situations (more \textbf{expressiveness})
+
+                \item \textbf{Pre-process} our data to make it \textbf{easier} for our model to find \textbf{patterns}.
+                
+            \end{itemize}
+
+        Now, we'd like to turn our attention to the last of the three:
+
+        \begin{itemize}
+            \item Convert our data into a \textbf{usable} format (if, say, the original format doesn't fit into our equations)
+        \end{itemize}
+
+        One challenge with our models are they rely on computation and calculation. This usually require our input to be something like a \textbf{number}.
+
+        But we don't always receive data in this way: words, brands, colors, and odd others data types, are often presented instead. Frequently, we even need to \textbf{adjust} our numerical inputs.
+
+        The \textbf{transformations} in this section address these kinds of problems. We take data that is informative, but not currently usable, and converting them to something we can \textbf{compute} with.\\
+
+        \begin{concept}
+            Often, we have to \vocab{convert} between data types, in order to do the machine learning work we want to do.
+
+            This requires using the appropriate \purp{transforms} to get data we can work with, without \gren{losing} important \gren{information}.
+        \end{concept}
+
+        As mentioned above, we have to be \textbf{careful}: if we use the wrong data type, we can \textbf{lose} crucial information that our model could have made use of.
+
+        \subsecdiv
+
+        \subsection{Discrete Features}
+
+            One of the most common issues with data types is figuring out what to do with \textbf{discrete} features: ones that are broken up into categories.
+
+            These categories may or may not have an order, or some other important information. We need to use the right data type to keep as much information as possible. This will allow our model to more easily discover patterns.
+
+            We'll make the following assumption:\\
+
+            \begin{clarification}
+                In this textbook/course, we assume that all \purp{input vectors} $x$ should be \gren{real-valued vectors} (or: $x \in \R^d$)
+            \end{clarification}
+
+
+            And now, we go through some common examples of feature transformations:
+
+            \subsubsection{Numeric}
+
+                First, we consider the case where our pre-processing \textbf{feature} is "\textit{almost}" in a number format: each class could reasonably correspond to a \textbf{number}.\\
+    
+                \begin{definition}
+                    In the \vocab{numeric} transformation, we convert each of our $k$ classes into a \purp{number}. 
+    
+                    \begin{itemize}
+                        \item This approach is only appropriate if each class is roughly "numeric": it fits appropriately into the \gren{real numbers}.
+                            \begin{itemize}
+                                \item We have a clear \purp{ordering}, and
+                                \item The numbers have the \purp{structure} of real numbers: \gren{distance} between points, or the idea of \gren{adding/multiplying}, makes sense.
+                            \end{itemize}
+                    \end{itemize}
+                \end{definition}
+
+                \miniex There are many ways to do this. Here, we evenly distribute values evenly between 0 and 1:
+                    \note{Remember: which way you transform should reflect the nature of your data!}
+    
+                    \begin{equation}
+                        \begin{bmatrix}
+                            \frac{1}{k} & \frac{2}{k} & \cdots & \frac{k-1}{k} & 1
+                        \end{bmatrix},
+                        \qquad 
+                        \text{Class } i \longrightarrow \frac{i}{k}
+                    \end{equation}
+
+            \subsecdiv
+            \subsubsection{Thermometer Code}
+
+                Next, we'll relax how number-like our feature is. This time, we don't need our data to behave like a number, but it does have an \textbf{ordering}.
+                    \note{By "relax", we mean we'll remove some requirements for our feature, like being able to add them together.}
+
+                Some examples:
+
+                \begin{itemize}
+                    \item Results of an opinion poll:
+                        \begin{itemize}
+                            \item "Strongly Agree", "Agree", "Neutral", "Disagree", "Strongly Disagree"
+                        \end{itemize}
+                    
+                    \item Education level: 
+                        \begin{itemize}
+                            \item "Below High School", "High School Degree", "Associates Degree", "Bachelors" "Advanced Degree"
+                        \end{itemize}
+                    
+                    \item Ranking of athletes
+                \end{itemize}
+
+                In this case, we can't just use numbers $\{1,2,3,...\}$. Why not?
+
+                Because that implies that there's a specific "scaling" between points: Is the \#1 athlete twice as good as the \#2 athlete? Maybe, but that's not what the ranking tells us!\\
+
+                \begin{concept}
+                    Data that is \vocab{ordered} but not \purp{numerical} cannot be represented with \gren{a single real number}.
+
+                    Otherwise, we might consider one element to be a certain amount "larger" or "smaller" than another, when that's not what \gren{ordering} means.
+                \end{concept}
+
+                \miniex Suppose we assign $\{1,2,3\}$ for $\{Disagree, Neutral, Agree\}$. The person who writes 'agree' is doesn't "agree three times as much" as the person who writes 'disagree'!
+
+                But, we still want to keep that ordering: counting up from one element to the next. How do create an order without creating an exact, numeric difference?
+
+                Just now, we tried to count by increasing a single variable. But, there's another way to count: counting up using multiple different variables!
+                    \note{This approach is more similar to counting on your fingers.}
+
+                \begin{equation*}
+                    \text{Class 1} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \text{Class 2} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \text{Class 3} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \text{Class 4} \longrightarrow
+                    \begin{bmatrix}
+                        \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                \end{equation*}
+                
+                This version allows us to avoid the problems we had before: this doesn't behave the same way as a \textbf{numerical} value.
+
+                To better understand what's going on, here's another way to frame it:
+                    \note{Class$(x)$ is just shorthand for, "which class is $x$ in?"}
+
+                \begin{equation}
+                    \phi(x) =
+                    \begin{bmatrix}
+                        \text{Class}(x)\geq 4 \\
+                        \text{Class}(x)\geq 3\\
+                        \text{Class}(x)\geq 2\\
+                        \text{Class}(x)\geq 1
+                    \end{bmatrix}
+                \end{equation}
+
+                \miniex Suppose $x$ is in class 3. The bottom three statements are all true, the top one is false: so we get $[0, 1, 1, 1]^T$. 
+
+                This helps us understand why this encoding is so useful:
+                
+                \begin{itemize}
+                    \item We aren't directly "adding" variables to each other: they stay separated by \textbf{index}.
+                    
+                    \item When using a linear model $\theta^T\phi(x)$, each class  matches a different $\theta_i$.
+                        \note{$\theta_i$ scales the $\nth{i}$ variable. So, each class can be scaled differently!}
+                        
+                    \item Despite not behaving like numbers, "higher" classes in the order still keep track of all of the classes below them.
+                        \begin{itemize}
+                            \item \miniex Class 2-4 all share the feature $\text{Class}(x)\geq 2$ (equivalent to $\text{Class}(x)>1$).
+                        \end{itemize}
+                \end{itemize}
+
+                This technique is called \textbf{thermometer encoding}.\\
+
+                \begin{definition}
+                    \vocab{Thermometer encoding} is a \purp{feature transform} where we take each class and turn it into a feature vector $\phi(x)$ where
+
+                    \begin{equation*}
+                    \text{Class 1} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix},
+                    \qquad 
+                    \text{Class 2} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class 3} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class } k \longrightarrow
+                    \begin{bmatrix}
+                        \red{1} \\ \vdots \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                \end{equation*}
+
+                    \begin{itemize}
+                        \item The \purp{length of the vector} is the \gren{number of classes} $k$ we have.
+                        \item The $\nth{i}$ class has $i$ \purp{ones}.
+                    \end{itemize}
+
+                    \phantom{}
+
+                    \begin{itemize}
+                        \item This transformation is only appropriate if the data 
+                            \begin{itemize}
+                                \item Is \purp{ordered},
+                                \item But not \gren{real number-compatible}: we can't add the values, or compare the "amount" of each feature.
+                            \end{itemize}
+                    \end{itemize}
+                \end{definition}
+
+                \miniex We reuse our example from earlier: 
+
+                \begin{equation*}
+                    \phi(x_{\text{Class 1}}) =
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix},
+                    \qquad \;\;
+                    \phi(x_{\text{Class 2}}) =
+                    \begin{bmatrix}
+                        \blu{0} \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \phi(x_{\text{Class 3}}) =
+                    \begin{bmatrix}
+                        \blu{0} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                    \qquad \;\;
+                    \phi(x_{\text{Class 4}}) =
+                    \begin{bmatrix}
+                        \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \end{bmatrix}
+                \end{equation*}
+
+            \subsecdiv
+            \subsubsection{One-hot Code}
+
+                We introduced this technique in the \textbf{previous} chapter:
+                
+                When there's no clear way to \textbf{simplify} our data, we accept the current discrete classes, and \textbf{convert} them to a number-like form.
+
+                \begin{itemize}
+                    \item Examples:
+                    \begin{itemize}
+                        \item Colors: $\{Red, Orange, Yellow, Green, Blue, Purple\}$
+                        \item Animals: $\{Dog, Cat, Bird, Spider, Fish, Scorpion\}$
+                        \item Companies: $\{Walmart, Costco, McDonald's, Twitter\}$
+                    \end{itemize}
+                \end{itemize}
+
+                We can't use thermometer code, because that suggests a natural \textbf{order}. And we definitely can't use real numbers.
+
+                \miniex $\{Brown, Pink, Green\}$ doesn't necessarily have an obvious order: you could force one, but there's no reason to.
+
+                But, we can use one idea from thermometer code: each class in a different variable.
+        
+                \begin{equation}
+                    \begin{bmatrix}
+                      C_1\\C_2\\ \vdots \\ C_k
+                    \end{bmatrix}
+                \end{equation}
+
+                But in this case, we don't "build up" our vector: we replace $\text{Class}(x)\geq 4$ with $\text{Class}(x)= 4$.
+
+                \begin{equation}
+                    \phi(x) =
+                    \begin{bmatrix}
+                        \text{Class}(x) = 4 \\
+                        \text{Class}(x) = 3\\
+                        \text{Class}(x) = 2\\
+                        \text{Class}(x) = 1
+                    \end{bmatrix}
+                \end{equation}
+                
+            This approach is called \textbf{one-hot encoding}.\\
+            
+            \begin{definition}
+                \vocab{One-hot encoding} is a way to represent \vocab{discrete} information about a data point.
+                
+                Our $k$ classes are stored in a length-$k$ column \gren{vector}. For \purp{each} variable in the vector, 
+                
+                \begin{itemize}
+                    \item The value is \gren{0} if our data point is \purp{not in that class}.
+                    \item The value is \gren{1} if our data point is \purp{in that class}.
+                \end{itemize}
+
+                 \begin{equation*}
+                    \text{Class 1} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \end{bmatrix},
+                    \qquad 
+                    \text{Class 2} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \blu{0} \\ \red{1} \\ \blu{0}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class 3} \longrightarrow
+                    \begin{bmatrix}
+                        \blu{0} \\ \vdots \\ \red{1} \\ \blu{0} \\ \blu{0}
+                    \end{bmatrix}
+                    \qquad
+                    \text{Class } k \longrightarrow
+                    \begin{bmatrix}
+                        \red{1} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \blu{0}
+                    \end{bmatrix}
+                \end{equation*}
+                
+                In one-hot encoding, items are \purp{never} labelled as being in \purp{two} classes at the \gren{same time}.
+
+                \begin{itemize}
+                    \item This transformation is only appropriate if the data is
+                        \begin{itemize}
+                            \item Does not have another \purp{structure} we can reduce it to: it's neither like a \gren{real number} nor \gren{ordered}
+                            
+                            \item We don't have an \gren{alternative} representation that contains more (accurate) information.
+                        \end{itemize}
+                \end{itemize}
+            \end{definition}
+            
+            \miniex Suppose that we want to classify \textbf{furniture} as table, bed, couch, or chair.
+            
+            \begin{equation}
+                \begin{bmatrix}
+                  \text{table} \\ \text{bed} \\ \text{couch} \\ \text{chair} 
+                \end{bmatrix}
+            \end{equation}
+            
+            For each class:
+            
+            \begin{equation}
+                y_{chair} = 
+                \begin{bmatrix}
+                  0\\0\\0\\ \red{1}
+                \end{bmatrix}
+                \qquad
+                y_{table} = 
+                \begin{bmatrix}
+                  \red{1}\\0\\0\\0
+                \end{bmatrix}
+                \qquad
+                y_{couch} = 
+                \begin{bmatrix}
+                  0\\0\\\red{1}\\0
+                \end{bmatrix}
+                \qquad
+                y_{bed} = 
+                \begin{bmatrix}
+                  0\\\red{1}\\0\\0
+                \end{bmatrix}
+            \end{equation}
+
+            \subsecdiv
+            \subsubsection{One-hot versus Thermometer}
+
+                One common question is, "why can't we use one-hot for ordered data? We could sort the indices so they're in order".
+
+                However, there's a problem with this logic: the computer \textbf{doesn't care} about the order of the variables in an array: it contains no information!
+
+                Why is that? If the vector has an order, shouldn't that \textbf{affect} the model?
+                
+                Well, remember that our model is represented by 
+
+                \begin{equation}
+                    \theta^T x = \sum_i \theta_i x_i
+                \end{equation}
+
+                The vector format $\theta^Tx$ is just a way to \textbf{condense} our equation: the ordering goes away when we compute the sum.\\
+
+                \begin{concept}
+                    \vocab{Order} of elements in a vector \purp{don't} affect the behavior of our model.
+
+                    This is because a linear model is a \gren{sum}, and sums are the same regardless of \purp{order}.
+                \end{concept}
+
+                If our model has the same math regardless of order, then it can't use order information.
+
+                \miniex We'll take a vector, and rearrange it.
+                    \note{Despite shuffling, these two equations are equivalent!}
+
+                \begin{equation*}
+                    \theta^T \phi(x) = 
+                    \begin{bmatrix}
+                        \theta_1 & \theta_2 & \theta_3 & \theta_4
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        0\\1\\0\\0
+                    \end{bmatrix}
+                    \qquad\longrightarrow\qquad
+                    (\theta^T)^* (\phi(x))^* = 
+                    \begin{bmatrix}
+                        \theta_3 & \theta_1 & \theta_4 & \theta_2
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        0 \\ 0 \\ 0 \\ 1
+                    \end{bmatrix}
+                \end{equation*}
+
+                The math is the same, despite changing order: our model knows nothing about ordering.\\
+
+                \begin{clarification}
+                    \vocab{One hot encoding} \purp{cannot} encode information about ordering.
+
+                    \vocab{Thermometer encoding} is required to \gren{represent ordered objects}.
+                \end{clarification}
+
+                Why is thermometer encoding able to of representing ordering? Let's try shuffling it, too.
+
+                \begin{equation}
+                    \theta^T \phi(x) = 
+                    \begin{bmatrix}
+                        \theta_1 & \theta_2 & \theta_3 & \theta_4
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        0\\1\\1\\1
+                    \end{bmatrix}
+                \end{equation}
+
+                \begin{equation}
+                    (\theta^T)^* (\phi(x))^* = 
+                    \begin{bmatrix}
+                        \theta_3 & \theta_1 & \theta_4 & \theta_2
+                    \end{bmatrix}
+                    \begin{bmatrix}
+                        1 \\ 0 \\ 1 \\ 1
+                    \end{bmatrix}
+                \end{equation}
+
+                Even though we've changed the order, we still know this is the \textbf{third} in the order, because we have \textbf{three} 1's!\\
+
+                \begin{concept}
+                    Even though the \gren{order of elements} in a vector \purp{doesn't matter}, we can retrieve the order of \vocab{thermometer coding} based on the \purp{number of 1's in the vector}.
+                \end{concept}
+            
+            \subsecdiv
+            \subsubsection{Factored Code}
+
+                Now, we move away from number-like properties. Instead, what other patterns of our feature could be \textbf{useful}?
+
+                Sometimes, a single feature will contain multiple pieces of information. Separating those pieces (or \textbf{factors}) from each other can make it easier for our machine to understand.
+
+                \begin{itemize}
+                    \item A \textbf{car} is often described by the "make" (brand) and "model" (which exact type of car by that brand). 
+                        \begin{itemize}
+                            \item These could be broken into two \textbf{features}: "make" is one feature, "model" is another.
+                            \item \miniex "Nissan Altima" becomes "Make: Nissan" and "Model: Altima".
+                        \end{itemize}
+                        
+                    \item Most \textbf{blood types} are in the following categories: $\{A+, A-, B+, B-, AB+, AB-, O+, O-\}$. 
+                    \begin{itemize}
+                        \item You could factor this based on the letter, and positive/negative: $\{A,B,AB,O\}$ and $\{+,-\}$.
+                        \item Since "O" means we contain neither $A$ nor $B$, we could factor the first feature further: $\{A, \text{not } A\}$, $\{B, \text{not } B\}$
+                        \item Example: Using the first factoring, $A-$ becomes $[A, -]$. Using the second it becomes $[A, \text{not } B, -]$. 
+                    \end{itemize}
+
+                    \item \textbf{Addresses} have many parts: street number, zip code, state, etc.
+                        \begin{itemize}
+                            \item Each of these can be given their own factor.\\
+                        \end{itemize}
+                \end{itemize}
+
+                \begin{definition}
+                    \vocab{Factored code} is a \purp{feature transformation} where we take one \gren{discrete class} and break it up into other discrete classifications, called \purp{factors}.
+
+                    \begin{equation}
+                        \text{Class } m \text{ and } n \longrightarrow \text{Class } m, \text{Class } n
+                    \end{equation}
+
+                    \begin{itemize}
+                        \item This transformation is only appropriate if
+                            \begin{itemize}
+                                \item We have some feature(s) that can be \purp{broken up} into \gren{simpler}, meaningful parts.
+                            \end{itemize}
+                    \end{itemize}
+
+                    Often, we apply \gren{other} feature transformations after factored coding. 
+                \end{definition}
+
+                Note the final comment: often, we turn a discrete class into multiple new discrete classes. 
+
+                But, we still need to convert these into a usable, numeric-vector form!
+
+                \miniex We can re-use our blood type example from above.
+
+                \begin{equation}
+                    \phi(x) = 
+                    \begin{bmatrix}
+                        x \text{ contains } A \\
+                        x \text{ contains } B \\
+                        x \text{ is } +
+                    \end{bmatrix}
+                \end{equation}
+
+                Each of these are binary features. For example:
+
+                \begin{equation}
+                    \phi(AB-) =
+                    \begin{bmatrix}
+                        \text{True} \\
+                        \text{True} \\
+                        \text{False}
+                    \end{bmatrix}
+                    =
+                    \begin{bmatrix}
+                        1 \\ 1 \\ 0
+                    \end{bmatrix}
+                \end{equation}
+
+            \subsubsection{Binary Code}
+
+                One possible way to encode data is to \textbf{compress} data using a \textbf{binary code}.
+
+                This might be tempting, because $k$ values can be represented by $\log_2(k)$ values.
+
+                \miniex Suppose you have the one-hot code for $6$, and want to represent it with binary:
+
+                \begin{equation}
+                    \text{Class 6} 
+                    \;\;\overbrace{\longrightarrow}^{\text{One-hot}}\;\;
+                    \begin{bmatrix}
+                        0 & 1 & 0 & 0 & 0 & 0 & 0
+                    \end{bmatrix}^T
+                    \;\;\overbrace{\longrightarrow}^{\text{Binary}}\;\;
+                    \begin{bmatrix}
+                        1 & 1 & 0
+                    \end{bmatrix}^T
+                \end{equation}
+
+                \begin{equation*}
+                    \mathlarger{\mathlarger{\mathlarger{\mathlarger{
+                        \mathfrak{Please\;do\;not\;do\;this}
+                    }}}}
+                \end{equation*}
+
+                \begin{concept}
+                    Using \vocab{binary code} to compress your features is usually a \purp{bad idea}.
+
+                    This forces your model to spend resources learning how to \gren{decode} the binary code, before it can do the task you want it to!
+                \end{concept}
+
+            \subsecdiv
+
+        \subsection{Text}
+
+            Just now, we showed different ways to transform \textbf{discrete} features.
+
+            Another very common data type we work with is \textbf{language}: bodies of text, online articles, corpora, etc.
+
+            Later in this course, we will discuss more powerful ways to analyze text, such as \textbf{sequential models}, and \textbf{transformers}.
+                \note{Obligatory chatgpt reference.}
+
+            There's a very simple encoding that we'll focus on here: the \textbf{bag of words} approach.
+
+            This approach is meant to be as simple as possible: for each word, we ask ourselves, "if this word in the text?", and answer yes (1) or no (0) for every single word.\\
+
+            \begin{definition}
+                The \vocab{bag of words} feature transformation takes a body of text, and creates a \purp{feature} for every \gren{word}: is that word in the text, or not?
+
+                \begin{equation}
+                    \phi(x) = 
+                    \begin{bmatrix}
+                        \text{Word 1 in } x \\
+                        \text{Word 2 in } x \\
+                        \vdots \\
+                        \text{Word k in } x \\
+                    \end{bmatrix}
+                \end{equation}
+
+                This approach is used for \purp{bodies of text}.
+            \end{definition}
+
+            \miniex Consider the following sentence: "She read a book."
+
+            With the words: $\{She, he, a, read, tired, water, book\}$
+
+            We get:
+
+            \begin{equation}
+                \phi(\text{"She read a book."}) =
+                \begin{bmatrix}
+                    1& 0& 1& 1& 0& 0& 1
+                \end{bmatrix}
+            \end{equation}
+
+            A couple weaknesses to this approach:
+
+            \begin{itemize}
+                \item Ignores the order of words and syntax of the sentence.
+                \item Doesn't encode meaning directly.
+                \item Duplicate words are only included once.
+                \item It doesn't create much structure for our model to use.
+            \end{itemize}
+
+            But, it's very easy to implement.
+
+        \subsection{Numeric values}
+
+            Now, on to the (typically) more manageable data type:\\
+
+            \begin{concept}
+                Typically, if your feature is \vocab{already a numeric value}, then we usually want to \purp{keep it as a data value}.
+            \end{concept}
+
+            \miniex Heart rate, stock price, distance, reaction time, etc.
+
+            However, this may not be true if there is some difference between different ranges of numbers:
+
+            \begin{itemize}
+                \item Being below or above the age of 18 (or 21) for legal reasons
+                \item Temperature above or below boiling
+                \item Different age ranges of children might need different range sizes: the difference between ages 1-2 is very different from ages 7-8.\\
+            \end{itemize}
+
+            \begin{concept}
+                Sometimes, if there are distinct \vocab{breakpoints}/boundaries between different values of a numerical feature, we might use \purp{discrete} features to represent those.
+            \end{concept}
+
+            \subsecdiv
+            \subsubsection{Standardizing Values}
+    
+                We still aren't done, if our data is numeric. We likely want to \textbf{scale} our features, so that they all tend to be in similar ranges.
+    
+                Why is that? If some features are much \textbf{larger} than others, then they will have a much larger impact on the answer.
+
+                For example, suppose we have $x_1=4000$, $x_2=7$:
+
+                \begin{equation}
+                    h(x) = \theta^Tx = 4000\theta_1 + 7\theta_2
+                \end{equation}
+
+                The first term is going to have a way bigger impact on $h(x)$. If we change $x_1$ by 10\%, that's going to be bigger than if we changed $x_2$ by 100\%!
+                    \note{$4000*10\%=400$\\ $7*100\%=7$}\\
+    
+                \begin{concept}
+                    If one \vocab{feature} is much \purp{larger} than \gren{another} feature, it will tend to have a much \purp{larger} effect on the result.
+
+                    This is often a bad thing: just because one feature is \gren{larger}, doesn't mean it's more \purp{important}!
+                \end{concept}
+
+                \miniex Income might be in the range of tens of thousands (10,000-100,000), while age is a two-digit number(20-100). Income will be weighed more heavily.
+
+                How do we solve that problem? We need to do two things:
+
+                \begin{itemize}
+                    \item \textbf{Shift} the data so that our range is not too high/low. Our goal is to have it centered on 0.
+                        \begin{itemize}
+                            \item We want it centered on 0 so we can distinguish between the above-average and below-average data points.
+                                \note{Plus, it's easier to get all of our data to 0, rather than picking some arbitrary value.}
+                                
+                            \item We do this by subtracting the \textbf{mean}, or the \textbf{average} of all of our data points.
+                        \end{itemize}
+                        
+                    \begin{equation}
+                        \phi_1(x) = x - \overline{x}
+                    \end{equation}
+
+                    \item Scale the \textbf{range} of possible values, so they all vary by roughly the same amount.
+                    
+                    \item: So, if one variable tends to vary by a \textbf{larger} amount, it doesn't have a bigger impact on the result.
+
+                    \begin{equation}
+                        \phi(x_i) = \frac{x_i - \overline{x}_i}{\sigma_i}
+                    \end{equation}
+
+                    Where $\sigma$ is the \textbf{standard deviation}.
+                        \note{Note that each feature has its own $\sigma_i$: we have to compute this equation for each feature.}
+                \end{itemize}
+
+                If you are interested, we define \textbf{standard deviation} below.\\
+
+                \begin{definition}
+                    To make sure that all of our data is \purp{on the same size scale}, we \vocab{normalize}/\vocab{standardize} our dataset using the operation
+
+                    \begin{equation*}
+                        \phi(x_i) = \frac{x_i - \overline{x}_i}{\sigma_i}
+                    \end{equation*}
+
+                    For every variable $x_i$ in a data point $x$.
+
+                    \begin{itemize}
+                        \item $\overline{x}_i$ is the \gren{mean} of $x_i$
+                        \item $\sigma_i$ is the \gren{standard deviation} of $x_i$
+                    \end{itemize}
+
+                    This results in a dataset which has 
+    
+                    \begin{itemize}
+                        \item A mean $\overline{x}_i$ of \gren{0}
+                        \item A standard deviation $\sigma_i$ of \gren{1}
+                    \end{itemize}
+                \end{definition}
+
+                So, all of our features have the same \textbf{average}, and \textbf{vary} by the same amount. 
+
+                This prevents some features getting prioritized because they're on different size scales.
+
+                \miniex Suppose we have 1-D data $x=[1,2,3,4,5,6]$
+
+                The mean is 
+
+                \begin{equation}
+                    \overline{x} = \frac{1+2+3+4+5+6}{6} = 3.5
+                \end{equation}
+
+                And the standard deviation is 
+
+                \begin{equation}
+                    \sigma = \sqrt{\frac{2.5^2+1.5^2+.5^2+.5^2+1.5^2+2.5^2}{6}}
+                    = \sqrt{\frac{35}{12}} \approx 1.7078
+                \end{equation}
+
+            \subsecdiv
+
+            \subsubsection{Variance and Standard Deviation (Optional)}
+
+                This section describes the origin of $\sigma$ above. Feel free to skip if you're familiar.
+
+                In order to scale our data, we need a measure of how much our data \textbf{varies}. So, if our data varies by more, we can scale it down, and vice versa.
+
+                We can measure this using the \textbf{variance}.\\
+
+                \begin{definition}
+                    We can measure how spread out/varying our data with \vocab{variance}
+
+                    \begin{equation}
+                        \sigma^2 = \sum_i \frac{ (\ex{x}{i} - \overline{x})^2 }{n}
+                    \end{equation}
+
+                    In other words, the \purp{average squared distance} from the \gren{mean}.
+                \end{definition}
+
+                Why do we square the terms? Same reason we square our loss:
+
+                \begin{itemize}
+                    \item We want only positive values, for distance.
+                    \item We don't want to use absolute value, for smoothness.
+                        \note{We also get nicer statistical properties we won't discuss here.}
+                \end{itemize}
+
+                However, this is too large: we want something similar to "average distance from the mean". This is the average \textbf{squared} distance.
+
+                So, we take a square root!\\
+
+                \begin{definition}
+                    A more common way to measure how our data varies is using \vocab{standard deviation} $\sigma$
+
+                    \begin{equation*}
+                        \sigma = \sqrt{\sigma^2}
+                        = \sqrt{ \sum_i \frac{ (x - \overline{x})^2 }{n} }
+                    \end{equation*}
+
+                    This term is \purp{not} the average distance from the mean, but can be used for \gren{scaling} our data in the same way.
+                \end{definition}
+
+                This term allows us to scale our data appropriately. If our data varies by a larger amount, $\sigma$ will be larger. So, $\frac{1}{\sigma}$ will cancel that variance out.
+
+                
+                
+                
+\pagebreak
+
+\section{Terms}
+
+    \begin{itemize}
+        \item Non-linear
+        \item Transformation
+        \item Feature
+        \item Feature Transformation
+        \item Polynomial Basis
+        \item Order/Degree of a polynomial
+        \item Radial Basis
+        \item Discrete Feature
+        \item Numeric transformation
+        \item Thermometer Code
+        \item One-hot Code
+        \item Factored Code
+        \item Binary Code
+        \item Bag of Words
+        \item Standardization
+        \item Normalization
+        \item Standard Deviation
+        
+    \end{itemize}
+                
+                
+            
 
 
 %%% Local Variables:

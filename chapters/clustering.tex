@@ -1,4 +1,4 @@
-\setcounter{chapter}{5}
+\setcounter{chapter}{12-1}
 
 \chapter{Clustering}
 
@@ -10,26 +10,32 @@
         
         \textbf{Simplifying} our data into \textbf{categories} can allow us to do better work, more easily.
         
-        This had lots of benefits: 
+        This has lots of benefits: 
         
         \begin{itemize}
-            \item It could be used to make \textbf{decisions}. For example, a binary classifier could be used to decide "yes" or "no". 
+            \item It could be used to make \textbf{decisions}. Sometimes, knowing the class of an object is enough to make a decision, by itself.
         
-            \item We could use this to understand the item It could be used to make yes or no decisions. and \textbf{distribution} of our data.
+            \item We could use this to understand the structure and \textbf{distribution} of our data.
             
             \item We could sort different types of data to be processed \textbf{separately}.
         \end{itemize}
         
         The problem is, this relied on us \textbf{knowing} what classes we plan to sort into. 
         
-        This may seem obvious, but what if we're looking at something \textbf{new}? A disease we don't fully \textbf{understand}, or animals we've never \textbf{seen} before? How do we classify them?
+        This may seem obvious, but what if we're looking at something \textbf{new}? A disease we don't fully \textbf{understand}, or animals we've never seen before? How do we classify them?
         
-        In the past, doing this ourselves has given rise to many of the \textbf{classes} we use to sort things today. But, computers allow us to do this in situations we \textbf{never} could before:
+        In the past, we've done this ourselves, giving us lots of useful classifications. But, computers allow us to do this in new situations:
         
         \begin{itemize}
             \item \textbf{High-dimensional} datasets, with too much \textbf{complex} information for a human to make sense of.
+                \begin{itemize}
+                    \item \miniex Looking for patterns in hundreds of genetic factors at the same time.
+                \end{itemize}
             
             \item Discovering new classes \textbf{faster} than ever using computers.
+                \begin{itemize}
+                    \item And thus saving human labor.
+                \end{itemize}
             
             \item Finding \textbf{patterns} in creative ways humans would never think to, especially for really \textbf{abstract} problems.\\
         \end{itemize}
@@ -40,7 +46,9 @@
             But, we use it when we \purp{don't know} what groupings we want, so we have to \gren{find} them.
         \end{concept}
         
-        We have some challenges ahead of us, though. Not only do we need to create \textbf{new classes}, we \textit{still} need to classify our points based on them!
+        We have some challenges ahead of us, though. How do we decide what things are "similar" or "different"? How do we create new classes, and know that they're meaningful?
+        
+        
 
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,8 +264,8 @@
             \begin{equation*}
                 \mathbb{1}(p) = 
                 \begin{cases}
-                    1 & \text{if $p=$ True} \\
-                    0 & \text{otherwise ( if $p=$ False)}
+                    1 & \text{if $p$} \\
+                    0 & \text{otherwise }
                 \end{cases}
             \end{equation*}
         \end{notation}
@@ -282,7 +290,7 @@
                 }^{ \text{Check cluster}}
                 \overbrace{
                     \norm{ \rxi - \bmuj }^2 
-                }^{\text{Dist from mean} }
+                }^{\text{Sq. dist from mean} }
         \end{equation}
         
         And finally, we add up over many clusters:
@@ -364,14 +372,18 @@
                 \mathbb{1}(\eyi = j)
         \end{equation}
         
-        One more loose end:\\
+        One more loose end: we've been focusing on \textbf{square distance} as loss function. We want to minimize this, but we're doing this over multiple data points.
+        
+        So, really we want to minimize the \textbf{average} of that. This is a very common (and very useful!) property of a distribution called the \textbf{variance}.\\
         
         \begin{definition}
-            The \vocab{variance} of a dataset is the \vocab{average distance} from the \vocab{mean}:
+            The \vocab{variance} of a dataset is the \vocab{average square distance} from the \purp{mean}:
             
             \begin{equation*}
-                Var[X] = \frac{1}{N} \sum_{i=1}^{N} \ex{x}{i}
+                \operatorname{Var}[X] = \frac{1}{N} \sum_{i=1}^{N} (\ex{x}{i} - \mu)^2
             \end{equation*}
+
+            It tells us how \gren{spread out} our data is.
         \end{definition}
         
         That means, our loss function is meant minimize the total \textbf{variance}.
@@ -539,7 +551,7 @@
           \li \Return $\mu, y$
         \end{codebox}
         
-    \subsection{Using gradient descent: minimizing $\mu$}
+    \subsection{Using gradient descent: minimizing distance to $\mu$}
     
         We can also use \textbf{gradient descent} to solve this problem!
         

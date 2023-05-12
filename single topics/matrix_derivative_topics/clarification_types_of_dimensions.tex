@@ -1,0 +1,44 @@
+    \subsection*{X.17 \quad Dimensions (Optional)}
+        \label{X.17}
+    
+        Here's a quick aside to clear up possible confusion from the last section: our definition of axes and "dimensions".
+        
+        We said a vector has 1 axis, or "dimension" of movement. But, can't a vector have \textbf{multiple} dimensions?\\
+        
+        \begin{clarification}
+            We have two competing definition of \vocab{dimension}: this explains why we can say seemingly conflicting things about derivatives.
+            
+            \boxdiv
+            
+            So far, by "\vocab{dimension}", we mean, "a separate \purp{value} we can \gren{adjust}".
+            
+            \begin{itemize}
+                \item Under this definition, a $(k \times 1)$ column \purp{vector} has \red{$k$} dimensions: it contains \red{$k$} different scalars we can \gren{adjust}.
+                
+                \begin{equation*}
+                    \begin{bmatrix}
+                        \org{v_1} \\ \org{v_2} \\ \vdots \\ \org{v_k}  
+                    \end{bmatrix}
+                    \bigggrB{60pt} \text{We can adjust each of our \red{$k$} scalars.}
+                \end{equation*}
+                
+                \item You might say a $(k \times r)$ \purp{matrix} has \red{$k$} dimensions, too: based on the \gren{dimensionality} of its column vectors.
+                    \begin{itemize}
+                        \item Since we prioritize the size of the vectors, we could say this is a very "vector-centric" definition.
+                    \end{itemize}
+            \end{itemize}
+            
+            \boxdiv
+            
+            In this section, by "dimension", we mean, "an \purp{index} we can \gren{adjust} (move along) to find another scalar.
+            
+            \begin{itemize}
+                \item Under this definition, a $(k \times 1)$ column \purp{vector} has \red{1} dimension: we only have \org{1} axis of \gren{movement}.
+                
+                \item You might say a $(k \times r)$ \purp{matrix} has \red{2} dimensions: a \gren{horizontal} one, and a \gren{vertical} one.
+                    \begin{itemize}
+                        \item This \vocab{definition} is the kind we use in the following sections.
+                    \end{itemize}
+            \end{itemize}
+        \end{clarification}
+        

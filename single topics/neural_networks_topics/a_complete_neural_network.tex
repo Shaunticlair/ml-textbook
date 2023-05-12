@@ -85,11 +85,13 @@
                 \Bigg)
             \end{equation*}
         \end{kequation}
+
+    \subsubsection*{Hidden Layers and the "First Layer"}
         
-        One more comment: a useful definition.\\
+        Now that we have a full network, we introduce some useful vocab.\\
         
         \begin{definition}
-            A \vocab{hidden layer} is any layer except for the \purp{last} one.
+            A \vocab{hidden layer} is any functional layer except for the \purp{output} (last) layer.
             
             It is called a "\gren{hidden}" layer because, if you're viewing the whole neural network based on
             
@@ -99,10 +101,41 @@
                 \item \gren{Output} $A^L$ (final output)
             \end{itemize}
             
-            Then you can't see the \gren{output} of any of the layers except for the \purp{last} one.
+            You can't see \purp{hidden layers} from outside the network.
+
+            Based on this definition,the \gren{number of hidden layers} in a network is the layer count, minus one: \grn{$L-1$}.
         \end{definition}
         
-        Sometimes you'll hear someone say that a hidden layer is any except the "\textbf{first} or \textbf{last}": by that, they mean you can view the \textbf{input} for the \textbf{first} layer, as well as the \textbf{output} for the \textbf{last} layer.
+        Note that there's one point of confusion: online, you may see that the hidden layer is "any layer other than the \textbf{input} (first) or \textbf{output} (last) layer".
 
-        But, when we're talking about \textbf{activation} functions (which we often are when we mention hidden layers, see below), we only care about whether the \textbf{output} is hidden!
+        This is because, often, we consider the input itself to be a separate "\textbf{input layer}". 
+        
+        Despite this fact, when someone counts the number of layers in a neural network, they're usually only counting the hidden and output layers: we \textbf{don't count} the input layer.
+            \note{It confused me, too.}\\
+
+        \begin{definition}
+            The \vocab{input layer} is a layer that brings the \gren{input} into the network. It applies \purp{no functions} to the data.
+
+            Because the input layer has \purp{no effect} on our data (it just moves it), we \purp{don't count the input layer} when we're saying how \gren{many layers} a network has.
+        \end{definition}
+
+        \miniex Consider the following network from earlier:
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=100mm,scale=0.4]{images/nn_images/two_layers_input_layer.png}
+        \end{figure}
+
+        In this network, $x$ is passed into the network by the \textbf{input layer}. This layer is \textbf{before} layer 1 (you could think of it as "Layer 0").
+
+        Despite having the input layer, plus layer 1 and 2, we count only
+        
+        \begin{itemize}
+            \item \textbf{Two} layers in our network:
+            \begin{itemize}
+                \item One hidden layer: Layer 1.
+                \item One output layer: Layer 2. 
+            \end{itemize}
+        \end{itemize}
+
         

@@ -23,7 +23,7 @@
             \end{bmatrix}
         \end{equation}
         
-        We can add an \textbf{additional} rule: the probabilities need to add up to \textbf{one}: we should assume our point ends up in some class or \textbf{another}.
+        We need one \textbf{additional} rule: the probabilities need to add up to \textbf{one}: we should assume our point ends up in some class or \textbf{another}.
         
         \begin{equation}
             g_1+g_2+...+g_k=1
@@ -34,10 +34,25 @@
             
             Because we should assume our data point is in \purp{some} class, all of these probabilities have to \gren{add} to 1.
         \end{concept}
+
+        Let's be careful, though: this is only true for probabilities within a single data point.
         
-        \textbf{Scaling} values to add up to 1 is called \textbf{normalization}. How do we do that?
+        \miniex Suppose you have two animals (data points).
         
-        Well, let's say each class gets a \textbf{value} of $r_i$, before being \textbf{normalized}: we have done some other math we won't worry about.
+            \begin{itemize}
+                \item It's impossible for the first animal to be \textbf{both} 90\% cat and 90\% dog.
+                \item \textit{But}, there's no issue with the first animal being 90\% cat and the second animal being 90\% dog.\\
+            \end{itemize}
+
+        \begin{clarification}
+            It's only true that all of the probabilities for the \purp{same data point} need to add to 1.
+
+            If you have $\p{\text{class 1}}$ for one data point and $\p{\text{class 2}}$ for another data point, those \gren{aren't related}.
+        \end{clarification}
+        
+        So, we want to scale our values so they add to 1: this is called \textbf{normalization}. How do we do that?
+        
+        Well, let's say each class gets a \textbf{value} of $r_i$, before being \textbf{normalized}. For now, let's ignore how we got $r_i$, just know that we have it.
         
         To make the total 1, we'll \textbf{scale} our terms by a factor $C$:
         
@@ -57,7 +72,7 @@
             \frac{1}{\sum r_i}
         \end{equation}
         
-        We've got $g_i$ now!
+        We've got our desired $g_i$ now!
         
         \begin{equation}
             g = 
@@ -83,7 +98,7 @@
             \note{Negative numbers are easy to mess up in algebra.}
         
         \begin{equation}
-            g = \frac{e^u}{1+e^u}
+            g = \frac{e^u}{e^u+1}
         \end{equation}
         
         We'll think of \textbf{binary} classification as a special case of \textbf{multi-class} classification. The above probability could be thought of as $g_1$: the chance of our first class.\\
@@ -126,16 +141,19 @@
             = 
             \frac{e^{u_i}}{\sum e^{u_j}}
         \end{equation}
+
+        Now, we have a template for expanding into higher dimensions!
         
     \subsection*{Our Linear Classifiers}
     
-        What are each of those $u_i$ terms? When we were doing \textbf{binary}, it was a \textbf{linear regression} function:
+        What are each of those $u_i$ terms? When we were doing \textbf{binary classification}, we used a \textbf{linear regression} function to help generate the probability:
+            \note{Remember that $u(x)$ is not a probability yet: we used a sigmoid to turn it \textit{into} a probability.}
         
         \begin{equation}
             u(x) = \theta^Tx+\theta_0
         \end{equation}
-        
-        We can do this for multiple different $u_i$ by just creating a different linear classifier $(\theta,\theta_0)$ for each one. We'll represent each vector as $\theta_{(i)}$.
+
+        Now, we want multiple probabilities. So, we create multiple different functions $u_i$: $k$ different linear regression models $(\theta,\theta_0)$. We'll represent each vector as $\theta_{(i)}$.
         
         \begin{equation}
             \theta_{(1)} = 
@@ -154,17 +172,27 @@
             \end{bmatrix}
         \end{equation}
         
-        And each can be used on our input:
+        Each of these models could be seen as a "different perspective" of our data point: what about that data point is prioritized (large $\theta_i$ magnitudes), how do we bias the result ($\theta_0$)?
+        
+        This "perspective" we call $\theta_{(i)}$ will tell us if our data point is "closer" to the class it represents. And we compute the result with:
         
         \begin{equation}
             u_1(x) = \theta_{(1)}^T x + \theta_{0(1)}
             \qquad\qquad
             u_2(x) = \theta_{(2)}^T x + \theta_{0(2)}
-            \dots
+            \quad \quad
+            u_k(x) = \theta_{(k)}^T x + \theta_{0(k)}
         \end{equation}
+
+        In the last section, we emphasized that we can only use $\sum p_i=1$ for the probabilities of a \textbf{single} data point. Based on this, we'll focus on only one data point.\\
+
+        \begin{clarification}
+            In this section, $x$ represents only \purp{one data point} $\ex{x}{i}$.
+
+            Softmax treats each data point \gren{individually}, so it's easier to not group them together. 
+        \end{clarification}
         
-        But this is tedious. Instead, we can combine them all into a $(d \times k)$
-        \textbf{matrix}.
+        Having all these separate equations for $\theta_i$ is tedious. Instead, we can combine them all into a $(d \times k)$ \textbf{matrix}.
             \note{$k$ classes, so we need $k$ classifiers. We'll stack them side-by-side like how we stacked multiple data points to create $X$.}
         
         \begin{equation}
@@ -259,4 +287,69 @@
         
         
         If we are forced to make a \textbf{choice}, we choose the class with the \textbf{highest probability}: we return a \textbf{one-hot encoding}.
+
+        \subsection*{A side comment: Sigmoid vs. Softmax}
+
+            Let's pause real quick and clarify something.
+
+            Usually, we expect to use \textbf{softmax} if we have more than 2 classes, because that's what we built it for.
+
+            However, this isn't always the case. 
+            
+            There's another aspect we haven't focused on: \textbf{softmax} represents $k$ different classes/events. These classes are assumed to be \textbf{mutually exclusive}: you can't be in multiple at the same time.
+
+            In other words, they are \textbf{disjoint}.\\
+
+            \begin{definition}
+                If two events are \vocab{disjoint}, they \purp{can't} happen at the \gren{same time}.
+
+                If $n$ events are \vocab{disjoint}, only \purp{one} of them can happen at a time.
+            \end{definition}
+
+            \miniex We usually wouldn't classify an animal as both a cat and a dog: it's either one or the other.
+
+            When events are disjoint, their probabilities are separate:\\
+
+            \begin{concept}
+                If two events are \vocab{disjoint}, then they have \gren{separate} probabilities: there's no overlap. Since $\p{A \cap B}=0$, we can say:
+
+                \begin{equation*}
+                    \p{A \cup B} = \p{A}+\p{B}
+                \end{equation*}
+
+                If we have \gren{every} event and they're all \vocab{disjoint}, then their probabilities sum to 1.
+
+                \begin{equation}
+                    \sum_i p_i = 1
+                \end{equation}
+            \end{concept}
+
+            \miniex If the weather options are rain, cloudy, and sunny, and you have to only choose one, you should expect that:
+
+            \begin{equation}
+                \p{\text{Rain}} + \p{\text{Cloudy}} + \p{\text{Sunny}} = 1
+            \end{equation}
+
+            But this only makes sense \textbf{if} events can't happen at the same time.
+
+            But, what if they can? For example: there might be $k$ different people we could find in an \textbf{image}. But, there can be \textbf{multiple} people in the same image! 
+
+            So, it doesn't make sense to assume that each event is \textbf{mutually exclusive}: multiple events can all happen, which just isn't an option with softmax!
+
+            The solution: we still have \textbf{probabilities}, so we just use \textbf{one sigmoid per class}.\\
+
+            \begin{clarification}
+                \purp{Softmax} is used when each of our $k$ classes is \purp{disjoint} (mutually exclusive).
+
+                However, if they aren't, then we \gren{can't} use softmax.
+
+                Instead, we use $k$ \purp{sigmoid} functions: one for each of our $k$ classes. We're using \vocab{binary classification} on each class separately.
+
+                The $\nth{i}$ sigmoid tells us how likely the \purp{data point} is to be in the $\nth{i}$ class.
+            \end{clarification}
+
+            \miniex We might have an algorithm figuring out which \textbf{products} a customer might want. They might want \textbf{multiple}, so we can't treat them as disjoint.
+
+            In this case, each product is a class, and we determine the result based on the matching sigmoid.
+
     
