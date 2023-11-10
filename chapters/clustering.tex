@@ -1,43 +1,45 @@
-\setcounter{chapter}{12-1}
+\setcounter{chapter}{6-1}
 
 \chapter{Clustering}
 
     \subsection{Why do clustering?}
     
-        In chapter 4, we discussed \textbf{classification}: sorting data points into different groups, or \textbf{classes}. 
+        In chapter 4, we discussed \orgg{classification}: sorting data points into different groups, or \textbf{classes}. 
         
         \miniex We might sort animals by \textbf{genetics}, or different sub-diseases that need different \textbf{treatments}. 
         
-        \textbf{Simplifying} our data into \textbf{categories} can allow us to do better work, more easily.
+        \textbf{Simplifying} our data into categories can allow us to do better work, more easily.
         
         This has lots of benefits: 
         
         \begin{itemize}
-            \item It could be used to make \textbf{decisions}. Sometimes, knowing the class of an object is enough to make a decision, by itself.
+            \item It could be used to make \gren{decisions}. Sometimes, knowing the class of an object is enough to make a decision, by itself.
         
-            \item We could use this to understand the structure and \textbf{distribution} of our data.
+            \item We could use this to understand the structure and \gren{distribution} of our data.
             
-            \item We could sort different types of data to be processed \textbf{separately}.
+            \item We could \gren{sort} different types of data to be processed \textbf{separately}.
         \end{itemize}
+
+        \subsecdiv
         
         The problem is, this relied on us \textbf{knowing} what classes we plan to sort into. 
         
-        This may seem obvious, but what if we're looking at something \textbf{new}? A disease we don't fully \textbf{understand}, or animals we've never seen before? How do we classify them?
+        This may seem obvious, but what if we're looking at something \purp{new}? A disease we don't fully understand, or animals we've never seen before? How do we \textbf{classify} them?
         
-        In the past, we've done this ourselves, giving us lots of useful classifications. But, computers allow us to do this in new situations:
+        In the past, we've done this ourselves, giving us lots of useful classifications. But, \orgg{computers} allow us to do this in new situations:
         
         \begin{itemize}
-            \item \textbf{High-dimensional} datasets, with too much \textbf{complex} information for a human to make sense of.
+            \item \gren{High-dimensional} datasets, with too much \textbf{complex} information for a human to make sense of.
                 \begin{itemize}
                     \item \miniex Looking for patterns in hundreds of genetic factors at the same time.
                 \end{itemize}
             
-            \item Discovering new classes \textbf{faster} than ever using computers.
+            \item Discovering \gren{new classes} \textbf{faster} than ever using computers.
                 \begin{itemize}
                     \item And thus saving human labor.
                 \end{itemize}
             
-            \item Finding \textbf{patterns} in creative ways humans would never think to, especially for really \textbf{abstract} problems.\\
+            \item Finding \gren{patterns} in creative ways humans would never think to, especially for really \textbf{abstract} problems.\\
         \end{itemize}
     
         \begin{concept}
@@ -59,11 +61,15 @@
         
         The first thing we should note: 
         
-        This problem is similar to classification, a \textbf{supervised} problem.
+        This problem is similar to classification, a \gren{supervised} problem.
+
+        \begin{itemize}
+            \item It was \textbf{supervised} because we knew the \textbf{correct} labels for our data in our advance. We just wanted to \textbf{teach} it to our computer.
+        \end{itemize}
         
-        It was \textbf{supervised} because we knew the \textbf{correct} labels for our data in our advance. We just wanted to \textbf{teach} it to our computer.
+        The problem here: we \textbf{don't} know the correct labels! In fact, we're making them up as we go. 
         
-        The problem here: we \textbf{don't} know the correct labels! In fact, we're making them up as we go. Because we aren't being "supervised" by a correct answer, we call this \textbf{unsupervised learning}.\\
+        Because we aren't being "supervised" by a correct answer, we call this \gren{unsupervised learning}.\\
         
         \begin{concept}
             \vocab{Clustering} is a type of \purp{unsupervised learning}: meaning, we don't have a \gren{correct} answer in advance.
@@ -75,18 +81,28 @@
         
     \subsection{What is clustering?}
     
-        So, if we don't know \textbf{what} our classes are, how do we figure out \textbf{which} classes to create?
+        So, if we don't know \textbf{what} our classes are, how do we figure out \textbf{which} classes to create? Well, we have to think of what we expect in a class.
         
-        Intuitively, we think of classes as a \textbf{collection} of things that are \textbf{similar} to each other. Before, we've considered things "\textbf{close}" if they have a \textbf{low distance} in input space.
+        Intuitively, we think of a class as a \textbf{collection} of things that are \gren{similar} to each other, and more different from other classes.
+
+        
+
+        So, two points in the \orgg{same class} are more similar: in RBF, we decided that "more similar" meant "low distance" in the input space.
             \note{Remember that input space is where we represent each data point using input variables.}
-            
-        \miniex We can tell two animals are \textbf{both} cats because they both have fur and sharp claws, among other things: they're \textbf{similar}.
-            
-        Meanwhile, two points in different classes are more \textbf{different}: they're further apart in input space. 
+
+        \begin{itemize}
+            \item \miniex Two people might look more similar if their heights are numerically closer: shorter distance.
+        \end{itemize}
         
-        \miniex We can tell a dolphin is \textbf{distinct} from a cat because one lives in water and one doesn't: their clusters are more \textbf{different}.
+            
+        Meanwhile, two points in \orgg{different classes} are more \textbf{distant}: they're further apart in input space. 
+
+        \begin{itemize}
+            \item \miniex Two people might look more different if their weights are numerically further: greater distance.
+        \end{itemize}
+
         
-        We call each of these groupings \textbf{clusters}.\\
+        We'll call these "possible classes" that we discover, \textbf{clusters}.\\
         
         \begin{definition}
             Informally, a \vocab{cluster} is a collection of \gren{data points} that are all 
@@ -96,7 +112,7 @@
                 \item \purp{Far} from the other clusters.
             \end{itemize}
             
-            We use clusters as our way to \gren{discover} new classifications.
+            We use clusters as our way to discover \orgg{new classifications.}
         \end{definition}
         
         \miniex Below, we can visually mark out what looks like 5 distinct \textbf{clusters} in input space $(x_1,x_2) \in \RR^2$:
@@ -113,7 +129,7 @@
             
             \item How many clusters do we want?
             
-            \item How do we evaluate our clustering?
+            \item How do we evaluate how "good" we are at clustering? Which clusters are closest to what we want?
         \end{itemize}
         
 \pagebreak
@@ -121,24 +137,42 @@
 
 \section{The k-means formulations}
 
-    In this section, we'll introduce a common way to do clustering called the \textbf{$k$-means approach}.
+    In this section, we'll introduce a common way to do clustering, called the \textbf{$k$-means approach}.
 
     \subsection{Defining a cluster: The mean}
         
-        We need to define what makes a "cluster" in order to move \textbf{forward}.
+        We need to \textbf{define} what makes a "cluster" in order to move forward.
+
+        Suppose we have a collection of $n$ points, which we informally think of as a "cluster".
         
-        We want the points within a cluster to be as \textbf{close together} as possible. So, you might measure the \textbf{distance} from one point to all the others.
+        We want the points within a cluster to be as \gren{close together} as possible. So, you might ask, "how far is this point $x^{(i)}$ from the rest of the cluster?"
+
+        \begin{itemize}
+            \item How do we measure this? Well, we could average the distance to every other point. That could get time-consuming.
+
+            \item Instead, could we somehow we could use one point that "\gren{represents}" the whole cluster?
+
+            \begin{itemize}
+                \item With this system, if you want the \textbf{distance from the cluster}, we can just use that "representative" as the "position" of our cluster.
+                \item That way, you only need to compute 1 distance, not $n-1$ distances.
+            \end{itemize}
+
+            \item This "representative" will be the \gren{average} of all of our points: that way, it'll give us a rough idea of "where" all the points in the cluster are.
+        \end{itemize}
         
-        So, it would make sense to \textbf{average} them out. And we need to average every pair of points. That's a lot of work: can we \textbf{simplify} it?
-        
-        Well, if we're trying to \textbf{average} the result of many data points, it would make sense to use the \textbf{mean}!
-        
-        That's how we'll \textbf{define} our cluster: as the \textbf{mean}, the point that is the \textbf{average} of all the other points in the cluster.\\
+        This is our \textbf{cluster mean}: when we want to know how far  a data point is from the rest of the cluster, we'll compare it to the cluster mean.\\
         
         \begin{definition}
-            We want to represent our \purp{cluster} using its \vocab{mean}: the \gren{average} of all of the data points in that \purp{cluster}.
+            We want to represent our \purp{cluster} using its \gren{mean}: the \gren{average} of all of the data points in that \purp{cluster}.
+
+            \begin{itemize}
+                \item This \vocab{cluster mean} will be treated as the "position" of our cluster.
+            \end{itemize}
+           
+
+            \subsecdiv
              
-            Our goal is for the \vocab{cluster mean} to have the \vocab{minimum average distance} possible to all of our data points: it's as \gren{close} to our points as we can get.
+            Our goal is for the \vocab{cluster mean} to have the \orgg{minimum average distance} possible to all of our data points: it's as \gren{close} to our points as we can get.
         \end{definition}
         
         \miniex We describe the "male lifespan" using \textbf{life expectancy}: the \textbf{average} time a male human lives for. Same for women as well.
@@ -147,9 +181,9 @@
     
         Now, we've created \textbf{one} cluster. To extend this to \textbf{many} clusters, we just need each cluster to have its \textbf{own} mean.
         
-        There are $k$ of these clusters: this is why we call this the \textbf{k-means formulation}.
+        We say that there are $k$ of these clusters: this is why we call this the \textbf{k-means formulation}.
         
-        How do we decide which point goes in which \textbf{cluster}? Well, we want our points to be close. So, we'll assign it to the \textbf{closest} one.\\
+        How do we decide which point goes in which \textbf{cluster}? Well, we want our points to be close to their cluster. So, we'll assign it to the \textbf{closest} one.\\
         
         \begin{concept}
             A \gren{point} is assigned to the \purp{closest} \vocab{cluster mean}.
@@ -163,13 +197,15 @@
             \item Our points are \textbf{assigned} to the \textbf{closest} cluster mean.
             
                 \begin{itemize}
-                    \item This separates \vocab{different} clusters of points from each other.
+                    \item This separates \purp{different} clusters of points from each other:
+
+                    \item If they're closer to different cluster means, they're in different groups.
                 \end{itemize}
             
             \item The cluster mean is the \textbf{average} of all of our points: the \textbf{minimum distance} to them.
             
                 \begin{itemize}
-                    \item This makes sure our cluster is made up of points that are \vocab{similar} to each other.
+                    \item This makes sure our cluster is made up of points that are \gren{similar} to each other:
                     
                     \item If our point is close to the \textbf{mean}, it's probably close to the \textbf{other} points in the cluster.
                 \end{itemize}
@@ -177,7 +213,7 @@
         
     \subsection{$k$-means loss}
     
-        Now, we know what we want out of our \textbf{clusters}. But, the problem is, we don't know \textbf{which} points will give us our nice clusters. 
+        Now, we know what we \textbf{want} out of our clusters. But, the problem is, we don't know \textbf{how} to get those nice clusters.
         
         So, first, we will have to \textbf{assign} our initial "cluster means": often, we \textbf{randomly} select some points from our dataset.\\
         
@@ -187,7 +223,7 @@
             At first, each point is assigned to the \purp{closest} cluster mean.
         \end{concept}
         
-        But as you'll notice, these points are \textbf{not} the cluster means we're looking for! They're just a random \textbf{initialization}. So, we have to \textbf{optimize}.\\
+        But as you'll notice, these points are \textbf{not} specially designed clusters! They're just a random \textbf{initialization}: we have to \textbf{optimize}.\\
         
         \begin{clarification}
             Notice that, when we \gren{first} select our "cluster means", we don't get them by \purp{averaging} any points: we choose them \purp{randomly}.
@@ -219,24 +255,24 @@
         We'll add this up for each of the $n$ data points in our cluster.
         
         \begin{equation}
-            \loss = \sum_{i=1}^n \norm{ \rxi - \blu{\mu} }^2
+            \loss = \mathlarger{\sum_{i=1}^n} 
+                \norm{ \rxi - \blu{\mu} }^2
         \end{equation}
         
     \subsection{Building up to $k$ clusters}
     
         So, what do we do for each of our $k$ clusters? Well, we can just \textbf{add} up the \textbf{loss} for them.
         
-        We'll use $j \in \{1, 2, 3, ... k\}$ to represent our $\nth{j}$ cluster. Each cluster has a mean $\blu{\ex{\mu}{j}}$.
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Command for readability
-        \newcommand{\bmuj}[0]{ \blu{\ex{\mu}{j}} } %Blue mu^j
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        We'll use $j \in \{1, 2, 3, ... k\}$ to represent our $\nth{j}$ cluster. Each cluster has a mean $\org{\ex{\mu}{j}}$.
+  
         
         \begin{equation}
-            \loss_j = \sum_{i=1}^n \norm{ \rxi - \bmuj }^2
+            \overbrace{\loss_j}^{\text{Loss for only cluster $j$}} = 
+            \mathlarger{\sum_{i=1}^n} 
+                \norm{ \ex{x}{i} - \mu^{\org{(j)}} }^2
         \end{equation}
         
-        Problem is, we're including \textbf{every} point $\exi$ in \textbf{every} cluster! We want a way to filter by \textbf{cluster}.
+        Problem is, we're including \textbf{every} point $\exi$ in \textbf{every} cluster! We want a way to filter by \textbf{cluster}: we only put one data point in each cluster.
         
         Remember that we \textbf{label} clusters the same way we labeled \textbf{classes} before:\\
         
@@ -250,10 +286,11 @@
             Where $j$ represents the $\nth{j}$ cluster.
         \end{notation}
         
-        Cluster mean $\bmuj$ is the $\nth{j}$ cluster mean: it only counts for points in $c_j$. So, we \textbf{only} want to add up the loss when 
+        Cluster mean $\mu^{\org{(j)}}$ \textbf{only} includes points in cluster $j$. So, when computing \purp{loss}, we \textbf{only} want to include data point $\ex{x}{i}$ when:
         
         \begin{equation}
-            \eyi = j
+            \overbrace{
+            \eyi = j}^{\text{$\ex{x}{i}$ is in cluster $j$}}
         \end{equation}
         
         We'll do this using the following helpful \textbf{function}:\\
@@ -273,10 +310,22 @@
         Combined with our \textbf{condition} of matching clusters, this can be useful:
         
         \begin{equation}
-            \mathbb{1}(\eyi = j)
+            \mathbb{1} \Big( \org{\eyi = j} \Big) = 
+            \begin{cases}
+                1 & \ex{x}{i} \text{ is in cluster } j \\
+                0 & \ex{x}{i} \text{ is not in cluster } j \\
+            \end{cases}
         \end{equation}
         
-        If we \textbf{multiply} this by our loss, it'll \textbf{only} appear if the clusters \textbf{match}! We can \textbf{eliminate} data points in a different cluster.
+        If we \textbf{multiply} this by our loss, it'll filter for situations where the clusters \textbf{match}! We can \textbf{eliminate} data points in a different cluster.
+
+        \begin{equation}
+            \mathbb{1} \Big( \org{\eyi = j} \Big) \norm{ \rxi - \blu{\ex{\mu}{j}} }^2 = 
+            \begin{cases}
+                \norm{ \rxi - \blu{\ex{\mu}{j}} }^2 & \ex{x}{i} \text{ is in cluster } j \\
+                0 & \ex{x}{i} \text{ is not in cluster } j \\
+            \end{cases}
+        \end{equation}
         
     \subsection{$k$-mean loss: final form}
     
@@ -284,12 +333,13 @@
         
         \begin{equation}
             \loss_j =
-            \sum_{i=1}^n 
+            \mathlarger{\sum_{i=1}^n} 
                 \overbrace{
-                    \mathbb{1}(\eyi = j)
+                    \mathbb{1} \Big( \eyi = j \Big)
                 }^{ \text{Check cluster}}
+                \cdot
                 \overbrace{
-                    \norm{ \rxi - \bmuj }^2 
+                    \norm{ \rxi - \blu{\ex{\mu}{j}} }^2 
                 }^{\text{Sq. dist from mean} }
         \end{equation}
         
@@ -304,16 +354,17 @@
         \begin{equation*}
                 \loss =
                 \overbrace{
-                    \sum_{j=1}^k
+                    \mathlarger{\sum_{j=1}^k}
                 }^{\text{clusters }}
                 \overbrace{
-                \sum_{i=1}^n 
+                    \mathlarger{\sum_{i=1}^n} 
                 }^{\text{data points}}
                     \overbrace{
                         \mathbb{1}(\eyi = j)
                     }^{ \text{Check cluster}}
+                    \cdot
                     \overbrace{
-                        \norm{ \rxi - \bmuj }^2 
+                        \norm{ \rxi - \blu{\ex{\mu}{j}} }^2 
                     }^{\text{Dist from mean} }
             \end{equation*}
             
@@ -325,13 +376,13 @@
             \begin{equation*}
                 \loss =
                 \pur{
-                    \sum_{j=1}^k \sum_{i=1}^n
+                    \mathlarger{ \sum_{j=1}^k \sum_{i=1}^n }
                 }
                 \red{
                     \mathbb{1}(\eyi = j)
                 }
                 \blu{
-                    \norm{ \exi - \bmuj }^2 
+                    \norm{ \exi - \blu{\ex{\mu}{j}} }^2 
                 }
             \end{equation*}
             
@@ -355,21 +406,22 @@
         
         \begin{equation}
             \ex{\mu}{j} = \frac{1}{N_j} 
-            \sum_{j=1}^k 
+            \mathlarger{\sum_{j=1}^k} 
                 \overbrace{
-                    \mathbb{1}(\eyi = j)
+                    \mathbb{1} \Big( \org{\eyi = j} \Big)
                 }^{ \text{check cluster} }
+                \cdot
                 \overbrace{
-                    \exi
+                    \blu{\exi}
                 }^{ \text{data points} }
         \end{equation}
         
-        And how large is $N_j$? We can just \textbf{add} 1 for every data point in cluster, 0 otherwise:
+        And how large is $N_j$? We can just \textbf{count} the number of data points in cluster $j$:
         
         \begin{equation}
             N_j = 
-            \sum_{j=1}^k 
-                \mathbb{1}(\eyi = j)
+            \mathlarger{\sum_{j=1}^k} 
+                \mathbb{1} \Big( \org{\eyi = j} \Big)
         \end{equation}
         
         One more loose end: we've been focusing on \textbf{square distance} as loss function. We want to minimize this, but we're doing this over multiple data points.
@@ -380,14 +432,15 @@
             The \vocab{variance} of a dataset is the \vocab{average square distance} from the \purp{mean}:
             
             \begin{equation*}
-                \operatorname{Var}[X] = \frac{1}{N} \sum_{i=1}^{N} (\ex{x}{i} - \mu)^2
+                \operatorname{Var}[X] = \frac{1}{N} 
+                \mathlarger{\sum_{i=1}^{N}} \norm{\ex{x}{i} - \mu}^2
             \end{equation*}
 
             It tells us how \gren{spread out} our data is.
         \end{definition}
         
         That means, our loss function is meant minimize the total \textbf{variance}.
-            \note{Almost, the factor of $1/N$ is missing: since this won't change as we improve our clustering, we'll leave it alone.}
+            \note{Almost, the factor of $1/N$ is missing: since this constant won't change much as we improve our clustering, we'll leave it alone.}
             
     \subsection{Initializing the $k$-means algorithm}
     
@@ -406,6 +459,7 @@
         But, for now, we'll \textbf{ignore} that problem, and say $k=5$. 
         
         Let's \textbf{randomly} assign our initial cluster means, and assign each point to the \textbf{closest} cluster:
+            \note{Above, we suggested selecting a random data point as our cluster mean, but you can also just pick a random position, like we did here.}
         
         \begin{figure}[H]
             \centering
@@ -468,7 +522,7 @@
         This creates a cycle that continues until we \textbf{converge} on our final answer.\\
         
         \begin{concept}
-            Together, of our steps for \gren{improving} our clusters create a \vocab{cycle} of \purp{optimization}:
+            Together, both of our steps for \gren{improving} our clusters create a \vocab{cycle} of \purp{optimization}:
             
             \begin{itemize}
                 \item \purp{Moving} our cluster mean \gren{changes} which point should go in each cluster.
@@ -566,8 +620,8 @@
         \begin{equation}
             \loss(\mu) =
             \sum_{i=1}^n 
-                    \mathbb{1}(\eyi = j)
-                    \norm{ \rxi - \bmuj }^2 
+                    \mathbb{1} \Big( \eyi = j \Big)
+                    \norm{ \rxi - \blu{\ex{\mu}{j}} }^2 
         \end{equation}
         
         Rather than dealing with the indicator function $1(\cdot)$, we could instead just consider whichever $\mu$ is closest: \textbf{minimum} distance.
@@ -577,14 +631,14 @@
                 \min_{j} 
             }^{Minimizing}
             \overbrace{
-                \norm{ \rxi - \bmuj }^2 
+                \norm{ \rxi - \blu{\ex{\mu}{j}} }^2 
             }^{distance}
         \end{equation}
         
         This \textbf{automatically} assigns every point to the closest \textbf{cluster} before we get our loss! So, all we need to worry about is $\mu_j$.
         
         \begin{notation}
-            Instead of using an \purp{indicator function}, we can represent \gren{cluster assignment} another way: using the \vocab{function} $\min_{j}$.
+            Instead of using an \purp{indicator function} $\mathbb{1}(p)$, we can represent \gren{cluster assignment} another way: using the \vocab{function} $\min_{j}$.
             
             It can give \vocab{minimum distance} from $\ex{x}{i}$ to one of the cluster means: it picks the \purp{closest} mean. 
             
@@ -597,7 +651,7 @@
             \overbrace{
                     \min_{j} 
             }^{\text{Nearest cluster}}
-                    \norm{ \rxi - \bmuj }^2 
+                    \norm{ \rxi - \blu{\ex{\mu}{j}} }^2
         \end{equation}
         
         Now, we can do gradient descent using $\pderiv{L(\mu)}{\mu}$. 
@@ -609,24 +663,26 @@
         
         Once we've finished gradient descent, and we've \textbf{minimized} our loss, we can get our \textbf{labels}.
         
-        $\min$ gives the \textbf{output} value that we get by minimizing. In this case, average \textbf{squared distance} from the cluster mean.
+        The "min" function gives the \purp{output} value that we get by minimizing. In this case, average \textbf{squared distance} from the cluster mean: the \purp{loss}.
         
-        Meanwhile, $\argmin$ gives us the \textbf{input} value that gives us the minimum output. In this case, the \textbf{cluster} that gives the minimum distance. 
+        Meanwhile, argmin gives us the \gren{input} value that gives us the minimum output. In this case, the \gren{choice of cluster means} that gives the minimum distance. 
         
-        So, $\argmin$ gives us the cluster closest to each point: that's our \textbf{label}!
+        So, $\argmin{}$ gives us the cluster closest to each point: that's our \textbf{label}!
         
         We can use this notation to get our \textbf{labels}.\\
         
         \begin{notation}
             After \purp{optimizing} $\mu$, our \vocab{labels} are given by:
             
-            \begin{equation}
+            \begin{equation*}
                 \eyi = \arg\min_j \norm{ x^{(i)} - \mu^{(j)} }^2
-            \end{equation}
+            \end{equation*}
         \end{notation}
         
         Using gradient descent can give us a \textbf{local} minimum, but our surface is not fully \textbf{convex}: so, we don't necessarily get a \textbf{global} minimum.
             \note{Even though individual terms of squared distance may be convex, adding $\min$ terms may not be convex.}
+
+        Of course, this is also true for the k-means algorithm.
 
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -863,7 +919,7 @@
         
         But, when it comes down to it, often, the \textbf{quality} of a clustering is based on how \textbf{useful} it is. So, what sorts of \textbf{uses} does clustering \textbf{have}? 
         
-        Well, we're organizing our data into \textbf{groups}: this \textbf{simplifies} how we look at our data. And it allows us to \textbf{view} at our data, and \textbf{understand} what's going on.
+        Well, we're organizing our data into \textbf{groups}: this \textbf{simplifies} how we look at our data. And when we can \textbf{look} at our data, we can better \textbf{understand} what's going on.
         
         In short: clustering allows humans to more easily make sense of data.\\
         
@@ -889,7 +945,7 @@
     
         Finally, there's one more way to think about clustering that is more \textbf{practical}, and closer to \textbf{objective}.
         
-        We use clustering to \textbf{sort} different data points that need \textbf{different} processing: this can make our model more \textbf{effective}, since different parts of the dataset may work \textbf{better} with different \textbf{treatment}.
+        We use clustering to \textbf{sort} different data points that need different processing: this can make our model more \textbf{effective}, since different parts of the dataset may work better with different \textbf{treatment}.
         
         \miniex We could train a different regression model on each cluster: this can create a more accurate model.
         
@@ -898,7 +954,11 @@
         \begin{definition}
             A \vocab{downstream application} is a \gren{problem} that relies on a \purp{different} process to make its work better or easier.
             
-            In this case, \gren{clustering} has \purp{downstream applications} that can \gren{take advantage} of the \purp{structure} it reveals.
+            In this case, \gren{clustering} has \purp{downstream applications} that can \gren{take advantage} of the \purp{structure} that clustering reveals.
+
+            \begin{itemize}
+                \item These "applications" rely on clustering for this improvement.
+            \end{itemize}
         \end{definition}
         
         If our clustering is \textbf{good}, we would expect it to \textbf{improve} the performance of downstream tasks.\\
@@ -911,7 +971,7 @@
         
     \subsection{A benefit of clustering}
     
-        One advantage for downstream applications is, there might be patterns that are more obvious if you only look at related segment of the data. For example:
+        One advantage for downstream applications is, there might be patterns that are more obvious if you only look at a related segment of the data. For example:
         
         \begin{figure}[h]
             \centering
@@ -930,7 +990,7 @@
             It shows that sometimes, \purp{patterns} that we see may reflect how we're \gren{looking} at the data.
         \end{definition}
         
-        Rest assured, you don't need to know this paradox by \textbf{name}! But it's important to \textbf{understand} possible problems like it: it'll make you more \textbf{responsible} in the future!
+        Rest assured, you don't need to know this paradox by \textbf{name}. But it's important to \textbf{understand} possible problems like it: it'll help you make more responsible judgements in the future.
         
     \subsection{Weaknesses of $k$-means}
     
@@ -939,22 +999,22 @@
         %Also show sine waves, parallel lines as examples
         %%%%%%%%%%%%%%%%%%%%%%%%%%
     
-        There are some \textbf{weaknesses} to $k$-means clustering. Certain patterns that we can \textbf{see} aren't easily \textbf{clustered}.
+        There are some \textbf{weaknesses} to $k$-means clustering. Some patterns that a human eye can see, aren't easily \textbf{clustered} by our algorithms.
         
         We can see this with a few \textbf{examples}:
         
         \begin{figure}[h]
             \centering
             \includegraphics[width=0.65\textwidth]{images/clustering_images/center_unclusterable.png}
-            \caption*{This data can't be simply clustered.}
+            \caption*{This data clearly seems to have a pattern. But does it have "clusters"?}
         \end{figure}
         
-        This example can't be effectively \textbf{clustered}: most people would agree that the "outer ring" should be \textbf{one} cluster, while the "inner circle" should be \textbf{another}.
+        This example can't be effectively \textbf{clustered}: and yet, most people would agree that the "outer ring" should be \textbf{one} cluster, while the "inner circle" should be \textbf{another}.
         
-        But, assuming we (correctly) place one cluster mean in the \textbf{center}, there's \textbf{nowhere} we can put our other cluster mean to be \textbf{closest} to all of the \textbf{outer} points, but \textbf{not} the inner points.
+        Assuming we (correctly) place one cluster mean in the \textbf{center}, there's \textbf{nowhere} we can put our other cluster mean to be \textbf{closest} to all of the \textbf{outer} points, but \textbf{not} the inner points.
         
         We might be able to \textbf{resolve} this using a \textbf{feature} transformation. But, the problem remains.
-            \note{For example, we could have a feature represent the radius! But then, we would still struggle with a ring not centered on the origin.}
+            \note{For example, we could have a feature represent the radius! But then, we would still struggle with a ring not centered on the origin. Or, two rings with different centers.}
             
         Another example works for clusters that aren't very centralized:
         
@@ -965,6 +1025,14 @@
         \end{figure}
         
         The edge of one cluster is too close to the other: we can't easily create a good pair of cluster means for each semi-circle.
+
+        These sorts of cases are often approached with either
+
+        \begin{itemize}
+            \item Attempts to directly visualize them
+            \item Feature transformations
+            \item Other algorithms not discussed here
+        \end{itemize}
         
 \section{Terms}
 

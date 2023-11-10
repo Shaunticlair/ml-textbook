@@ -1,6 +1,11 @@
-\section*{X.  Matrix Derivatives}
+
+
+\chapter{Matrix Derivatives}
+\section{Introduction and Review}
+
+    
         
-    In general, we want to be able to combine the powers of matrices and calculus:
+    Our goal here, is to combine the powers of matrices and calculus:
     
     \begin{itemize}
         \item \textbf{Matrices}: the ability to store lots of \textbf{data}, and do fast linear operations on all that data at the \textbf{same time}.
@@ -40,7 +45,7 @@
         \begin{itemize}
             \item These "relationships" are \vocab{derivatives}: consider $\derivslash{y}{x}$. How does $y$ change if we modify $x$? Currently, we only have \purp{scalar derivatives}.
             
-            \item This "data" is stored as \vocab{matrices}: blocks of data, that we can do linear operations (matrix multiplication) on.
+            \item These "data" are stored as \vocab{matrices}: blocks of data, that we can do linear operations (matrix multiplication) on.
         \end{itemize}
         
         Our goal is to work with many scalar derivatives at the \gren{same time}. 
@@ -61,13 +66,13 @@
         }^{(\red{b} \times c)}
     \end{equation}
     
-    We can't do anything that would \textbf{violate} this rule: otherwise, our \textbf{equations} don't make sense, and we get stuck. This means we need to build our math carefully.
+    We can't do anything that would \textbf{violate} matrix rules like these: otherwise, we're not really doing "matrix \textbf{calculus}" anymore. This means we need to build our math carefully.
     
-    First, we'll look at the \textbf{properties} of derivatives. Then figure out how to usefully apply them to \textbf{vectors}, and then \textbf{matrices}.
+    First, we'll look at the \textbf{properties} of derivatives. Then, we figure out how to usefully apply them to \textbf{vectors}, and finally, to \textbf{matrices}.
     
     \secdiv
     
-    \subsection*{X.1 \quad Review: Partial Derivatives}
+    \subsection{\quad Partial Derivatives}
     
         One more comment, though - we may have many different variables floating around. This means we \textbf{have} to use the multivariable \textbf{partial derivative}.\\
         
@@ -78,9 +83,17 @@
                 \pderiv{B}{A}
             \end{equation*}
             
-            Is used when there may be \purp{multiple variables} in our functions.
+            Is useful when there may be \gren{multiple variables} in our functions.
             
-            The rule of the partial derivative is that we keep every \gren{independent} variable other than $A$ and $B$ \purp{fixed}.
+            The rule of the partial derivative is that we keep every variable \purp{other} than $A$ and $B$ \purp{fixed}.
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item This is different from the "total" derivative $\deriv{B}{A}$, where we consider how $B$ affects $A$, without keeping other variables fixed.
+
+                \item The total derivative is also used in multi-variable calculus, but serves a different role: we'll come back to this later.
+            \end{itemize}
         \end{definition}
         
         \miniex Consider $f(x,y) = 2x^2y$.
@@ -91,10 +104,16 @@
         
         Here, we kept $y$ \textit{fixed} - we treat it as if it were an unchanging \textbf{constant}. 
         
-        Using the partial derivative lets us keep our work tidy: if \textbf{many} variables were allowed to \textbf{change} at the same time, it could get very confusing. 
-            \note{Imagine keeping track of $k$ different variables $x_i$ with $k$ different changes $\Delta x_i$ at the same time! That's a headache.}
+        Using the partial derivative lets us keep our work tidy: 
         
-        If this is too complicated, we can change those variables \textit{one at a time}. We get a partial derivative for each of them, holding the others \textbf{constant}.
+        \begin{itemize}
+            \item If \textbf{many} variables were allowed to \textbf{change} at the same time, it could get very confusing. 
+            \note{Imagine keeping track of $k$ different variables $x_i$ with $k$ different changes $\Delta x_i$ at the same time! That's a headache.}
+
+            \item Since this is too complicated, we'll instead change these variables \textit{one at a time}. We get a partial derivative for each of them, holding the others \textbf{constant}.
+        \end{itemize}
+        
+        
         
         Our \textbf{total} derivative is the result of all of those different variables, \textbf{added} together. This is how we get the \textbf{multi-variable chain rule}.\\ 
         
@@ -130,12 +149,18 @@
                     \pderiv{\pur{x_i}} {\blu{s}}
                 }^{\text{$x_i$ component}}
             \end{equation*}
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item We justify a lot of aspects of the multivariable chain rule, and the gradient, in our Gradient Descent chapter. Feel free to review there.
+            \end{itemize}
             
         \end{definition}
+        
+        \secdiv
     
-    \secdiv
-    
-    \subsection*{X.2 \quad Thinking about derivatives}
+    \subsection{Thinking about derivatives}
     
         The typical definition of derivatives
         
@@ -146,12 +171,12 @@
         Gives an \textit{idea} of what sort of things we're looking for. It reminds us of one piece of information we need:
         
         \begin{itemize}
-            \item Our derivative \textbf{depends} on the \textbf{current position} $x$ we are taking the derivative at.
+            \item Our derivative \textbf{depends} on the \gren{current position} $x$ we are taking the derivative at.
         \end{itemize}
         
-        We need this because derivative are \textbf{local}: the relationship between our variables might change if we move to a different \textbf{position}.
+        We need this because derivative are \gren{local}: the relationship between our variables might change if we move to a different \textbf{position}.
         
-        But, the problem with vectors is that each component can act \textbf{separately}: if we have a vector, we can change in many different "directions".
+        But, the problem with vectors is that each component can act \purp{separately}: if we have a vector, we can change in many different "directions".
         
         \begin{equation}
             A = 
@@ -167,8 +192,10 @@
         
         \miniex Suppose we want a derivative $\pderivslash{B}{A}$: $\Delta a_1, \Delta a_2,$ and $\Delta a_3$ could each, separately, have an effect on $\Delta b_1$ and/or $\Delta b_2$. That requires 6 different derivatives, $\pderivslash{b_i}{a_j}$.
             \note{3 dimensions of $A$ times 2 dimensions of $B$: 6 combinations.}
-        
-        Every component of the input $A$ can potentially modify \textbf{every} component of the output $B$. 
+
+        \begin{itemize}
+            \item Every component of the input $A$ can potentially modify \textbf{every} component of the output $B$. 
+        \end{itemize}
         
         One solution we could try is to just collect all of these derivatives into a \textbf{vector} or \textbf{matrix}.\\
         
@@ -204,14 +231,22 @@
     
     \secdiv
     
-    \subsection*{X.3 \quad Derivatives: Approximation}
+    \subsection{Derivatives: Approximation}
         
-        To answer this, we need to ask ourselves \textit{why} we care about these derivatives: their \textbf{structure} will be based on what we need them for.
+        To answer this, we need to ask ourselves \textit{why} we care about these derivatives: we'll define them based on what we \textbf{need} them for.
         
         \begin{itemize}
-            \item We care about the \textbf{direction of greatest decrease}, the gradient. For example, we might want to adjust weight vector $w$ to reduce $\loss$.
+            \item We care about the \gren{direction of greatest decrease}: the negative of the \textbf{gradient}.
             
-            \item We also want other derivatives that have the \textbf{same} behavior, so we can combine them using the \textbf{chain rule}.
+            \begin{itemize}
+                \item One application: we might want to adjust weight vector $w$ to reduce loss $\loss$.
+            \end{itemize}
+            
+            \item To find the gradient, we'll need some other \textbf{matrix} derivatives that will be useful in a \purp{chain rule}.
+
+                \begin{itemize}
+                    \item The chain rule creates lots of intermediate derivatives, that we need to work with.
+                \end{itemize}
         \end{itemize}
         
         Let's focus on the first point: we want to \textbf{minimize} $\loss$. Our focus is the \textbf{change} in $\loss$, $\Delta \loss$.
@@ -257,8 +292,10 @@
         We already understand \textbf{scalar} derivatives, so let's move on to the \textbf{gradient}.
         
     \secdiv
+
+\pagebreak
     
-    \subsection*{X.4 \quad The Gradient: a vector input, scalar output}
+\section{Derivative: Scalar/Vector (Gradient)}
     
         Our plan is to look at every derivative combination of scalars, vectors, and matrices we can.
         
@@ -298,7 +335,7 @@
     
     \secdiv
        
-    \subsection*{X.5 \quad Finding the scalar/vector derivative}
+    \subsection{Finding the scalar/vector derivative}
         
         But how do we shape our matrix? Let's look at our \textbf{rule}.
         
@@ -308,9 +345,11 @@
             \pderiv{\red{s}}{ \pur{v} }  
             \star
             \Delta \pur{v}
-                \qquad
-                \text{or}
-                \qquad
+        \end{equation}
+
+        We can transform using our shapes:
+
+        \begin{equation}
             \Delta \red{s}
             \approx
             \pderiv{\red{s}}{ \pur{v} } 
@@ -324,12 +363,24 @@
         
         How do we get $\Delta \red{s}$? We have so many variables. Let's focus on them one at a time: breaking $\Delta \pur{v}$ into $\Delta \pur{v_i}$, so we'll try to consider each $\pur{v_i}$ \textbf{separately}.
             \note{It's usually possible to change each $\pur{v_i}$, so we have to look at every one of them.}
+
         
-        One problem, though: how can we treat each \textbf{derivative} separately? Each $\Delta \pur{v_i}$ will move our position, which can change a different derivative $\pur{v_k}$: they can \textbf{affect} each other.
+        
+        One problem, though: how can we treat each \textbf{derivative} separately? 
+        
+        \begin{itemize}
+            \item Suppose we only start by considering $\Delta v_1$: it'll move us along one axis.
+
+            \item But our derivative is based on our position! If we've just moved, all of our derivatives have changed.
+
+            \item So, choosing $\Delta v_1$ first, had an effect on the other $\Delta v_i$ terms: they're not really "separate".
+        \end{itemize}
+
+        So, what do we do?
     
     \secdiv
     
-    \subsection*{X.6 \quad Review: Planar Approximation}
+    \subsection{Review: Planar Approximation}
         
         We'll resolve this the same way we did in chapter 3, \textbf{gradient} descent: by taking advantage of the "planar approximation".
         
@@ -347,7 +398,7 @@
                 \end{itemize}
         \end{itemize}
         
-        if we take a small enough step $\Delta v_i$, then, if our function is \textbf{smooth}, then the derivative will hardly change!
+        If we take a small enough step $\Delta v_i$, then, if our function is \textbf{smooth}, then the derivative will hardly change!
             \note{You could imagine repeatedly shrinking the size of our step, until the change in the derivatives is basically unnoticeable.}
             
         So, if we zoom in enough (shrink the scale of change), then we can \textbf{pretend} the derivative is \textbf{constant}.\\
@@ -355,26 +406,37 @@
         \begin{concept}
             If you have a \gren{smooth function}, then...
             
-            If you take sufficiently \vocab{small steps}, then you can treat the derivatives as \purp{constant}.
+            If you take sufficiently \orgg{small steps}, then you can treat the derivatives as \purp{constant}.
+
+            \subsecdiv
+
+            This is called the \vocab{planar approximation} because that's how a smooth surface looks, at small scales:
+
+            \begin{itemize}
+                \item The derivatives of a flat plane are the same at every position: they're \purp{constant} (we show this below).
+                \item This is, of course, an \gren{approximation}: we can't use it at every position, just "very nearby positions".
+            \end{itemize}
         \end{concept}
         
         \phantom{}\\
         
         \begin{clarification*}
-            This section is \vocab{optional}.
+            This clarification is \vocab{optional}.
             
             We can describe "sufficiently small steps" in a more mathematical way:
+
+            \subsecdiv
             
-            Our goal is for $\org{f'(x)}$ to be \purp{basically constant}: it doesn't change much. $\Delta \org{f'(x)}$ is \gren{small}. 
+            Our goal is for $\org{f'(x)}$ to be \purp{basically constant}: it doesn't change much. In other words, $\Delta \org{f'(x)}$ is \gren{small}. 
             
-            Let's say it can't change more then $\pur{\delta}$. 
+            Let's say we don't want it to change more than $\pur{\delta}$: this is our definition of "very small".
             
             If you want 
             \begin{itemize}
                 \item $\Delta \org{f'(x)}$ to be very small ($|\Delta \org{f'(x)}| < \pur{\delta}$)
                 \item It has been proven that...
                 \begin{itemize}
-                    \item can take a small enough step $|\Delta \red{x}| < \pur{\epsilon}$, and to get that result.
+                    \item it's possible to take a small enough step $|\Delta \red{x}| < \pur{\epsilon}$, and to get that result.
                 \end{itemize}
             \end{itemize}
         \end{clarification*}
@@ -411,7 +473,7 @@
         \end{figure}
         
         
-        Why does this help? If our derivative doesn't \textbf{change}, we can combine multiple steps  You can take multiple steps $\Delta \pur{v_i}$ and the order doesn't matter.
+        Why does this help? If our derivative doesn't \textbf{change}, you can take multiple steps $\Delta \pur{v_i}$ and the order doesn't matter.
             \note{So, you can combine your steps or separate them easily.}
             
         \begin{figure}[H]
@@ -438,7 +500,7 @@
     
     \secdiv
     
-    \subsection*{X.7 \quad Our scalar/vector derivative}
+    \subsection{Our completed scalar/vector derivative}
         
         From this, we can get an \textbf{approximated} version of the MV chain rule.\\
         
@@ -449,7 +511,7 @@
             
             \begin{equation*}
                 \Delta \red{f} 
-                = 
+                \approx 
                 \overbrace{
                     \pderiv{\red{f}}{\pur{x}}
                     \Delta \pur{x}
@@ -471,7 +533,7 @@
             \begin{equation*}
                 \Delta \red{f} 
                 \quad
-                = 
+                \approx 
                 \quad
                 \sum_{i=1}^{m}
                 \overbrace{
@@ -544,7 +606,7 @@
         This gives us our derivative: it contains all of the \textbf{element-wise} derivatives we need, and in a \textbf{useful} form!\\
         
         \begin{definition}
-            If $\red{s}$ is a \redd{scalar} and $\pur{v}$ is an $(m \times 1)$ \purp{vector}, then we define the \vocab{derivative} or \vocab{gradient} $\pderivslash{\red{s}}{\pur{v}}$ as fulfilling:
+            If $\red{s}$ is a \redd{scalar} and $\pur{v}$ is an $(m \times 1)$ \purp{vector}, then we define the derivative or \vocab{gradient} $\pderivslash{\red{s}}{\pur{v}}$ as fulfilling:
             
             \begin{equation*}
                 \Delta \red{s}
@@ -617,8 +679,9 @@
         \end{equation}
         
     \secdiv
-    
-    \subsection*{X.8 \quad Vector derivative: a scalar input, vector output}
+
+\pagebreak
+\section{Derivative: Vector/Scalar}
     
         Now, we want to try the flipped version: we swap our vector and our scalar.
         
@@ -629,7 +692,7 @@
         \end{equation}
         
         We'll take $\red{s}$ to be our scalar, and $\pur{w}$ to be our vector. So, our input is a \textbf{scalar}, and our output is a \textbf{vector}.
-            \note{Note that we're using vector $w$ instead of $v$ this time: this will be helpful for our vector/vector derivative: we can use both.}
+            \note{Note that we're using vector $w$ instead of $v$ this time: this will be helpful for our vector/vector derivative: we'll need two different symbols for "a vector".}
         
         \begin{equation}
             \Delta \red{s}
@@ -675,17 +738,17 @@
             \Delta \red{s}
         \end{equation}
         
-        Here, we can't do a \textbf{dot product}: we're multiplying our derivative by a \textbf{scalar}. Plus, we'd get the \textbf{same shape} as before: we might \textbf{mix up} our derivatives.
+        Here, we can't do a \textbf{dot product}: we're multiplying our derivative by a \textbf{scalar}. 
     
     \secdiv
     
-    \subsection*{X.9 \quad Working with the vector derivative}   
+    \subsection{Working with the vector derivative}   
         
         How do we get each of our terms $\Delta w_i$?
         
         Well, each term is \textbf{separately} affected by $\Delta s$: we have our terms $\pderivslash{w_i}{s}$.
         
-        So, if we take these terms \textbf{individually}, treating it as a scalar derivative, we get:
+        So, if we take one of these terms \textbf{individually}, treating it as a scalar derivative, we get:
             \note{If you're ever confused with matrix math, thinking about individual elements is often a good way to figure it out!}
             
         \begin{equation}
@@ -716,10 +779,16 @@
         This works out for our equation above!
         
         It could be tempting to think of our derivative $\pderivslash{ \pur{w} }{ \red{s} }$ as a \textbf{column vector}: we just take $w$ and just differentiate each element. Easy!
+
+        \begin{itemize}
+            \item In fact, this \textit{is} a valid convention. However, this conflicts with our previous derivative: they're both column vectors! 
+
+            \item Not only is it \textbf{confusing}, but it also will make it harder to do our \textbf{vector/vector} derivative.
+        \end{itemize}
         
-        In fact, this \textit{is} a valid convention. However, this conflicts with our previous derivative: they're both column vectors! 
         
-        Not only is it \textbf{confusing}, but it also will make it harder to do our \textbf{vector/vector} derivative.
+        
+        
         
         So, what do we do? We refer back to the equation we used last time:
         
@@ -803,8 +872,10 @@
         \end{definition}
     
     \secdiv
-    
-    \subsection*{X.10 \quad Vectors and vectors: vector input, vector output}  
+
+
+\pagebreak
+\section{Derivative: Vector/Vector}  
     
         We'll be combining our two previous derivatives: 
         
@@ -846,7 +917,7 @@
     
     \secdiv
     
-    \subsection*{X.11 \quad The vector/vector derivative}  
+\subsection{The vector/vector derivative}  
     
         We return to our rule from before. We'll skip the star notation, and jump right to the equation we've gotten for both of our two previous derivatives:
             \note{Hopefully, since we're combining two different derivatives, we should be able to use the same rule here.}
@@ -934,24 +1005,115 @@
             \end{equation}
             
             So, our vector-vector derivative is a \textbf{generalization} of the two derivatives we did before! 
+
+            \begin{itemize}
+                \item It seems that extending along the \textbf{vertical} axis changes our $\org{v_i}$ value, while moving along the \textbf{horizontal} axis changes our $\pur{w_j}$ value.
+            \end{itemize}
             
-            It seems that extending along the \textbf{vertical} axis changes our $\org{v_i}$ value, while moving along the \textbf{horizontal} axis changes our $\pur{w_j}$ value.
+            
          
     \secdiv
-    
-    \subsection*{X.12 \quad General derivative}  
+
+\pagebreak
+\section{General derivative (Vector/Vector)}  
         
         You might have a hint of what we get: one derivative stretches us along \textbf{one} axis, the other along the \textbf{second}.
         
-        To prove it to ourselves, we can \textbf{combine} these concepts. We'll handle solve as if we have one vector, and then \textbf{substitute} in the second one.\\
-        
+        But now, let's prove it to ourselves.
+
+        \subsecdiv
+
+        Our biggest problem is that we developed these tools for working with \gren{vectors}, and now we have a \purp{matrix}.
+
+        Rather than giving up this perspective, we'll instead take it further:
+
+        \begin{itemize}
+            \item We can think of a matrix as a "stack of vectors".
+
+            \begin{equation}
+                M \quad=\quad 
+                \begin{bmatrix}
+                    \red{a_1} & \blu{b_1} & \cdots & \org{z_1} \\
+                    \red{a_2} & \blu{b_2} & \cdots & \org{z_2} \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    \red{a_n} & \blu{b_n} & \cdots & \org{z_n}
+                \end{bmatrix}
+                \quad=\quad
+                \begin{bmatrix}
+                    \begin{bmatrix}
+                        \red{a_1} \\
+                        \red{a_2} \\
+                        \vdots \\
+                        \red{a_n} 
+                    \end{bmatrix}
+                    &
+                    \begin{bmatrix}
+                        \blu{b_1} \\
+                        \blu{b_2} \\
+                        \vdots \\
+                        \blu{b_n} 
+                    \end{bmatrix}
+                    & 
+                    \cdots 
+                    &
+                    \begin{bmatrix}
+                        \org{z_1} \\
+                        \org{z_2} \\
+                        \vdots \\
+                        \org{z_n} 
+                    \end{bmatrix}
+                \end{bmatrix}
+            \end{equation}
+            
+            \item Or, a \orgg{row vector of column vectors}.
+
+            \begin{equation}
+                M =
+                \begin{bmatrix}
+                    \red{\vec{a}} & \blu{\vec{b}} & \cdots & \org{\vec{z}}
+                \end{bmatrix}
+            \end{equation}
+        \end{itemize}
+
+        So, that's our plan: we first view our matrix as a row vector, hiding the column vectors inside.
+
+        \begin{itemize}
+            \item This requires treating our column vectors as if they were "scalars".
+        \end{itemize}
+
+        Then, we'll expand those column vectors, and see what we get.\\
+
+    
+
         \begin{concept}
             One way to \vocab{simplify} our work is to treat \purp{vectors} as \gren{scalars}, and then convert them back into \purp{vectors} after applying some math.
+
+            \begin{itemize}
+                \item We have to be \redd{careful} - any operation we apply to the pretend "\gren{scalar}", has to match how the \purp{vector} would behave.
+            \end{itemize}
             
-            We have to be careful - any operation we apply to the \gren{scalar}, has to match how the \purp{vector} would behave.
+            \subsecdiv
             
-            This is \purp{equivalent} to if we just focused on one scalar inside our vector, and then stacked all those scalars back into the vector.
+            This is \purp{equivalent} to when just focused on one scalar inside our vector, and then stacked all those scalars back into the vector.
         \end{concept}
+
+        Here's how we apply this to our situation.
+        
+        \begin{itemize}
+            \item First, we treat each \gren{column} as a \gren{scalar}, and the whole object as a \orgg{vector}.
+
+            \begin{itemize}
+                \item This will use one familiar derivative.
+            \end{itemize}
+
+            \item Then, we'll expand each \gren{column} into a whole \gren{vector}. Then, we have a \orgg{matrix}.
+            
+            \begin{itemize}
+                \item This will us our other derivative.\\
+            \end{itemize}
+        \end{itemize} 
+        
+        
         
         This isn't just a cute trick: it relies on an understanding that, at its \textbf{basic} level, we're treating \textbf{scalars} and \textbf{vectors} and \textbf{matrices} as the same type of object: a structured array of numbers.
             \note{We'll get into "arrays" later.}
@@ -959,7 +1121,7 @@
         As always, our goal is to \textbf{simplify} our work, so we can handle each piece of it.
         
         \begin{itemize}
-            \item We treat $\Delta v$ as a scalar so we can get the simplified derivative.
+            \item We treat $\Delta v$ as a \gren{scalar} so we can get the \gren{simplified} derivative.
         \end{itemize}
             
         \begin{equation}
@@ -971,7 +1133,7 @@
             \Delta \org{v}
         \end{equation}
         
-        We'll only expand \textbf{one} of our vectors, since we know how to manage \textbf{one} of them.
+        We'll only expand $\Delta w$, because that's a simpler case we know how to manage.
         
         \begin{equation}
             \begin{bmatrix}
@@ -983,10 +1145,13 @@
             \bigg)^T
             \Delta \org{v}
         \end{equation}
+
+        \begin{itemize}
+            \item Notice that we \textbf{didn't} simplify $\org{v}$ to $\org{v_i}$. We aren't using only one element of $v$: we're pretending as if the whole vector $v$ (including all elements) is a scalar. 
+        \end{itemize}
+
         
-        This time, notice that we \textbf{didn't} simplify $\org{v}$ to $\org{v_i}$. We didn't \textbf{remove} the other elements - we still have a full \textbf{vector}. But, let's treat it as if it \textit{were} a scalar. 
-        
-        This comes out to:
+        We compute our derivative, based on earlier work:
         
         \begin{equation}
             \pderiv{ \pur{w} }{ \org{v} } 
@@ -1005,7 +1170,7 @@
             \item Our "answer" is a row vector. But, each of those derivatives is a \textbf{column} vector!
         \end{itemize}
         
-        Now that we've taken care of $\partial w_j$ (one for each column), we can expand our derivatives in terms of $\partial v_i$.
+        Now that we've taken care of $\partial w_j$ (one for each column), we can \gren{expand} our derivatives in terms of $\partial v_i$: each is a \gren{column vector}!
         
         First, for $\pur{w_1}$:
         
@@ -1103,7 +1268,7 @@
             \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
         \end{equation}
         
-        We have column vectors in our row vector... let's just combine them into a \textbf{matrix}.\\
+        We have column vectors in our row vector... based on our new perspective, this is basically the same as a  \textbf{matrix}.\\
         
         \begin{definition}
             If 
@@ -1118,14 +1283,14 @@
                 \Delta \pur{w}
                 =
                 \bigg(
-                    \pderiv{ \pur{w} }{ \red{s} } 
+                    \pderiv{ \pur{w} }{ \red{v} } 
                 \bigg)^T
-                \Delta \red{s}
+                \Delta \red{v}
             \end{equation*}
             
             \boxdiv
             
-            Thus, our derivative must be a \blu{$(1 \times n)$} vector
+            Thus, our derivative must be a \blu{$(m \times n)$} vector
             
                 \begin{equation*}
                     \pderiv{ \pur{w} }{ \org{v} } 
@@ -1174,7 +1339,7 @@
     
     \secdiv
     
-    \subsection*{X.13 \quad More about the vector/vector derivative}
+    \subsection{More about the vector/vector derivative}
         
         Let's show a specific example: $\pur{w}$ is $(\pur{3} \times 1)$, $\org{v}$ is $(\org{2} \times 1)$.
         
@@ -1207,9 +1372,9 @@
         \begin{notation}
             Our matrix $\pderivslash{ \pur{w} }{ \org{v} }$ is entirely filled with \textbf{scalar derivatives}
             
-            \begin{equation}
+            \begin{equation*}
                 \pderiv {\pur{w_j}} { \org{v_i} }
-            \end{equation}
+            \end{equation*}
             
             Where any one \textbf{derivative} is stored in
             
@@ -1271,8 +1436,9 @@
         These compressed forms will be useful for deriving our new and final derivatives, \textbf{matrix}-\textbf{scalar} pairs.
             
     \secdiv
-    
-    \subsection*{X.14 \quad Derivative: matrix/scalar}
+
+\pagebreak
+\section{Derivative: matrix/scalar}
     
         Now, we have our general form for creating derivatives.
         
@@ -1290,10 +1456,10 @@
             \blu{M}
             =
             \begin{bmatrix}
-                \blu{m}_{11} & \blu{m}_{12} & \cdots & \blu{m}_{1r} \\ 
-                \blu{m}_{21} & \blu{m}_{22} & \cdots & \blu{m}_{2r} \\ 
+                \blu{m}_{11} & \blu{m}_{12} & \cdots & \blu{m}_{1k} \\ 
+                \blu{m}_{21} & \blu{m}_{22} & \cdots & \blu{m}_{2k} \\ 
                 \vdots       & \vdots       & \ddots & \vdots     \\
-                \blu{m}_{k1} & \blu{m}_{k2} & \cdots & \blu{m}_{kr} \\ 
+                \blu{m}_{r1} & \blu{m}_{r2} & \cdots & \blu{m}_{rk} \\ 
             \end{bmatrix}
         \end{equation}
         
@@ -1301,11 +1467,17 @@
         
         Well, let's try to make this work anyway. 
         
-        What did we do before, when we didn't know how to handle a \textbf{new} derivative? We compared it to \textbf{old} versions: we built our vector/vector case using the vector/scalar case and the scalar/vector case.
+        What did we do before, when we didn't know how to handle a \textbf{new} derivative? 
         
-        We did this by \textbf{compressing} one of our \textit{vectors} into a \textit{scalar} temporarily: this works, because we want to treat each of these objects the \textbf{same way}.
+        \begin{itemize}
+            \item We compared it to \textbf{old} versions: we built our vector/vector case using the vector/scalar case and the scalar/vector case.
+
+            \item We did this by \textbf{compressing} one of our \textit{vectors} into a \textit{scalar} temporarily: this works, because we want to treat each of these objects the \textbf{same way}.
+        \end{itemize}
         
-        We don't know how to work with Matrix/Scalar, but what's the \textbf{closest} thing we do know? \textbf{Vector/Scalar}.
+        
+        
+        We don't know how to work with \orgg{Matrix/Scalar}, but what's the \textbf{closest} thing we do know? \gren{Vector/Scalar}.
         
         How do we accomplish that? As we saw above, a matrix is a \textbf{vector} of \textbf{vectors}. We could turn it into a \textbf{vector} of \textbf{scalars}.\\
         
@@ -1321,7 +1493,7 @@
             \blu{M}
             =
             \begin{bmatrix}
-                \blu{M}_1 \\ \blu{M}_2 \\ \vdots \\ \blu{M}_k
+                \blu{M}_1 \\ \blu{M}_2 \\ \vdots \\ \blu{M}_r
             \end{bmatrix}
         \end{equation}
     
@@ -1338,7 +1510,7 @@
             \end{bmatrix}
         \end{equation}
         
-        Aha - we have the same form that we did for our vector/vector derivative! Each derivative is a column vector. Let's expand it out:
+        Aha - we have the same form that we did for our vector/scalar derivative! Each derivative is a column vector. Let's expand it out:
         
         \begin{equation}
             \pderiv{ \blu{M} }{ \red{s} } 
@@ -1352,7 +1524,7 @@
                         \\
                         \vdots \\ 
                         \\
-                        \bigpderiv{ \blu{m}_{1r} }   { \red{s} }
+                        \bigpderiv{ \blu{m}_{1k} }   { \red{s} }
                     \end{bmatrix}, &
                     \begin{bmatrix}
                         \bigpderiv{ \blu{m}_{21} }   { \red{s} }\\ 
@@ -1361,17 +1533,17 @@
                         \\
                         \vdots \\ 
                         \\
-                        \bigpderiv{ \blu{m}_{2r} }   { \red{s} }
+                        \bigpderiv{ \blu{m}_{2k} }   { \red{s} }
                     \end{bmatrix}, &
                     \cdots &
                     \begin{bmatrix}
-                        \bigpderiv{ \blu{m}_{k1} }   { \red{s} }\\ 
+                        \bigpderiv{ \blu{m}_{r1} }   { \red{s} }\\ 
                         \\
-                        \bigpderiv{ \blu{m}_{k2} }   { \red{s} }\\ 
+                        \bigpderiv{ \blu{m}_{r2} }   { \red{s} }\\ 
                         \\
                         \vdots \\ 
                         \\
-                        \bigpderiv{ \blu{m}_{kr} }   { \red{s} }
+                        \bigpderiv{ \blu{m}_{rk} }   { \red{s} }
                     \end{bmatrix}
                 \end{bmatrix}
             }^{ \text{\small Column $j$ matches $\blu{m}_{j?}$} }
@@ -1395,7 +1567,7 @@
                             \\
                             \vdots \\ 
                             \\
-                            \bigpderiv{ \blu{m}_{1r} }   { \red{s} }
+                            \bigpderiv{ \blu{m}_{1k} }   { \red{s} }
                         \end{matrix} 
                         &
                         \begin{matrix}
@@ -1405,7 +1577,7 @@
                             \\
                             \vdots \\ 
                             \\
-                            \bigpderiv{ \blu{m}_{2r} }   { \red{s} }
+                            \bigpderiv{ \blu{m}_{2k} }   { \red{s} }
                         \end{matrix}
                         &
                         \begin{matrix}
@@ -1413,25 +1585,30 @@
                         \end{matrix} 
                         &
                         \begin{matrix}
-                            \bigpderiv{ \blu{m}_{k1} }   { \red{s} }\\ 
+                            \bigpderiv{ \blu{m}_{r1} }   { \red{s} }\\ 
                             \\
-                            \bigpderiv{ \blu{m}_{k2} }   { \red{s} }\\ 
+                            \bigpderiv{ \blu{m}_{r2} }   { \red{s} }\\ 
                             \\
                             \vdots \\ 
                             \\
-                            \bigpderiv{ \blu{m}_{kr} }   { \red{s} }
+                            \bigpderiv{ \blu{m}_{rk} }   { \red{s} }
                         \end{matrix}
                     \end{bmatrix}
                 }^{ \text{\small Column $j$ matches $\blu{m}_{j?}$} }
                 \bigggrB{125pt} \text{\small Row $i$ matches $\blu{m}_{?i}$} 
             \end{equation*}
+
+
+            \begin{itemize}
+                \item This matrix has the shape of $\blu{M}^T$.
+            \end{itemize}
             
-            This matrix has the transpose of the shape of $\blu{M}$.
         \end{definition}
     
     \secdiv
-        
-    \subsection*{X.15 \quad Derivative: scalar/matrix}
+
+\pagebreak
+\section{Derivative: scalar/matrix}
     
         We'll get our derivative of the form 
         
@@ -1449,7 +1626,7 @@
             \blu{M}
             =
             \begin{bmatrix}
-                \blu{M}_1 \\ \blu{M}_2 \\ \vdots \\ \blu{M}_k
+                \blu{M}_1 \\ \blu{M}_2 \\ \vdots \\ \blu{M}_r
             \end{bmatrix}
         \end{equation}
         
@@ -1465,7 +1642,7 @@
                 \\
                 \vdots \\
                 \\
-                \bigpderiv{ \red{s} }{ \blu{M_k} }
+                \bigpderiv{ \red{s} }{ \blu{M_r} }
             \end{bmatrix}
         \end{equation}
         
@@ -1482,7 +1659,7 @@
                     & 
                     \cdots 
                     & 
-                    \bigpderiv{ \red{s} }{ \blu{m}_{1r} } 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{1k} } 
                 \end{bmatrix}
                 \\\\
                 \begin{bmatrix}
@@ -1492,19 +1669,19 @@
                     & 
                     \cdots 
                     & 
-                    \bigpderiv{ \red{s} }{ \blu{m}_{2r} } 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{2k} } 
                 \end{bmatrix}
                 \\\\
                 \vdots
                 \\\\
                 \begin{bmatrix}
-                    \bigpderiv{ \red{s} }{ \blu{m}_{k1} }    
+                    \bigpderiv{ \red{s} }{ \blu{m}_{r1} }    
                     & 
-                    \bigpderiv{ \red{s} }{ \blu{m}_{k2} } 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{r2} } 
                     & 
                     \cdots 
                     & 
-                    \bigpderiv{ \red{s} }{ \blu{m}_{kr} } 
+                    \bigpderiv{ \red{s} }{ \blu{m}_{rk} } 
                 \end{bmatrix}
             \end{bmatrix}
         \end{equation}
@@ -1527,7 +1704,7 @@
                             \\
                             \vdots \\ 
                             \\
-                            \bigpderiv{ \red{s} } { \blu{m}_{k1} }
+                            \bigpderiv{ \red{s} } { \blu{m}_{r1} }
                         \end{matrix} 
                         &
                         \begin{matrix}
@@ -1537,7 +1714,7 @@
                             \\
                             \vdots \\ 
                             \\
-                            \bigpderiv{ \red{s} } { \blu{m}_{k2} }
+                            \bigpderiv{ \red{s} } { \blu{m}_{r2} }
                         \end{matrix}
                         &
                         \begin{matrix}
@@ -1545,13 +1722,13 @@
                         \end{matrix} 
                         &
                         \begin{matrix}
-                            \bigpderiv{ \red{s} } { \blu{m}_{1r} }\\ 
+                            \bigpderiv{ \red{s} } { \blu{m}_{1k} }\\ 
                             \\
-                            \bigpderiv{ \red{s} } { \blu{m}_{2r} }\\ 
+                            \bigpderiv{ \red{s} } { \blu{m}_{2k} }\\ 
                             \\
                             \vdots \\ 
                             \\
-                            \bigpderiv{ \red{s} } { \blu{m}_{kr} }
+                            \bigpderiv{ \red{s} } { \blu{m}_{rk} }
                         \end{matrix}
                     \end{bmatrix}
                 }^{ \text{\small Column $j$ matches $\blu{m}_{?j}$} }
@@ -1563,8 +1740,11 @@
         
         
      \secdiv  
+
+\pagebreak
+\section{Tensors}
     
-    \subsection*{X.16 \quad Other Derivatives}
+    \subsection{Other Derivatives}
         \label{X.16}
     
         After these, you might ask yourself, what about other derivative combinations?
@@ -1619,7 +1799,7 @@
         \end{definition}
 
         Why does the number of \textbf{axes} matter? Remember that, so far, for our derivatives, each axis of the output represented an axis of the \textbf{input} or \textbf{output}.
-            \note{Note that last bit: we're saying a vector has one dimension. Can't a vector have \textbf{multiple} dimensions? Jump to \hyperref[X.17]{X.17} for a clarification.}\\
+            \note{Note that last bit: we're saying a vector has one dimension. Can't a vector have \textbf{multiple} dimensions? We'll clarify this in an optional following section.}\\
         
         \begin{equation*}
             \pderiv{ \pur{w} }{ \org{v} } 
@@ -1699,22 +1879,21 @@
             
             So, if the \gren{input} $x$ has $m$ axes, and the \gren{output} $y$ has $n$ axes, then the derivative needs to have the same \purp{total} number:
             
-            \begin{equation}
+            \begin{equation*}
                 \text{Axes}
                 \Bigg(
                     \pderiv{\pur{y}}{\org{x}}
                 \Bigg) 
                 = 
                 \text{Axes}(\pur{y}) + \text{Axes}(\org{x})
-            \end{equation}
+            \end{equation*}
         \end{concept}
         
         This is where our problem comes in: if we have a vector and a matrix, we need \textbf{3 axes}! That's more than a matrix.
     
     \secdiv
     
-    \subsection*{X.17 \quad Dimensions (Optional)}
-        \label{X.17}
+    \subsection{Dimensions (Optional)}
     
         Here's a quick aside to clear up possible confusion from the last section: our definition of axes and "dimensions".
         
@@ -1756,12 +1935,19 @@
                     \end{itemize}
             \end{itemize}
         \end{clarification}
+
+        In other words:
+
+        \begin{itemize}
+            \item Vector-style dimensionality: number of separate scalars in your vector.
+            \item Matrix(tensor)-style dimensionality: number of separate indices we can use to find scalars.
+        \end{itemize}
         
         If you jumped here from X.16, feel free to follow this \hyperref[X.16]{link} back. Otherwise, continue on.
     
     \secdiv
     
-    \subsection*{X.18 \quad Dealing with Tensors}
+    \subsection{Dealing with Tensors}
     
         If a vector looks like a "\textbf{line}" of numbers, and a matrix looks like a "\textbf{rectangle}" of numbers, then a \textbf{3-axis} version would look like a "\textbf{box}" of numbers. How do we make sense of this?
         
@@ -1773,33 +1959,73 @@
             The most typical example is a \gren{vector}: an ordered sequence of \gren{scalars}.
             
             A \purp{matrix} can be thought of as a \gren{vector} of \gren{vectors}. For example: it could be a row vector, where every column is a column vector. 
+
+            \begin{itemize}
+                \item So, we think of a matrix as a "two-dimensional array". 
+            \end{itemize}
             
-            So, we think of a matrix as a "two-dimensional array". 
+            
         \end{definition}
         
         We can extend this to any number of dimensions. We call this kind of generalization a \textbf{tensor}.\\
         
         \begin{definition}
-            In \gren{machine learning}, we think of a \vocab{tensor} as a "\purp{multidimensional array}" of numbers.
+            In machine learning, we think of a \vocab{tensor} as a "\purp{multidimensional array}" of numbers.
+
+            \begin{itemize}
+                \item Each "dimension" is what we have been calling an "\purp{axis}".
+                
+                \item A tensor with $c$ axes is called a \vocab{$c$-Tensor}.
+            \end{itemize}
             
-            Each "dimension" is what we have been calling an "\purp{axis}".
-            
-            A tensor with $c$ axes is called a \vocab{$c$-Tensor}.
-            
-            Note that what we call a tensor is \redd{not} a mathematical (or physics) tensor: we do not often use the "tensor product", or other tensor properties. 
-            
-            Our tensor can be better thought of as a "\vocab{generalized matrix}".
         \end{definition}
         
         \miniex The 3-D box we are talking about above is called a 3-Tensor. We can simply think of it as a stack of matrices.
+
+        \begin{itemize}
+            \item We can imagine stacking the following two matrices in the third dimension, with the leftmost in front, and the rightmost in the back, in a $(2 \times 3 \times 2)$ block:
+
+            \begin{equation}
+                \begin{bmatrix}
+                    1 & 2  & 3 \\ 4 & 5 & 6
+                \end{bmatrix}
+                \qquad
+                \begin{bmatrix}
+                    5 & 7 & 11 \\ 13 & 17 & 19
+                \end{bmatrix}
+            \end{equation}
+        \end{itemize}
+
+        \begin{clarification}
+            Note that what we call a tensor is \redd{not} a mathematical (or physics) tensor.
+
+            \begin{itemize}
+                \item We don't make use of most of the crucial properties of a mathematical tensor.
+            \end{itemize}
+
+            Our tensor can be better thought of as a "\vocab{generalized matrix}", or a "multidimensional array".
+
+            \subsecdiv
+
+            This is important, because a "mathematical" tensor has properties that can be confusing from an ML perspective:
+
+            \begin{itemize}
+                \item The "tensor product" doesn't behave at all like a matrix product.
+                \item Rather, the generalized version of the \gren{matrix product} is something called \vocab{tensor contraction}.
+            \end{itemize}
+
+            Tensor contraction examples, like the einsum function in numpy ("einstein summation notation"), can get very complex for higher-dimensional tensors.
+        \end{clarification}
         
-        How do we handle \textbf{tensors}? Simply, we convert them into regular \textbf{matrices} in some way, and then do our usual math on them:
-            \note{These examples aren't especially important, but you'll see different variations in different softwares!}
+        If tensors don't really behave quite like matrices, and their math is complex, how do we handle \textbf{tensors}? 
+        
+        Simply, we convert them into regular \textbf{matrices} in some way, and then do our usual math on them:
+            \note{These examples aren't especially important, but you can see different variations used for different problems!}
         
         \begin{itemize}
-            \item If a tensor has a pattern of zeroes, we might be able to flatten it into a matrix.
+            \item If a tensor has a pattern of \purp{zeroes}, we might be able to flatten it into a matrix.
                 \begin{itemize}
-                    \item For example, if we wanted to flatten a matrix into a vector (which we sometimes do!), we could do
+                    \item For example, in this matrix, we make a vector out of the diagonal:
                     
                     \begin{equation}
                         \begin{bmatrix}
@@ -1815,31 +2041,53 @@
                     
                 \end{itemize}
                 
-            \item We can also flatten it into a matrix or vector by placing the layers next to each other.
-            
-            \item We cleverly do regular matrix multiplication in a way that's compatible with our tensors.
+            \item We can also flatten it into a matrix or vector by \gren{stacking} layers next to each other in the same dimension.
+                \note{This version is used when we are willing to give up our n-D structure: we lose a lot of information.}
+
                 \begin{itemize}
-                    \item Note that tensors do not have a matrix multiplication-like multiplication by default: several have been designed, however.
+                    \item For example, we could stack the two columns of a matrix:
                 \end{itemize}
-                
-            \item We ignore the structure of the tensor, and just look at the individual elements: we take the scalar chain rule for each of them, without respecting the overall tensor.\\
+
+                \begin{equation}
+                    \begin{bmatrix}
+                        1 & 2 \\ 3 & 4
+                    \end{bmatrix}
+                    \rightarrow
+                    \begin{bmatrix}
+                        1 \\ 3 \\ 2 \\ 4
+                    \end{bmatrix}
+                \end{equation}
+            
+            \item We cleverly "\orgg{hide}" dimensions of a matrix, as we have before: treat a scalar as a vector, etc.
+                \note{This works best for high-level, conceptual stuff. We'll use it below.}
+            
+            \item We \gren{systematically} multiply and add our elements in a way that gives us the derivatives we want, replicating matrix multiplication.
+                \begin{itemize}
+                    \item This is \vocab{tensor contraction}.
+                    \item This method is often used by softwares to implement the chain rule.\\
+                \end{itemize}
         \end{itemize}
         
         \begin{clarification}
-            If you look into \vocab{derivatives} that would result in a \purp{3-tensor} or higher, you'll find that there's no consistent \gren{notation} for what these derivatives look like.
+            If you look into \vocab{derivatives} that would result in a \purp{3-tensor} or higher, you'll find that there's no consistent \gren{notation} for what these derivatives look like: shape, structure, etc.
             
             These techniques are part of why: there are \gren{different} approaches for how to approach these objects.
+
+            The solution tends to be directly computing the chain rule, rather than figuring out the structure of the abstract object.
         \end{clarification}
         
         As we will see in the next chapter, tensors are \textbf{very} important to machine learning. 
         
-        However, because they don't have a natural matrix multiplication, we'll try to convert it into a matrix in most cases.
+        However, because they're so troublesome to work with, we'll convert to matrices in most cases.
     
     \secdiv
+
+\pagebreak
+\section{Chapter 7 Derivatives}
         
-    \subsection*{X.19 \quad The loss derivative}
+    \subsection{The loss derivative}
     
-        Finally, we apply this to our common derivatives in section 7.5.
+        Finally, we apply all of our new knowledge to the common derivatives in section 7.5.
         
         \begin{equation}
             \overbrace{
@@ -1852,16 +2100,16 @@
         \begin{notation}
             Our derivative
             
-            \begin{equation}
+            \begin{equation*}
                 \pderiv {\pur{\loss}}{\org{A^L}}
-            \end{equation}
+            \end{equation*}
         
             Is a scalar/vector derivative, and thus the shape \blu{$(n^{L} \times 1)$}.
         \end{notation}
             
     \secdiv
             
-    \subsection*{X.20 \quad The weight derivative}
+    \subsection{The weight derivative}
         
         \begin{equation}
             \overbrace{
@@ -1869,11 +2117,10 @@
             }^{ (m^{\ell} \times 1) ?}
         \end{equation}
         
-        This derivative is difficult - it's a derivative in the form vector/matrix. With \textbf{three} axes, we might imagine representing as a 3-tensor.
-        
-        In fact, this can be manipulated into multiple different interesting \textbf{shapes} based on your \textbf{interpretation}: as we mentioned, there's no consistent rule for these variables.
+        This derivative is difficult - it's a derivative in the form vector/matrix. With \orgg{three} axes, a 3-tensor seems suitable.
             
-        But, our goal is to use this for the \textbf{chain rule}: so, we need to make the shapes \textbf{match}. This is why we do that strange transposing for our complete derivative.
+        But, our goal is to use this for the \purp{chain rule}: so, we need to make matrix shapes that \textbf{match}. 
+            \note{Rememeber that we had to do weird reordering and transposing in chapter 7 to flip the order of the chain rule? This is why: shape consistency.}
         
             \begin{equation}
                 \pderiv {\pur{\loss}} {\blu{W^{\ell}}} 
@@ -1891,9 +2138,8 @@
             
         \subsecdiv
         
-        Our problem is we have \textbf{too many axes}: the easiest way to resolve this to \textbf{break up} our matrix. So, for now, we focus on only \textbf{one neuron} at a time: it has a column vector $\blu{W_i}$.
-            \note{For simplicity, we're gonna ignore the $\ell$ notation: just be careful, because $Z$ and $A$ are from two different layers!}
-        
+        Our problem is we have \textbf{too many axes}: the easiest way to resolve this to \textbf{break up} our matrix. 
+
         \begin{equation}
             \blu{W}
             =
@@ -1901,8 +2147,12 @@
                 \blu{W}_1 & \blu{W}_2 & \cdots & \blu{W}_n
             \end{bmatrix}
         \end{equation}
+
+        Notice that, this time, we broke $W$ into \purp{column vectors} $W_i$, rather than row vectors. Each \purp{neuron}'s weights are represented by one column vector.
         
-        Notice that, this time, we broke it into \textbf{column vectors}, rather than row vectors: each neuron's \textbf{weights} are represented by a column vector.
+        So, for now, we focus on only \gren{one neuron} at a time: it has a column vector $\blu{W_i}$.
+            \note{For simplicity, we're gonna ignore the $\ell$ notation: just be careful, because $Z$ and $A$ are from two different layers!}
+        
         
         We'll ignore everything except $\blu{W_i}$.
         
@@ -1912,25 +2162,48 @@
                 \blu{w}_{1i} \\ \blu{w}_{2i} \\ \vdots \\ \blu{w}_{mi}
             \end{bmatrix}
         \end{equation}
-        
-        Finally, we get into our equation: notice that a \textbf{single} neuron has only \textbf{one} pre-activation $z_i$, so we don't need the whole vector.
+
+        \begin{concept}
+            When you have a derivative that has \purp{too many dimensions}, it's easier to only focus on \gren{one} of the elements/dimensions, and find the derivative of that first. 
+
+            \begin{itemize}
+                \item In this example, rather than finding $\pderiv{Z}{W}$, we're finding $\pderiv{Z}{W_i}$.
+                \item We're simplifying from \purp{matrix} $W$ to \gren{vector} $W_i$.
+            \end{itemize}
+        \end{concept}
+
+        \subsecdiv
+
+        So, we're doing $\pderiv{Z}{W_i}$: we need equations relating these variables.
+
+        \begin{itemize}
+            \item $\blu{W_i}$ represents the weights of one neuron, while $\red{Z}$ represents the pre-activation of all the neurons.
+        \end{itemize}
+
+        Let's focus on one pre-activation neuron at a time.
         
         \begin{equation}
-            \red{z_i} = \blu{W_i^T}\org{A}
+            \red{z_j} = \blu{W_j^T}\org{A}
         \end{equation}
+
+        Notably, this equation reminds us that pre-activation $z_j$ is only affected by weights from the same neuron, $W_j$. 
+
+        \begin{itemize}
+            \item Weights from a different neuron have no effect on $z_j$.
+            \item So, the derivative between them will be 0: we can check this using the equation above.
+        \end{itemize}
         
-        Wait: there's something to notice, right off the bat. $\red{z_i}$ is \textbf{only} a function of $\blu{W_i}$: that means the derivative for every other term $\pderivslash{}{\blu{W_k}}$ is \textbf{zero}!
-            \note{For example, changing $\blu{W_2}$ would have \textbf{no} effect on $\red{z_1}$.}\\
         
         \begin{concept}
-            The $\nth{i}$ neuron's \vocab{weights}, $W_i$, have \gren{no effect} on a different neuron's \purp{pre-activation} $z_j$.
+            The $\nth{i}$ neuron's \vocab{weights}, $W_i$, have \gren{no effect} on a different neuron's \redd{pre-activation} $z_j$.
             
-            So, if the \purp{neurons} don't match, then our derivative is zero:
+            So, if the neurons don't match, then our derivative is \orgg{zero}:
             
             \begin{itemize}
-                \item $i$ is the neuron for pre-activation $\red{z_i}$
-                \item $j$ is the $\nth{j}$ \blu{weight} in a neuron.
-                \item $k$ is the neuron for weight vector $\blu{W_k}$
+                \item $i$ is the neuron for \redd{pre-activation} $\red{z_i}$
+
+                \item $j$ is the $\nth{j}$ weight \purp{in neuron $k$}.
+                \item $k$ is the \vocab{neuron} for weight vector $\blu{W_k}$
             \end{itemize}
             
             \begin{equation*}
@@ -1948,7 +2221,11 @@
         
         \subsecdiv
         
-        With that done, let's substitute in our values:
+        With that out of the way, let's actually \orgg{expand} our expression from above, to compute $\pderiv{ \red{z}_i }{ \blu{W}_{ji} }$.
+
+        \begin{equation}
+            \red{z_i} = \blu{W_i^T}\org{A}
+        \end{equation}
         
         \begin{equation}
             \red{z_i} 
@@ -1961,7 +2238,7 @@
             \end{bmatrix}
         \end{equation}
         
-        And we'll do our \textbf{matrix multiplication}:
+        This matrix multiplication can be written as an easier-to-use \gren{sum}:
         
         \begin{equation}
             \red{z_i} 
@@ -1970,13 +2247,13 @@
             \blu{W_{ji} }\org{a_j}
         \end{equation}
         
-        Finally, we can get our derivatives:
+        Finally, we can get our derivatives, for the \purp{non-zero} terms:
         
         \begin{equation}
             \pderiv{ \red{z_i} }{  \blu{W_{ji} }} = \org{a_j}
         \end{equation}
         
-        So, if we combine that into a vector, we get:
+        Now, we can combine them into a vector.
         
         \begin{equation}
             \pderiv{ \red{z_i} }{  \blu{W_{i} }} =
@@ -1991,7 +2268,7 @@
             \end{bmatrix}
         \end{equation}
         
-        We can use our equation:
+        We plug in our new values:
         
         \begin{equation}
             \pderiv{ \red{z_i} }{  \blu{W_{i}} } =
@@ -2012,7 +2289,7 @@
         
         \subsecdiv
         
-        What if the pre-activation $\red{z_i}$ and weights $\blu{W_{k}}$ don't match? We've already seen: the derivative is 0: weights don't affect different neurons.
+        What if the pre-activation $\red{z_i}$ and weights $\blu{W_{k}}$ don't match? We've already seen: the derivative is 0: weights from one neuron don't affect different neurons.
         
         \begin{equation}
             \pderiv{ \red{z}_i }{ \blu{W}_{jk} } = 0 
@@ -2036,14 +2313,29 @@
         So, now, we can describe all of our vector components:
         
         \begin{equation}
+            \boxed{
             \pderiv{ \red{z}_i }{ \blu{W}_{k} } = 
             \begin{cases}
               \org{A} & \text{if } i = k\\
               \vec{0} & \text{if } i \neq k
             \end{cases}
+            }
         \end{equation}
+
+        Again, we see: "same neuron? they're related. Different neurons? They're not."
+
+        \subsecdiv
+
+        This derivative, despite being a vector, can be represented with a \purp{single} symbol ($\vec{0}$ or $A$), for each element $\pderiv{ \red{z}_i }{ \blu{W}_{k} }$.
         
-        These are all the elements of our matrix $\pderivslash{ \red{z}_i }{ \blu{W}_{k} }$: so, we can get our result.
+        \begin{itemize}
+            \item For the sake of trying to wrangle our 3-tensor, we'll "\gren{hide}" one dimension using this fact.
+            \item If this is the case, then we have to pretend that $W_k$ is a "scalar": so, $W$ is now a "vector".
+        \end{itemize}
+
+        
+        
+        We compute $\pderiv{Z}{W}$ as a "vector/vector" derivative: this is a \orgg{matrix}!
         
         \begin{equation}
             \pderiv{ \red{Z} }{ \blu{W} } 
@@ -2056,7 +2348,7 @@
             \end{bmatrix}
         \end{equation}
         
-        We have our result: it turns out, despite being stored in a \textbf{matrix}-like format, this is actually a \textbf{3-tensor}! Each entry of our \textbf{matrix} is a \textbf{vector}: 3 axes.
+        We have our result: it turns out, despite being stored in a \textbf{matrix}-like format, this is actually a \textbf{3-tensor}! Each "scalar" of our \textbf{matrix} is a \textbf{vector}: we really have 3 axes.
         
         \subsecdiv
         
@@ -2102,7 +2394,7 @@
             \org{A}
         \end{equation}
         
-        We have our big result!\\
+        We have our final answer!\\
         
         \begin{notation}
             Our derivative
@@ -2121,14 +2413,17 @@
         \end{notation}
         
         This is as \textbf{condensed} as we can get our information: if we compress to a scalar, we lose some of our elements.
-        
-        Even with this derivative, we still have to do some clever \textbf{reshaping} to get the result we need (transposing, changing derivative order, etc.)
+
+        \begin{itemize}
+            \item Even with this derivative, we still have to do some clever \textbf{reshaping} to get the result we need (transposing, changing multiplication order of the chain rule, etc.)
+                \note{This is the weird order change we mentioned in chapter 7, where we reverse the order of elements.}
+        \end{itemize} 
         
         However, at the end, we get the right shape for our chain rule!
         
     \secdiv
             
-    \subsection*{X.21 \quad Linking Layers}
+    \subsection{Linking Layers $\ell-1$ and $\ell$}
                 
         \begin{equation}
             \pderiv{\red{Z^\ell}} {\org{A^{\ell-1}}}
@@ -2141,9 +2436,11 @@
             \red{Z} = \blu{W}^T\org{A}
         \end{equation}
         
-        We'll use the same approach we did last time: $\blu{W}$ is a vector, and we'll focus on $\blu{W_i}$. This will allow us to break it up \textbf{element-wise}, and get all of our \textbf{derivatives}.
-        
-        We could treat $\blu{W}$ as a whole matrix, but this will give us our results without as much clutter: the only \textbf{difference} is that we would have to depict every $\blu{W_i}$ at \textbf{once}.
+        We'll use the same approach we did last section: $\blu{W}$ is a "vector", and we'll focus on $\blu{W_i}$. This will allow us to break it up \textbf{element-wise}.
+
+        \begin{itemize}
+            \item We could treat $\blu{W}$ as a whole matrix, but our approach will be cleaner: otherwise, we'd have to depict every $\blu{W_i}$ at \textbf{once}.
+        \end{itemize}
         
         \begin{equation}
             \blu{W}
@@ -2187,7 +2484,7 @@
         \end{equation}
         
         We look at our whole matrix derivative:
-            \note{This notation looks a bit weird, but it's just a way to represent that all of our elements follow this pattern.}
+            \note{This notation looks a bit weird, but it's just a way to represent that all of our elements follow the same pattern.}
 
         
         \begin{equation}
@@ -2199,18 +2496,18 @@
                     \cdots & \bigpderiv{ \red{z_i} }{ \org{a_j}  } & \cdots \\
                     \iddots& \vdots                                & \ddots
                 \end{bmatrix}
-                }^{ \text{\small Column $j$ matches $\red{z_i}$} }
-            \bigggrB{60pt} \text{\small Row $i$ matches $\org{a_j}$} 
+                }^{ \text{\small Column $i$ matches $\red{z_i}$} }
+            \bigggrB{60pt} \text{\small Row $j$ matches $\org{a_j}$} 
         \end{equation}
         
         Wait. 
         \begin{itemize}
-            \item The derivative $\pderivslash{ \red{z_i} }{ \org{a_j}  }$ is in the $\nth{j}$ row, $\nth{i}$ column.
+            \item The derivative $\pderivslash{ \red{z_i} }{ \org{a_j}  }$ is in the $\nth{j}$ row, $\nth{i}$ column of $\pderiv{ \red{Z} }{ \org{A} }$.
             
-            \item $\blu{W}_{ji}$ represents the element in the $\nth{j}$ row, $\nth{i}$ column.
+            \item $\blu{W}_{ji}$ is  the element of $W$ in the $\nth{j}$ row, $\nth{i}$ column.
         \end{itemize}
         
-        They're the same matrix!
+        $W_{ji}$ goes in the same place in both matrices! They're the same matrix: $W=\pderiv{Z}{A}$
             \note{If two matrices have exactly the same shape and elements, they're the same matrix.}
             
         We get our final result:\\
@@ -2229,19 +2526,25 @@
         
             Is a vector/vector derivative, and thus a matrix.
             
-            But, we have turned it into the shape \blu{$(m^{\ell} \times n^{\ell})$}.
+            It takes the shape \blu{$(m^{\ell} \times n^{\ell})$}.
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item This matches the intuition we have from the simplified, 1d version, where we have $z=wa$, instead of $Z = W^TA$.
+            \end{itemize}
         \end{notation}
             
            
     \secdiv  
          
-    \subsection*{X.22 \quad Activation Function}
+    \subsection{Activation Function}
         
         \begin{equation}
             \pderiv {\org{A^\ell}}   {\red{Z^\ell}}
         \end{equation}
     
-        The last derivative is less unusual than it looks.
+        The last derivative is less strange than its solution looks.
         
         \begin{equation}
             \org{A^\ell} = f( \red{Z^\ell} ) 
@@ -2291,12 +2594,12 @@
             So, our only nonzero derivatives are
             
             \begin{equation*}
-                \pderiv { \org{a_j} }   { \red{z_i} }
+                \pderiv { \org{a_i} }   { \red{z_i} }
             \end{equation*}
             
         \end{concept}
         
-        As for our remaining term, we'll describe any row of the above vectors:
+        As for our \purp{non-zero} terms, they all rely on the equation:
         
         \begin{equation}
             \org{a_i} = f(\red{z_i})
@@ -2311,7 +2614,7 @@
         In general, including the non-diagonals:
         
         \begin{equation}
-            \pderiv { \org{a_i} }{ \red{z_i} }
+            \pderiv { \org{a_i} }{ \red{z_j} }
             = 
             \begin{cases}
               f'(\red{z_i}) & \text{if } i = j\\
@@ -2324,7 +2627,7 @@
         \begin{notation}
             Our derivative
             
-            \begin{equation}
+            \begin{equation*}
                 \overbrace{
                     \pderiv {\org{A^\ell}}   {\red{Z^\ell}}
                 }^{ (n^{\ell} \times n^{\ell}) }
@@ -2339,17 +2642,17 @@
                     \end{bmatrix}
                 }^{ \text{\small Column $j$ matches $a_j$} }
                 \bigggrB{100pt} \text{\small Row $i$ matches $z_i$} 
-            \end{equation}
+            \end{equation*}
         
             Is a vector/vector derivative, and thus a matrix.
             
-            But, we have turned it into the shape \blu{$(n^{\ell} \times n^{\ell})$}.
+            It takes the shape \blu{$(n^{\ell} \times n^{\ell})$}.
         \end{notation}
     
     
-    \subsection*{X.23 \quad Element-wise multiplication}
+    \subsection{Element-wise multiplication}
 
-        Notice that, in the previous section, we would've compressed this matrix down to remove the unnecessary 0's:
+        Notice that, in the previous section, we could've compressed this matrix down to remove the unnecessary 0's:
         
         \begin{equation}
             \begin{bmatrix}
@@ -2386,7 +2689,7 @@
             
             Then we can write their product each of these ways:
             
-            \begin{equation}
+            \begin{equation*}
                 RQ = 
                 \overbrace{
                     R * Q
@@ -2395,12 +2698,13 @@
                 \begin{bmatrix}
                     r_1q_1 \\ r_2q_2\\ r_3q_3 \\ \vdots \\r_nq_n
                 \end{bmatrix}
-            \end{equation}
+            \end{equation*}
         \end{concept}
         
         So, we can substitute the chain rule this way.
 
-\section*{Terms}
+\pagebreak
+\section{Terms}
 
     \begin{itemize}
         \item Matrix/scalar derivative
@@ -2411,6 +2715,5 @@
         \item Array
         \item "Tensor" (Generalized matrix)
         \item $c$-Tensor (2-tensor, 3-tensor, etc.)
-        \item Gaussian/Normal Distribution (Optional)
     \end{itemize}
         

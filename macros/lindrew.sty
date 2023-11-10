@@ -128,17 +128,21 @@
 
 % five different colors of boxes
 
+\definecolor{lightergrey}{rgb}{0.90, 0.90, 0.90}
+
 \thmboxstyle{defbox}{mdredbox}{red}{orange!5}
 \thmboxstyle{thmbox}{mdbluebox}{blue!90!red}{cyan!4}
 \thmboxstyle{exbox}{mdgreenbox}{green!70!black}{teal!4}
 \thmboxstyle{notebox}{mdorangebox}{orange!50!brown}{yellow!5!olive!5}
 \thmboxstyle{lembox}{mdpurplebox}{purple!50!blue}{purple!5!blue!3}
+\thmboxstyle{commbox}{mdgreybox}{black}{lightergrey}
 
 \iflinclass
     \declaretheorem[style = thmbox, name = Theorem]{theorem}
 \else
     \declaretheorem[style = thmbox, name = Theorem, numberwithin = section]{theorem}
 \fi
+
 
 \declaretheorem[style = lembox, name = Lemma, sibling = theorem]{lemma}
 \declaretheorem[style = thmbox, name = Proposition, sibling = theorem]{proposition}
@@ -170,10 +174,12 @@
 \declaretheorem[style = plain, name = Claim, sibling = theorem]{claim}
 \declaretheorem[style = plain, name = Claim, numbered = no]{claim*}
 
-\declaretheorem[style=plain, name=Remark, sibling=theorem]{remark}
-\declaretheorem[style=plain, name=Remark, numbered=no]{remark*}
+
 
 %%New box types added by Shaunticlair Ruiz
+
+\declaretheorem[style=commbox, name=Remark (Optional), sibling=theorem]{remark}
+\declaretheorem[style=commbox, name=Remark (Optional), numbered=no]{remark*}
 
 \declaretheorem[style = notebox, name = Concept, sibling = theorem]{concept}
 \declaretheorem[style = notebox, name = Concept, numbered = no]{concept*}

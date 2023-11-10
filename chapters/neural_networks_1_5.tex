@@ -1,4 +1,4 @@
-\setcounter{chapter}{6-1}
+\setcounter{chapter}{7-1}
 
 \chapter{Neural Networks 1.5 - Back-Propagation and Training}
 
@@ -261,47 +261,71 @@
         \end{figure}
         
         We want to link $\loss$ to $w$. In order to do that, we need to \textbf{connect} each thing in between.
-        
-        This lets us \textbf{combine} lots of simple \textbf{links} to get our more complicated result.
+
+        \begin{itemize}
+            \item This lets us \textbf{combine} lots of simple \textbf{links} to get our more complicated result.
             \note{We can also call this "chaining together" lots of derivatives.}
-            
-        Loss is what we really care about. So, what is the loss directly \textbf{connected} to? The \textbf{activation}, $a$.
+        \end{itemize}
+
+        \subsecdiv
         
+        Loss \org{$\loss$} is what we really care about. So, what is the loss directly \textbf{connected} to? The \textbf{activation}, \purp{$a$}.
+
+        \begin{itemize}
+            \item Our loss function $\loss(a,y)$ contains information about how $\loss$ is linked to $a$.
+        \end{itemize}
+        
+        
+        
+        \begin{equation}
+            \overbrace{
+                \pderiv {\org{\loss}} {\pur{a}} 
+            }^{\text{Loss unit}} 
+        \end{equation}
+
+        We send this information backwards, so it can be used later.
+
         \begin{figure}[H]
             \centering
             \includegraphics[width=90mm,scale=0.4]{images/nn_1_5_images/llc_backprop_1.png}
         \end{figure}
+
+        Now, we're on the $\sigma(z)$ unit.
+
+        \begin{itemize}
+            \item The $\sigma(z)$ unit contains information about how \pur{$a$} is linked to \red{$z$}.
+
+            \item We've connected \org{$\loss$} to \pur{$a$}, and \pur{$a$} to \red{$z$}. We chain them together, connecting \org{$\loss$} to \red{$z$}.
+
+                \begin{equation}
+                    \overbrace{
+                        \pderiv {\org{\loss}} {\pur{a}} 
+                    }^{\text{Loss unit}}
+                    \cmul
+                    \overbrace{
+                        \pderiv {\pur{a}}     {\red{z}}
+                    }^{\text{Activation function}}
+                \end{equation}
+        \end{itemize}
         
-        So, our $\sigma$ unit has information about the derivative that comes after it: the \textbf{loss} derivative
-        
-        \begin{equation}
-            \overbrace{
-                \pderiv {\pur{\loss}} {\blu{a}} 
-            }^{\text{Loss unit}} 
-        \end{equation}
-        
-        And what is that connected to? The \textbf{pre-activation} $z$:
+        We haven't reached $w$ yet, so we send this information further back.
         
         \begin{figure}[H]
             \centering
             \includegraphics[width=100mm,scale=0.4]{images/nn_1_5_images/llc_backprop_2.png}
         \end{figure}
+
         
-        Now, our $\sum$ unit has information about both the \textbf{loss} derivative and the $\sigma$ derivative:
         
-        \begin{equation}
-            \overbrace{
-                \pderiv {\pur{\loss}} {\blu{a}} 
-            }^{\text{Loss unit}}
-            \cmul
-            \overbrace{
-                \pderiv {\blu{a}}     {\red{z}}
-            }^{\text{Activation function}}
-        \end{equation}
-       
-        
-        And finally, we've reached $w$:
-        
+        Finally, we reach $\sum$.
+
+        \begin{itemize}
+            \item The $\sum$ unit contains information about how $z$ is linked to $w$.
+            \item Finally, we have a chain of links, that allows us to connect \org{$\loss$} to $w$.
+        \end{itemize}
+
+        This last derivative uses $x$, because $w^Tx +w_0 = z$.
+
         \begin{figure}[H]
             \centering
             \includegraphics[width=110mm,scale=0.4]{images/nn_1_5_images/llc_backprop_3.png}
@@ -413,14 +437,14 @@
         We can get:
         
         \begin{equation}
-            \pderiv {\pur{\loss}} {w^2} 
+            \pderiv {\org{\loss}} {w^2} 
             =
             \overbrace{
-                \pderiv {\pur{\loss}} {\blu{a^2}} 
+                \pderiv {\org{\loss}} {\pur{a^2}} 
             }^{\text{Loss unit}}
             \cmul
             \overbrace{
-                \pderiv {\blu{a^2}}     {\red{z^2}}
+                \pderiv {\pur{a^2}}     {\red{z^2}}
             }^{\text{Activation}}
                 \cmul
             \overbrace{
@@ -496,12 +520,12 @@
         Now, we have our new chain rule:
         
         \begin{equation}
-            \pderiv {\pur{\loss}} {a^1} 
+            \pderiv {\org{\loss}} {a^1} 
             =
             \overbrace{
-                \pderiv {\pur{\loss}} {\blu{a^2}} 
+                \pderiv {\org{\loss}} {\pur{a^2}} 
                     \cmul
-                \pderiv {\blu{a^2}}   {\red{z^2}}
+                \pderiv {\pur{a^2}}   {\red{z^2}}
             }^{\text{Other terms} } 
                 \cmul
             \overbrace{
@@ -519,10 +543,10 @@
             So we can get 
             
             \begin{equation*}
-                \pderiv {\pur{\loss}} {w^\ell} 
+                \pderiv {\org{\loss}} {w^\ell} 
                 =
                 \overbrace{
-                    \pderiv {\pur{\loss}} {\red{z^\ell}} 
+                    \pderiv {\org{\loss}} {\red{z^\ell}} 
                 }^{\text{Other terms} }
                 \cmul  
                 \overbrace{
@@ -574,14 +598,14 @@
         We can get our second chain rule
         
         \begin{equation}
-            \pderiv {\pur{\loss}} {w^1} 
+            \pderiv {\org{\loss}} {w^1} 
             =
             \overbrace{
-                \pderiv {\pur{\loss}} {\blu{a^1}} 
+                \pderiv {\org{\loss}} {\pur{a^1}} 
             }^{\text{Other layers}}
             \cmul
             \overbrace{
-                \pderiv {\blu{a^1}}   {\red{z^1}}
+                \pderiv {\pur{a^1}}   {\red{z^1}}
                 \cmul
                 \pderiv {\red{z^1}}   {w^1}
             }^{\text{Layer 1}}
@@ -590,27 +614,27 @@
         Which, in reality, looks much bigger:
         
         \begin{equation}
-            \pderiv {\pur{\loss}} {w^1} 
+            \pderiv {\org{\loss}} {w^1} 
             =
             \overbrace{
                 \Bigg(
-                    \pderiv {\pur{\loss}} {\blu{a^2}} 
+                    \pderiv {\org{\loss}} {\pur{a^2}} 
                 \Bigg)
             }^{\text{Loss unit}}
             \cmul
             \overbrace{
                 \Bigg(
-                    \pderiv {\blu{a^2}}   {\red{z^2}}
+                    \pderiv {\pur{a^2}}   {\red{z^2}}
                         \cmul
-                    \pderiv {\red{z^2}}   {a^1}
+                    \pderiv {\red{z^2}}   {\blu{a^1}}
                 \Bigg) 
             }^{\text{Layer 2}}
             \cmul
             \overbrace{
                 \Bigg(
-                    \pderiv {\blu{a^1}}   {\red{z^1}}
+                    \pderiv {\blu{a^1}}   {\grn{z^1}}
                         \cmul
-                    \pderiv {\red{z^1}}   {w^1}
+                    \pderiv {\grn{z^1}}   {w^1}
                 \Bigg)
             }^{\text{Layer 1}}
         \end{equation}
@@ -620,7 +644,7 @@
         \begin{concept}
             We can get all of our \vocab{weight gradients} by repeatedly appending to the \purp{chain rule}.
             
-            For each layer, we multiply by
+            If we want to get the \orgg{weight gradient} of layer $\ell$, we \gren{terminate} with
             
             \begin{equation*}
                 \overbrace{
@@ -632,9 +656,7 @@
                 }^{\text{Get weight grad}}
             \end{equation*}
             
-            To get the \purp{weight gradient} $\pderivslash{ \pur{\loss} }{w^\ell}$.
-            
-            If we want to \gren{extend} to the next layer, we \red{instead} multiply by
+            If we want to \gren{extend} to the previous layer, we \redd{instead} multiply by
             
             \begin{equation*}
                 \overbrace{
@@ -694,7 +716,7 @@
                         }^{\text{Get weight grad}}
                     \end{equation*}
                     
-                    We \red{exclude} this term for any other gradients we want.
+                    We \redd{exclude} this term for any other gradients we want.
                 
                 \item If we aren't at layer 1, there's a previous layer we want to get the weight for. We reach layer $\ell-1$ by multiplying our chain rule by 
                 
@@ -727,7 +749,7 @@
                 \Bigg(
                     \pderiv {\blu{a^L}}   {\red{z^L}}
                         \cmul
-                    \pderiv {\red{z^L}}   {a^{L-1}}
+                    \pderiv {\red{z^L}}   {\grn{a^{L-1}}}
                 \Bigg) 
             }^{\text{Layer $L$}}
             \cmul
@@ -735,7 +757,7 @@
                 \Bigg(
                     \pderiv {\blu{a^{L-1}}}   {\red{z^{L-1}}}
                         \cmul
-                    \pderiv {\red{z^{L-1}}}   {a^{L-2}}
+                    \pderiv {\red{z^{L-1}}}   {\grn{a^{L-2}}}
                 \Bigg) 
             }^{\text{Layer $L-1$}}
             \cmul
@@ -747,7 +769,7 @@
                 \Bigg(
                     \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
                         \cmul
-                    \pderiv {\red{z^\ell}}   {w^{\ell}}
+                    \pderiv {\red{z^\ell}}   {\org{w^{\ell}}}
                 \Bigg) 
             }^{\text{Layer $\ell$}}
         \end{equation}
@@ -755,9 +777,9 @@
         That's pretty ugly. If we need to hide the complexity, we can:\\
         
         \begin{notation}
-            If you need to do so for \purp{ease}, you can \vocab{compress}  your \vocab{derivatives}. For example, if we want to only have the last weight term \gren{separate}, we can do:
+            If you need to do so for \purp{ease}, you can \orgg{compress}  your derivatives. For example, if we want to only have the last weight term \gren{separate}, we can do:
             
-            \begin{equation}
+            \begin{equation*}
                 \pderiv {\pur{\loss}} {w^\ell} 
                 =
                 \overbrace{
@@ -767,7 +789,7 @@
                 \overbrace{
                     \pderiv {\red{z^\ell}}   {w^\ell}
                 }^{\text{Weight term}}
-            \end{equation}
+            \end{equation*}
         \end{notation}
         
         But we should also explore what each of these terms \textit{are}.
@@ -811,17 +833,31 @@
                 \begin{equation}
                     \pderiv {\blu{a^\ell}}   {\red{z^\ell}} 
                     = 
+                    \overbrace{
                     \Big(
-                        \overbrace{
                         f^\ell 
-                        }^{\text{func for layer $\ell$}}
+                    \Big)'
+                    }^{\text{deriv of func for layer $\ell$}}
+                    \overbrace{
+                    (
+                        \red{z^\ell}
+                    )
+                    }^{\text{Deriv input}}
+                \end{equation}
+                
+                This expression is a bit visually clunky, but it works. Without the annotation:
+                    \note{$z^\ell$ is not being multiplied by $(f^\ell)'$, it's the input to that derivative.}
+
+                \begin{equation}
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}} 
+                    = 
+                    \Big(
+                        f^\ell 
                     \Big)'
                     (
                         \red{z^\ell}
                     )
                 \end{equation}
-                
-                This expression is a bit visually clunky, but it works.
                 
         \end{itemize}
         
@@ -853,7 +889,7 @@
                 
         \end{itemize}
         
-    Finally, every gradient will end with
+    Finally, every gradient will end with...
         
         \begin{itemize}
                 
@@ -882,19 +918,19 @@
     \begin{notation}
         Our \vocab{derivatives} for the \purp{chain rule} in a \vocab{1-D neural network} take the form:
         
-        \begin{equation}
+        \begin{equation*}
             \pderiv {\pur{\loss}} {\blu{a^L}}
-        \end{equation}
+        \end{equation*}
         
-        \begin{equation}
+        \begin{equation*}
             \pderiv {\blu{a^\ell}}   {\red{z^\ell}} = (f^\ell)'(\red{z^\ell})
-        \end{equation}
+        \end{equation*}
         
-        \begin{equation}
+        \begin{equation*}
             \pderiv {\red{z^\ell}}   {\blu{a^{\ell-1}}}
             =
             w^{\ell}
-        \end{equation}
+        \end{equation*}
         
         \begin{equation}
             \pderiv {\red{z^\ell}}   {w^{\ell}}
@@ -1051,7 +1087,7 @@
                 
                 We cannot rely on a linear activation function for our \textbf{hidden} layers, because a linear neural network is no more \textbf{expressive} than one layer.
                 
-                But, we use it for \textbf{regression}.
+                But, we use it as the output activation for \textbf{regression}.
                 
             \item \vocab{Softmax} function softmax$(z)$:
             
@@ -1066,7 +1102,7 @@
                     1 - \tanh(z)^2
                 \end{equation}
                 
-                This strange little expression is the "hyperbolic secant" squared. We won't bother further with it.\\
+                This strange little expression is 1 minus the "hyperbolic secant" squared. We won't bother further with it.\\
         \end{itemize}
         
         
@@ -1164,32 +1200,32 @@
             
             Square:
             
-            \begin{equation}
+            \begin{equation*}
                 \deriv{}{a} \loss_{sq} = 2(a-y)
-            \end{equation}
+            \end{equation*}
             
             Linear (Absolute):
             
-            \begin{equation}
+            \begin{equation*}
                 \deriv{}{a} \loss_{lin} = \text{sign}(a-y)
-            \end{equation}
+            \end{equation*}
             
             NLL (Negative-Log Likelihood):
             
-            \begin{equation}
+            \begin{equation*}
                 \deriv{}{a} \loss_{NLL} = - \Bigg( \frac{y}{a} - \frac{1-y}{1-a} \Bigg)
-            \end{equation}
+            \end{equation*}
         \end{notation}
         
     \secdiv
     
     \subsection{Many neurons per layer}
     
-        Now, we just have left the elephant in the room: what do we do about the case where we have \textit{full} layers? That is, what if we have \textbf{multiple} neurons per layer? This makes this more complex.
+        Now, we just have left the elephant in the room: what do we do about the case where we have \textit{big} layers? That is, what if we have \textbf{multiple} neurons per layer? This makes this more complex.
         
-        Well, the solution is the same as in the first part of chapter 7: we introduce \textbf{matrices}.
+        Well, the solution is the same as earlier in the course: we introduce \textbf{matrices}.
         
-        But this time, with a twist: we have to do \textbf{matrix} calculus: a difficult topic indeed.
+        But this time, with a twist: we have to do serious \textbf{matrix} calculus: a difficult topic indeed.
         
         To handle this, we will go in somewhat \textbf{reversed} order, but one that better fits our needs.
         
@@ -1206,15 +1242,27 @@
     
     \subsection{The chain rule: Matrix form}
     
-        Let's start with the first: the punchline, how does the chain rule and our gradient descent \textbf{change} when we add \textbf{matrices}?
+        Let's start with the first: the punchline, how does the chain rule and our gradient descent \textbf{change} when we add \vocab{matrices}?
         
         It turns out, not much: by using \textbf{layers} in the last section, we were able to create a pretty powerful and mathematically \textbf{tidy} object.
+
+        \begin{itemize}
+            \item With layers, each layer feeds into the \textbf{next}, with no other interaction. And neurons \purp{within} the same layer do \gren{not} directly \gren{interact} with each other, which simplifies our math greatly.
+
+            \begin{itemize}
+                \item Basically, we have a bunch of functions (neurons) that, within a layer, have \gren{nothing} to do with each other, and only \textbf{output} to the \textbf{next} layer of similar functions. 
+            \end{itemize}
+
+            
+            
+            \item So, we can often \textbf{oversimplify} our model by thinking of each \purp{layer} as like a "big" function, taking in a vector of size \blu{$m^\ell$} and outputting a vector of size \red{$n^\ell$}. 
+        \end{itemize}
         
-        With layers, each layer feeds into the \textbf{next}, with no other interaction. And neurons within the same layer do not directly interact with each other, which simplifies our math greatly.
         
-        Basically, we have a bunch of functions (neurons) that, within a layer, have nothing to do with each other, and only \textbf{output} to the \textbf{next} layer of similar functions.
         
-        So, we can often \textbf{oversimplify} our model by thinking of each layer as like a "big" function, taking in a vector of size $m^\ell$ and outputting a vector of size $n^\ell$. 
+        
+        
+        
         
         Our main concern is making sure we have agreement of \textbf{dimensions}!
             \note{In fact, if you just rearranging your matrices and transposing them can be a helpful way to debug. Be careful, though!}
@@ -1275,7 +1323,6 @@
         \end{notation}
         
         \begin{figure}[H]
-            \centering
             \includegraphics[width=180mm,scale=0.4]{images/nn_1_5_images/network_bp_full5.png}
         \end{figure}
         
@@ -1436,12 +1483,13 @@
             \end{equation*}
             
             Where $r$ is the length of $Z^\ell$.
+
+            \begin{itemize}
+                \item In short, we only have the $\red{z_i}$ derivative on the $\nth{i}$ diagonal
+                \item Why? Check the matrix derivative notes.
+            \end{itemize}
         \end{notation}
         
-        
-        
-        In short, we only have the $\red{z_i}$ derivative on the $\nth{i}$ diagonal.
-            \note{Why this is will be explained in the matrix derivative notes.}
         
         \miniex Suppose you have the activation $f(\red{z}) = \red{z}^2$.
         
@@ -1478,6 +1526,12 @@
             \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
             =
             \begin{bmatrix}
+                f'(1) & 0         & 0         \\
+                0        & f'(2) & 0         \\
+                0        & 0         & f'(3) \\
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
                 2\cdot 1 & 0         & 0         \\
                 0        & 2 \cdot 2 & 0         \\
                 0        & 0         & 2 \cdot 3 \\
@@ -1491,7 +1545,7 @@
         \end{equation*}
         
         If you want to be able to \textbf{derive} some of the derivatives, without reading the matrix derivative section, just use this formula for vector derivatives:
-            \note{If you have time, do read - you won't understand what you're doing otherwise!}
+            \note{If you have time, do read -- you won't understand what you're doing otherwise!}
         
         \begin{equation}
                 \pderiv{ \pur{w} }{ \org{v} } 
@@ -1536,8 +1590,14 @@
             We can use this for scalars as well: we just treat them as a vector of length 1.
             
             With some cleverness, you can derive the Scalar/Matrix and Matrix/Scalar derivatives as well.  
-                \note{This is contained in the matrix derivatives chapter.}
-        
+                \note{This is contained in the matrix derivatives chapter.}\\
+
+
+            \begin{clarification}
+                Note that we have chosen a \gren{convention} for how our matrices work: plenty of other resources use a transposed version of matrix derivatives.
+
+                This alternate version means the exact \gren{same} thing as our version. Our choice is called the \vocab{denominator layout notation} for matrix derivatives.
+            \end{clarification}
             \secdiv
 
 \pagebreak
@@ -1599,6 +1659,8 @@
     \subsection{Pseudocode}
     
         Our training algorithm for backprop can follow smoothly from what we've laid out.
+
+        Here, we'll use the $@$ symbol to indicate matrix multiplication, following numpy conventions.
      
         \begin{codebox}
             \Procname{$\proc{SGD-Neural-Net}(\dataTrain, T, L, (m^1, \ldots,
@@ -1617,7 +1679,7 @@
             \li While \gren{termination condition} not met:
                 \Do
                     \li Get random data point \org{$i$}
-                    \li Kepp track of time $t$
+                    \li Keep track of time $t$
                     \li
                     \li Do forward pass
                         \Do
@@ -1651,7 +1713,7 @@
                                             \Do
                                                 \li 
                                                 $( \pderivslash{ \red{Z}^{\ell+1} }{ \org{A}^\ell } )$ 
-                                                \;*\; 
+                                                \;@\; 
                                                 $( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell+1} } )$ 
                                             \End
                                             \li 
@@ -1661,7 +1723,7 @@
                                             \Do
                                                 \li
                                                 $( \pderivslash{ \org{A}^\ell }{ \red{Z}^{\ell} } )$ 
-                                                \;*\;
+                                                \;@\;
                                                 $( \pderivslash{ \pur{\loss} }{ \org{A}^\ell } )$ 
                                             \End
                                             \li
@@ -1677,7 +1739,7 @@
                                                 = \red{A}^{\ell-1}$
                                                 \li
                                                 $( \pderivslash{\red{Z}^{\ell}}{ \blu{W}^\ell } )$ 
-                                                \;*\;
+                                                \;@\;
                                                 $( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell}} )$ 
                                             \End
                                             \li

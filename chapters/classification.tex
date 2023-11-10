@@ -19,9 +19,9 @@
 
     \subsection{Motivation: Putting things into classes}
         
-        We don't \textit{always} want a \textbf{real number} output: that can be complicated, or not match some problems well. 
+        We don't \textit{always} want a \textbf{real number} output: sometimes, we just have a different kind of question.
         
-        Often, it's more useful to, rather than give exact values, sort things into \textbf{categories}, or what we will call \textbf{classes}.\\
+        Often, it's more useful to, rather than give numeric values, instead sort things into \textbf{categories}, or what we will call \textbf{classes}.\\
         
         \begin{definition}
             A \vocab{class} is \gren{set} of things that have something relevant in \purp{common}.
@@ -39,7 +39,7 @@
             In this setting, we take \gren{real-valued data}, stored in a $(d \times 1)$ \textbf{vector}, and return one of our \purp{classes}.
             
             \begin{equation*}
-                h: \RR^d \rightarrow \{C_1, C_2, C_3, \dots C_n\}
+                h: \RR^d \rightarrow \setty{C_1, C_2, C_3, \dots C_n}
             \end{equation*}
             
             Where $\{C_1, C_2, C_3, \dots C_n\}$ are all \purp{classes}. Sometimes, we call the value we return a \purp{label} instead.
@@ -47,7 +47,7 @@
         
             \note{As a refresher, the function notation here just says, "take in a $d$-dimensional vector, and output one of our $n$ discrete classes."}
         
-        \miniex You might classify different \textbf{animals} as a bird, a mammal, or a fish. You have 5 pieces of useful data to \textbf{classify} with.
+        \miniex Suppose you want to classify different \textbf{animals} as a bird, a mammal, or a fish. You are given (as input) 5 pieces of useful data to \textbf{classify} with.
         
         \begin{equation}
             h: \RR^5 \rightarrow \{ Bird, Mammal, Fish \}
@@ -108,10 +108,10 @@
                     \item The real numbers are ordered, too.
                 \end{itemize}
                 
-            \item In some problems, you get to \textbf{decide} what classes are acceptable: where do you draw the \textbf{line} between two categories? Do you care about dogs, or just mammals? And so on.
+            \item In some problems, you get to \textbf{decide} what classes you choose. Do you want to compare dogs vs. cats, mammals vs. fish, color of fur? What goes in different classes, or the same?
             
                 \begin{itemize}
-                    \item You can change units, but the \textbf{structure} of the real numbers is very \textbf{consistent}.\\
+                    \item You can change units (lb vs kg), but you don't "decide" how the real numbers work.\\
                 \end{itemize}
         \end{itemize}
         
@@ -236,7 +236,7 @@
         
         Interesting - the \textbf{boundary} between positive and negative is defined by a \textbf{vertical line}.
         
-        Or, almost. Compare $x_1>3$ and $x_1<3$:
+        A vertical line is missing some information, though: compare $x_1>3$ and $x_1<3$:
         
         \begin{figure}[H]
                 \includegraphics[width=70mm,scale=0.5]{images/classification_images/x1_2d_plot_boundary.png}
@@ -484,6 +484,14 @@
                     -1 & \text{otherwise}
                 \end{cases}
             \end{equation*}
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item Note that we assigned $-1$ if $\theta \cdot x=0$.
+                \item This is an \orgg{arbitrary} convention: we could also have assigned $+1$ for $\theta \cdot x=0$.
+                \item All that matters is to have a decision, and be consistent about it.
+            \end{itemize}
         \end{kequation}
         
     \subsection{Introducing our offset}
@@ -521,6 +529,13 @@
                     -1 & \text{otherwise}
                 \end{cases}
             \end{equation*}
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item Again, we assigned $-1$ if $\theta \cdot x=0$.
+                \item Again, this choice is \orgg{arbitrary}. Consistency is what matters most.
+            \end{itemize}
         \end{kequation}
         
         Notice that this looks very similar to what we did in regression! We'll get into that in a bit.
@@ -538,11 +553,11 @@
     
     \subsection{How does the offset affect our classifier?}
     
-        So, how exactly does our offset $\theta_0$ affect our \textbf{classifier}? Well, we mark our classifier with our \textbf{normal vector} and the \textbf{boundary}.
+        So, how exactly does our offset $\theta_0$ affect our \textbf{classifier}? Well, we mark our classifier with our \gren{normal vector} and the \purp{boundary}.
         
-        Our \textbf{normal vector} is entirely captured by $\theta$: it's unchanged by $\theta_0$.
+        Our \gren{normal vector} is entirely captured by \gren{$\theta$}: it's unchanged by $\theta_0$.
         
-        What about our \textbf{boundary}? We have its \textbf{orientation}, but we don't know where it has \textbf{shifted} to.
+        What about our \purp{boundary}? We have its \gren{orientation}, but we don't know where it has \purp{shifted} to.
         
         \begin{figure}[H]
             \centering
@@ -550,23 +565,25 @@
                 \caption*{Note that the origin has been marked.}
         \end{figure}
         
-        Well, let's use our equation: the \textbf{boundary} line is given by 
+        Well, let's use our equation: if your formula is positive, you get +1. If your formula is negative, you get -1. 
+        
+        The \purp{boundary} line is between positive and negative: it's at \purp{zero}.  
         
         \begin{equation}
-            \theta^T x + \theta_0 = 0 
-            \Longleftrightarrow 
-            \theta^T x = -\theta_0
+            \theta^T x + \theta_0 = \purp{0} 
+            \iff
+            \org{\theta^T x = -\theta_0}
         \end{equation}
         
         We'll break the effects of $\theta_0$ into three cases:
             \note{Note: the below statements are true no matter what $\theta$ we choose!}
         
-        For each, we'll show two different $\theta$ values.
+        For each, we'll show a boundary, and a \vocab{flipped} version of that boundary.
         
         \begin{itemize}
-            \item If $\theta_0=0$, then $x=(0,0)$ is \textbf{on the line}.
+            \item If \orgg{$\theta_0=0$}, then \orgg{$x=(0,0)$} is \orgg{on the line}.
                 \begin{itemize}
-                    \item Without an \textbf{offset}, our line goes through the \textbf{origin}.
+                    \item Without an \textbf{offset}, our line goes through the \orgg{origin}.
                 \end{itemize}
                 
                 \begin{figure}[H]
@@ -575,9 +592,10 @@
                         \caption*{The boundary is on the origin.}
                 \end{figure}
                 
-            \item If $\theta_0>0$, then $x=(0,0)$ is in the \textbf{positive} region.
+            \item If \gren{$\theta_0>0$}, then the \purp{origin} is in the \gren{positive} region.
                 \begin{itemize}
-                    \item That means the positive region is \textbf{larger}: the line must have moved in the $-\theta$ direction.
+                    \item That means the positive region is "larger": some space that was negative, is positive.
+                    \item The boundary line has moved in the $-\theta$ direction.
                 \end{itemize}
                 
                 \begin{figure}[H]
@@ -587,9 +605,10 @@
                 \end{figure}
                 
                 
-            \item If $\theta_0<0$, then $x=(0,0)$ is in the \textbf{negative} region.
+            \item If \gren{$\theta_0<0$}, then the \purp{origin} is in the \gren{negative} region.
                 \begin{itemize}
-                    \item That means the positive region is \textbf{smaller}: the line must have moved in the $+\theta$ direction.
+                    \item That means the positive region is "smaller": some space that was positive, is negative.
+                    \item The boundary line has moved in the $+\theta$ direction.
                 \end{itemize}
                 
                 \begin{figure}[H]
@@ -611,7 +630,7 @@
         
         This gives us a general idea of how the offset affects it, but what is the \textbf{exact} effect of $\theta_0$ on the line?
         
-        We'll focus on one point on the line: the \textbf{closest point to the origin} We want to look at this \textbf{point} because it's \textbf{unique}.
+        We'll focus on one point on the line: the \textbf{closest point to the origin}. We want to look at this \textbf{point} because it's \textbf{unique}.
             \note{Points that aren't unique are hard to keep track of!}
     
     \subsection{Distance from the Origin to the Plane}
@@ -728,6 +747,11 @@
                 \begin{bmatrix}
                   \theta_1 \\ \theta_2 \\ \vdots \\ \theta_d
                 \end{bmatrix}
+                \qquad
+                x =
+                \begin{bmatrix}
+                    x_1 \\ x_2 \\ \vdots \\ x_d
+                \end{bmatrix}
             \end{equation*}
         \end{kequation}
         
@@ -736,9 +760,9 @@
         \begin{figure}[H]
             \centering
             
-            \includegraphics[width=70mm,scale=0.5]{images/classification_images/3d_classification_problem.png}
+            \includegraphics[width=100mm,scale=0.5]{images/classification_images/3d_classification_problem.png}
 
-            \caption*{As we move into 3D, we can \textbf{separate} points on \textbf{three different axes}.}
+            \caption*{Notice the green + signs are "above" the plane, while the red - signs are "below" the plane.}
         \end{figure}
         
         Just like with regression, this is when we introduce the \textbf{hyperplane}:\\
@@ -750,7 +774,13 @@
             
             The hyperplane is \vocab{oriented}: there is a \purp{normal} vector $\theta$ which defines the \purp{orientation} of the hyperplane, and which side is \gren{positive}.
             
-            It also has an \gren{offset} term $\theta_0$, that slides it in the $\theta$ direction \purp{away} from the origin.
+            It also has an \gren{offset} term $+\theta_0$, that slides it in the $-\theta$ direction \purp{away} from the origin.
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item $\theta_0$ can be any real number, but the shift will always be in the opposite direction.
+            \end{itemize}
         \end{concept}
         
         For any dimensional input, we can use hyperplanes as separators.
@@ -806,7 +836,7 @@
             \centering
             
             \includegraphics[width=70mm,scale=0.5]{images/classification_images/2d_regression_plot.png}
-            \caption*{We have one input, and we get the exact value of our output.}
+            \caption*{We have one input, and we get the exact value of our output. We only plot values on the line.}
         \end{figure}
         
         But the classification plot \textbf{doesn't}! We aren't given the value of $\theta^Tx +\theta_0$ at $x=(1,0)$: we just know that it's \textbf{negative}.
@@ -815,12 +845,12 @@
             \centering
             
             \includegraphics[width=70mm,scale=0.5]{images/classification_images/2d_classification_plot.png}
-            \caption*{We have two input, and we \textbf{don't} get the exact output.}
+            \caption*{We have two inputs, and we \textbf{don't} get the exact output. We can plot inputs anywhere in space.}
         \end{figure}
         
         If we wanted to know the exact value of our 2-D classification, we would need to view it as a plane in 3-D space.
         
-        This is the trade-off between these two plots: one gives more information about the output, and the other allows for more inputs in a lower dimension.\\
+        This is the trade-off between these two plots: one gives more information about the \textbf{output}, and the other allows for more inputs in a \textbf{lower-dimensional} visualization.\\
         
         \begin{clarification}
             \vocab{Regression} and \vocab{classification} plots that look the same, have \vocab{different functions}: 
@@ -829,17 +859,49 @@
             \begin{itemize}
                 \item A \purp{regression} plot gives the \gren{exact numeric} $f(x)$.
                 
-                \item A \purp{classification} plot only gives the \gren{sign} of the $f(x)$.
+                \item A \purp{classification} plot only shows where $f(x)=0$, and the sign of $f(x)$ elsewhere.
             \end{itemize}
+
+            In short:
+
+            \red{Regression adds the whole $y$ \textbf{number line}, classification only shows $y=0$. This saves \textbf{one dimension} of space.}
+
+            \subsecdiv
             
-            When plotting $n$ inputs,
+            When plotting $d$ inputs,
                 \begin{itemize}
-                    \item A \purp{regression} plot uses a $d+1$ dimensions ($d$-dim hyperplane) to plot: +1 for the \gren{output}.
-                    \item A \purp{classification} plot only needs $d$ dimensions ($(d-1)$-dim hyperplane): we only see the $f(x)=0$ \gren{hyperplane}.
+                    \item A \purp{regression} plot uses a \red{$d+1$} dimensions ($d$-dim hyperplane) to plot: +1 dimension for the \gren{output axis}.
+
+                        \begin{itemize}
+                            \item \miniex You have one input dimension, $d=1$. You need to plot the \gren{input and output}: you'll be plotting it on a 2D plane.
+                            \item However, on that 2D plane, you'll plot a \orgg{line}: despite existing in 2D space, a line is a 1-d hyperplane.
+                        \end{itemize}
+                    \item A \purp{classification} plot only needs \red{$d$} dimensions ($(d-1)$-dim hyperplane): we don't need an output axis, because we only plot \gren{$y=0$}.
+                        \begin{itemize}
+                            \item \miniex You have three input dimensions, $d=3$. You'll be plotting every combination of \gren{three inputs} that gives \gren{$y=0$}: you'll be plotting it in 3D space.
+                            \item However, in 3D space, you'll plot a \orgg{plane}: despite existing in 3D space, a plane is 2-d hyperplane.
+                        \end{itemize}
                 \end{itemize}
+
         \end{clarification}
+
+        \phantom{}
+
+        \begin{notation}
+            A $(d-1)$-dimensional hyperplane is a $d$-dimensional \orgg{separator}.
+
+            That's because it's \orgg{splitting} the $d$-dimensional space in half.
+
+            \begin{itemize}
+                \item \miniex A \gren{line} ($1-$dim) splits the \gren{plane} ($2-$dim) in half.
+                \item So, it separates the two halves of 2-d space.
+            \end{itemize}
+        \end{notation}
         
-        Why do we need $d+1$ dimensions to plot a $d$-dimensional \textbf{hyperplane}? You can think of it this way: a \textbf{line} in 2-D space is a 1-D \textbf{hyperplane}: we have only \textbf{one axis} we can move on the line.
+        Why do we need \red{$d+1$} dimensions to plot a \blu{$d$}-dimensional \textbf{hyperplane}? Because the hyperplane doesn't fill the whole space.
+        
+        Here's an example: a \textbf{line} in 2-D space is a 1-D \textbf{hyperplane}: we have only \textbf{one axis} we can move on the line.
+            \note{It's a 1-d object "embedded" in 2-d space.}
             
         \begin{figure}[H]
             \centering
@@ -847,6 +909,13 @@
             \includegraphics[width=70mm,scale=0.5]{images/classification_images/2d_regression_1d_hyperplane.png}
             \caption*{Our plot is 2-D, but we can only move along one axis on our line!}
         \end{figure}    
+
+        \begin{itemize} 
+            \item Notice that our line does not fill up the whole space: that's why it's a lower dimension.
+            \item You need 2 dimensions to see \textbf{where} the line is, but the line itself is only 1-d.
+        \end{itemize}
+
+        
         
         Because of these differences, $\theta$ also acts differently:\\
         
@@ -856,15 +925,15 @@
             \begin{itemize}
                 \item In \vocab{2-D regression}, $\theta$ is the \purp{slope} of the line
                 
-                    \begin{equation}
+                    \begin{equation*}
                         h(x) = \theta x + \theta_0
-                    \end{equation}
+                    \end{equation*}
                 
                 \item In \vocab{2-D classification}, $\theta$ is the \purp{normal vector} of the line
                 
-                    \begin{equation}
+                    \begin{equation*}
                         0 = \theta^T x + \theta_0
-                    \end{equation}
+                    \end{equation*}
                 
             \end{itemize}
         \end{clarification}
@@ -872,19 +941,20 @@
     \subsection{3d plot of 2d separator}
     
         For additional understanding, you might view the full output of $\theta^T x + \theta_0$, before we simplify the output to $\{-1,+1\}$.
+
+        The below plot "reveals" the 3rd dimension (output of $h(x)$) that the classification plot usually hides.
         
         \begin{figure}[H]
-            \centering
-            
+            \includegraphics[width=90mm,scale=0.5]{images/classification_images/2d_classifier_to_make_3d.png}
             \includegraphics[width=70mm,scale=0.5]{images/classification_images/2d_classification_in_3d.png}
-            \caption*{The red line represents where $f(x)=0$. The black line is our \textbf{normal vector}: notice that it's normal to the \textbf{line}, not the \textbf{plane}.}
+            \caption*{We can \textbf{compare} what we usually see (left plot) to an \textbf{alternate} version that shows the 3rd dimension (right plot). These are the \textbf{same classifier}!}
         \end{figure}
         
         We mentioned before that, if we wanted to show the exact value of $f(x)$ for our 2-D classifier, we'd need a 3-D plot (just like for regression).
         
         So here, we've done \textbf{exactly} that: the \textbf{height} is the output of $h(x)$.
         
-        But, because we don't \textbf{care} about the \textbf{exact} output in classification, we usually only graph the \textbf{red line}: where $f(x)=0$.
+        But, because we don't \textbf{care} about the \textbf{exact} output in classification, we usually only graph the plane containing the \textbf{red line}: where $f(x_1,x_2)=0$.
         
         This shows how we're taking a 2D slice ($f(x)=0$) out of a 3-D plot (full hyperplane), to \textbf{save} on one dimension of \textbf{plotting}.
     
@@ -917,11 +987,15 @@
         
         But, sometimes, we can \textbf{almost} linearly separate it: we get very high \textbf{accuracy}. In those cases, it may be \textbf{fine} to use a linear separator: we might risk \textbf{overfitting} if we use a more complex model.
             \note{What is "high enough accuracy"? Depends on what you need it for!}
-        
-        Still, if a dataset is not \textbf{linearly separable}, or at least \textbf{high-accuracy} with a linear separator, that could mean we need a \textbf{richer} hypothesis class. 
+
+        \begin{itemize}
+            \item Still, if a dataset is not \textbf{linearly separable}, or at least \textbf{high-accuracy} with a linear separator, that could mean we need a \textbf{richer} hypothesis class. 
             \note{Remember: a "richer" or more "expressive" hypothesis class is one that can create more hypotheses that our current one can't!}
+
+            \item We'll get into ways to make a \textbf{richer} class in the \textbf{next} chapter: \textbf{feature transformations}.
+        \end{itemize}
         
-        We'll get into ways to make a \textbf{richer} class in the \textbf{next} chapter: \textbf{feature transformations}.
+        
 
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -951,14 +1025,18 @@
             
         So, we refer to our other approach, \textbf{gradient descent}.
         
-        But in order to do that, we'll just need to get the \textbf{gradient}.
+        First, we need to compute the \textbf{gradient}.
         
         \begin{equation}
             \nabla_\theta J = 0
         \end{equation}
         
         ...Well that's not good.
-            \note{Why not? Because we use our \textbf{gradient} to decide \textbf{how} to change $\theta$, if the gradient is 0, we'll never \textbf{improve} $\theta$ at all!}
+            \note{Why not? Because we use our \textbf{gradient} to decide \textbf{how} to change $\theta$.
+
+            \phantom{}
+            
+            If the gradient is 0, $\theta$ never changes, and we never \textbf{improve} $\theta$ at all!}
         
     \subsection{The real problem: sign$(u)$ is flat}
     
@@ -972,13 +1050,21 @@
         \end{figure}
         
         Well, that explains why we can't use the gradient: the function is \textbf{flat}.
-        
-        Another way to say this is that our function doesn't \textbf{tell} us when we're \textbf{closer} to being right.
-        
-        There's \textbf{no difference} between being \textbf{wrong} by 1 unit or being wrong by 10 units: you can't tell if you're getting \textbf{closer} to a correct answer.
-        
-        And the \textbf{gradient} doesn't tell you which way to move in \textbf{parameter space} to further improve.
+
+        \begin{itemize}
+            \item Another way to say this is that our function doesn't \textbf{tell} us when we're \textbf{closer} to being right.
+            
+            \item There's \textbf{no difference} between being \textbf{wrong} by 1 unit or being wrong by 10 units: you can't tell if you're getting \textbf{closer} to a correct answer.
+            
+            \item And the \textbf{gradient} doesn't tell you which way to move in \textbf{parameter space} to further improve.
             \note{Remember, parameter space is what we move through as we change our parameter vector $\theta$.}
+        \end{itemize}
+        
+        
+        
+        
+        
+        
         
         In fact, the best way we know how to approach this kind of problem takes \textbf{exponential} time: it takes exponentially \textbf{longer} to solve based on our \textbf{number} of data points.
         
@@ -1033,13 +1119,17 @@
         \begin{definition}
             The \vocab{sigmoid} function
             
-            \begin{equation}
+            \begin{equation*}
                 \sigma(u) = \frac{1}{1+e^{-u}}
-            \end{equation}
+            \end{equation*}
             
             \ldots is a \purp{nonlinear} function that we use to \gren{compute} the output of our \vocab{classification} problem.
             
-            It is also called the \vocab{logistic} function.
+            
+
+            \begin{itemize}
+                \item It is also called the \vocab{logistic} function.
+            \end{itemize}
         \end{definition}
         
         The function looks like this:
@@ -1055,10 +1145,12 @@
         Something you may \textbf{notice} is that $\sigma(x)$ is always between 0 and 1. But before, sign$(x)$ was \textbf{always} between -1 and +1. Why would we use \textit{this} function?
         
         Because going between 0 and 1 has a different advantage: we can interpret it as a \textbf{probability}.
+
+        \begin{itemize}
+            \item Your \textbf{value} of $\sigma(u)$ can be stated as, "what does the machine think is the \textbf{probability} we \textbf{classify} this data point as +1".
+            \item And, on the \textbf{flip} side, $1-\sigma(u)$ is the "\textbf{probability} we \textbf{classify} as $-1$".
+        \end{itemize}
         
-        Your \textbf{value} of $\sigma(u)$ can be stated as, "what does the machine think is the \textbf{probability} we \textbf{classify} this data point as +1".
-        
-        And, on the \textbf{flip} side, $1-\sigma(u)$ is the \textbf{probability} we \textbf{classify} as $-1$.
         
         This solves the second problem we mentioned \textbf{earlier}: we can indicate how \textbf{confident} the machine is in its answer!\\
         
@@ -1066,10 +1158,10 @@
             The output of the \vocab{sigmoid function} $\sigma(\red{u(x)})$ gives the \purp{probability} that the data point $x$ is classified \gren{positively}.
             
             \begin{equation*}
-                \quad \;\; \sigma(u) = \p{ x\text{ is classified }+1 }
+                \quad \;\; \sigma(u) = \prob{ x\text{ is classified }+1 }
             \end{equation*}
             \begin{equation*}
-                1 - \sigma(u) = \p{ x\text{ is classified }-1 }
+                1 - \sigma(u) = \prob{ x\text{ is classified }-1 }
             \end{equation*}
             
             Note that this works because $\sigma(u) \in (0,1)$.
@@ -1109,19 +1201,25 @@
         
     \subsection{Prediction Threshold}
     
-        When we were just using $u(x) = \theta^T x + \theta_0$, we classified data points by saying whether $u(x)>0$. Our boundary was $u(x)=0$.
+        When we were just using $u(x) = \theta^T x + \theta_0$, we classified data points by saying whether $\red{u}(x)>0$. Our boundary was $\red{u}(x)=0$.
         
-        We can't quite do that here, because $\sigma(u)=0$ is \textbf{impossible}: $\sigma(u)$ is \textbf{always} greater than 0.
+        What happens to \blu{$\sigma$} if \red{$u=0$}?
         
         \begin{figure}[H]
             \centering
             
             \includegraphics[width=70mm,scale=0.5]{images/classification_images/sigmoid_u.png}
             
-            \caption*{$\sigma(u)$ approaches 0 as $u$ approaches $-\infty$, but it never reaches it.}
+            \caption*{If we go to $u=0$ on the x-axis, we find $\sigma=.5$ on the y-axis.}
         \end{figure}
         
-        Well, what happens when $u(x)=0$? We get $\sigma(0)=.5$. So, we could use that as our classification: $\sigma(u)>.5$
+        We get $\blu{\sigma}(\red{u=0})=0.5$. So, we could use that as our classification: $\blu{\sigma}(\red{u})>0.5$.
+
+        \begin{equation}
+            u>0 \iff \sigma(u) > 0.5
+        \end{equation}
+
+        If we want to plot the positive and negative regions:
         
         \begin{figure}[H]
             \centering
@@ -1130,39 +1228,46 @@
 
         \end{figure}
         
-        But, we don't necessarily always want to use .5:
+        But, we don't necessarily always want to use $\sigma=0.5$ as our boundary:
         
-        \miniex Imagine if you wanted to \textbf{classify} whether someone needs \textbf{life-saving} treatment. Classify $-1$ if sick (they need it), $+1$ if healthy (they don't). 
+        \miniex Imagine if you wanted to \textbf{classify} whether someone needs a \textbf{test} for a disease. Classify $-1$ if we test them, $+1$ if we don't.
         
-        Let's say you got $\sigma(u)=.6$, so you're only 60\% sure they \textbf{don't} need it. You'd classify that as $\sigma(u)>.5$: they're '\textbf{healthy}'.
-        
-        Even so, you probably shouldn't \textbf{refuse} someone treatment that's $40\%$ likely to \textbf{save} their life. We might not want to use $\sigma(u)>.5$ after all.
+        Let's say you got $\sigma(u)=0.6$, so you're only 60\% sure they \textbf{don't} need it. You'd classify that as $\sigma(u)>0.5$: they're assigned "\textbf{no test}".
+
+        If the disease is life-threatening, and the test is cheap, then a $40\%$ chance could justify getting the test.
+
+        \begin{itemize}
+            \item Whether or not they \textbf{should} get that test isn't usually decided by whether the chance is greater than 50\%: that's a pretty \textbf{arbitrary} number. 
+            \item In real life, the \purp{certainty} you want depends on the situation.
+                \note{How expensive is the test? How bad is it, if we don't catch the disease now? Etc.}
+        \end{itemize}
+
         
         We call the \textbf{boundary} between positive and negative the \textbf{prediction threshold}.\\
         
         \begin{definition}
             The \vocab{prediction threshold} $\sigma_{thresh}$ is the value where you go from \purp{negative} classification to \gren{positive}.
             
-            In general, we say
+            \subsecdiv
             
-            
-            
-            Our \purp{default} value is a threshold of .5, but our threshold can be \gren{anywhere} in the range
+            Our \purp{default} value is a threshold of 0.5, but our threshold can be \gren{anywhere} in the range
             
             \begin{equation*}
                 0 < \sigma_{thresh} < 1
             \end{equation*}
         \end{definition}
         
-        \miniex If $\sigma_{thresh}=.9$, we would see:
+        \miniex If $\sigma_{thresh}=0.9$, we would see:
         
         \begin{figure}[H]
             
             \includegraphics[width=70mm,scale=0.5]{images/classification_images/sigmoid_.5.png}
             \includegraphics[width=70mm,scale=0.5]{images/classification_images/sigmoid_.9.png}
-            \caption*{We switch from a .5 threshold to a .9 threshold.}
+            \caption*{We switch from a 0.5 threshold (left) to a 0.9 threshold (right).}
 
         \end{figure}
+
+        In this example, more things will be negatively classified.
         
     \subsection{Linear Logistic Classifier}
         
@@ -1181,9 +1286,9 @@
             
             where 
             
-            \begin{equation}
+            \begin{equation*}
                 u=\theta^T x + \theta_0   \qquad\qquad \sigma(u) = \frac{1}{1+e^{-u}}
-            \end{equation}
+            \end{equation*}
             
             We call it linear because of the linear inner function $u(x)$, and logistic because of the outer function $\sigma(u)$.
         \end{kequation}
@@ -1208,7 +1313,7 @@
             \caption*{Our shifted LLC: $u(x)=1x+4 $. $\theta_0$ shifts us along the $x$-axis!}
         \end{figure}
         
-         Just like before, it \textbf{shifts} us in the \textbf{opposite} direction: if $\theta_0$ is \textbf{positive}, we shift in the \textbf{negative} direction, and vice versa.
+         Just like in linear regression, it \textbf{shifts} us in the \textbf{opposite} direction: if $\theta_0$ is \textbf{positive}, we shift in the \textbf{negative} direction, and vice versa.
          
          What if we increase the magnitude of $\theta$!
          
@@ -1219,13 +1324,15 @@
         \end{figure}
         
         Making the magnitude of $\theta$ larger makes our function \textbf{change} faster. 
-        
-        This makes some sense: if $\theta$ (linear slope of $u(x)$) makes $u(x)$ \textbf{change} faster, it will make $\sigma(u)$ change faster \textbf{too}.
+
+        \begin{itemize}
+            \item This makes some sense: if $\theta$ (linear slope of $u(x)$) makes $u(x)$ \textbf{change} faster, it will make $\sigma(u)$ change faster \textbf{too}.
+        \end{itemize}
         
         You can combine these changes as well: you can shift your LLC with $\theta_0$, and also make it steeper/less steep by changing magnitude of $\theta$.\\
         
         \begin{concept}
-            When working with \vocab{sigmoids}, you can \purp{transform} them using your \gren{parameters}:\\
+            When working with \vocab{sigmoids}, you can \purp{transform} them using your \gren{parameters}:
             
             \begin{itemize}
                 \item A higher \purp{magnitude} $\norm{\theta}$ makes the slope \gren{steeper}, and answers more \gren{confident}.
@@ -1245,54 +1352,18 @@
         
         As you can see, you get mostly the same shape: if you look at it from the side, it's exactly the same, in fact! Just stretched out into 3D.
         
-    \subsection{LLCs and overfitting}
-    
-        In chapter 2, we reduced \textbf{overfitting} by limiting the \textbf{magnitude} of $\theta$ using
-        
-        \begin{equation}
-            R(\theta)=\lambda \norm{\theta}^2
-        \end{equation}
-        
-        In this chapter, it's more clear why reducing \textbf{magnitude} reduces \textbf{overfitting}. Let's see what happens when $\theta$ is very \textbf{large}:
-        
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=70mm,scale=0.5]{images/classification_images/theta_x20.png}
-            \caption*{Our shifted LLC: $u(x)=20x$.}
-        \end{figure}
-        
-        This function starts looking more and more like the \textbf{sign} function. This means we very, \textbf{very quickly} go from \textbf{confident} in one answer, to confident in another.
-        
-        But if you have a limited dataset, and you're very carefully tuned to it, it's doesn't make sense to be \textbf{very confident} in your answer. Especially when you're \textbf{close} to your \textbf{boundary}.
-        
-        You have closely \textbf{fitted} your sigmoid function to your data: in a way, you may have \textbf{overfitted} it.
-        
-        The problem is, you're \textbf{rewarded} for increasing $\theta$! If you're just a little bit \textbf{more sure} of the answers you get correct, the loss function continues going \textbf{down}.
-        
-        So, we need to prevent $\theta$ from \textbf{growing} to an unreasonably high value. We'll \textbf{penalize} a large $\norm{\theta}$.
-        
-        This means we're \textbf{penalizing} the machine's \textbf{overconfidence} in its answer, so that it \textbf{generalizes} better.\\
-        
-        \begin{concept}
-            In \vocab{classification}, the \vocab{regularizer} follows the form
-            
-            \begin{equation*}
-                R(\theta)=\lambda \norm{\theta}^2
-            \end{equation*}
-            
-            Regularization in this form reduces \purp{overfitting} to our data by
-            \begin{itemize}
-                \item Making the \textbf{transition} between classifications less \gren{sudden}, when it shouldn't be so \textbf{certain} of the boundary.
-                \item It also prevents our model from becoming \purp{overly confident} in its answer.
-            \end{itemize} 
-        \end{concept}
+
         
         
         
         
     \subsection{LLCs and LCs have the same boundary}
         
-        One more important thing to note: noticed that we set $\sigma_{thresh}=.5$, because that was when $u(x)=0$.
+        One more important thing to note: noticed that we set $\sigma_{thresh}=0.5$, because that was when $u(x)=0$.
+
+        \begin{equation}
+            u=0 \iff \sigma(u) = 0.5
+        \end{equation}
         
         This means that, if our threshold is $0.5$, then the boundary of our LLC should look exactly the same as if it were LC: the only difference is the values that we \textit{can't} see:
         
@@ -1306,14 +1377,23 @@
         One way to think about this difference is that while one may be logistic, they are both \textbf{linear}: they both create the same \textbf{linear separator}.
         
         The main benefit of switching to LLC is that $\sigma(u)$ has a useful \textbf{gradient}, while sign$(u)$ does \textbf{not}, so we can do \textbf{gradient descent}.
-            \note{The probabilistic interpretation is also more appropriate: we shouldn't be fully confident in our answers.}
-            
-        Even if we adjust our threshold $\sigma_{thresh}$, that will simply shift the linear classifier.\\
+            \note{The probability interpretation is also more appropriate: we usually aren't fully confident in our answers.}
+
+        \begin{itemize}
+            \item Even if we adjust our threshold $\sigma_{thresh}$, that will simply shift the linear classifier.\\
+        \end{itemize}
+    
         
         \begin{concept}
             \vocab{LLCs} (Linear Logistic Classifiers) and \vocab{LCs} (Linear Classifiers) both create a \gren{linear} \purp{hyperplane separator} in $d-1$ dimensional \gren{space}.
             
             If the \gren{threshold value} is 0.5, then they have the \purp{exact same} separator.
+
+            \begin{itemize}
+                \item This is because the \orgg{same set of inputs} $x$ that cause $u(x)=0$, will also cause $\sigma(u(x))=0.5$.
+
+                \item So, if $u(x)=0$ (LC) creates a hyperplane, then $\sigma(u(x))=0.5$ (LLC) will, too.
+            \end{itemize}
         \end{concept}
     
     \subsection{Learning LLCs: Loss Functions}
@@ -1337,8 +1417,10 @@
         \end{equation*}
         
         But, this \textbf{loss} function the same problem our \textbf{sign} function did: it isn't \textbf{smooth}! 
-        
-        It's a \textbf{discrete} function based on our \textbf{discrete classes}: so, it won't have a smooth \textbf{gradient} we can do \textbf{descent} on.
+
+        \begin{itemize}
+            \item It's a \textbf{discrete} function based on our \textbf{discrete classes}: so, it won't have a smooth \textbf{gradient} we can do \textbf{descent} on.
+        \end{itemize}
         
         For our \textbf{sign} function, we switched to the \textbf{sigmoid} function, which measures in terms of \textbf{probabilities}: this gave us some \textbf{smoothness} to our classification.
         
@@ -1346,7 +1428,7 @@
         
     \subsection{Building our new loss function}
     
-        So, the \textbf{output} of our sigmoid $\sigma(u)$ is a \textbf{probability}: how \textbf{likely} do we think a point is to be in class $+1$?
+        So, the \textbf{output} of our sigmoid $\sigma(u)$ is a \textbf{probability}: it tells us, "how \textbf{likely} do we think a point is to be in class $+1$?"
         
         We want a loss function
         
@@ -1357,18 +1439,46 @@
         That considers two facts: the \textbf{correct} answer $y$, and how likely we \textbf{expected} $+1$ to be, $g=\sigma(u)$.\\
         
         \begin{notation}
-            For our \vocab{loss function}, rather than using $y \in \{-1,+1\}$, we'll use $ y \in \{0,1\}$.
+            For our \vocab{loss function}, rather than using $\hat{y} \in \setty{-1,+1}$, we switch to \orgg{probabilities}: $ y \in \setty{0,1}$.
+
+            \begin{equation*}
+                \hat{y} \in \setty{\red{-1},\blu{+1}} 
+                \quad \longrightarrow \quad
+                y \in \setty{\red{0},\blu{1}}
+            \end{equation*}
             
             That way, $\sigma(u)$ and $y$ \purp{match}:
             
             \begin{equation*}
-                y \in \{0,1\} \qquad \qquad g \in (0,1)
+                y \in \setty{0,1} \qquad \qquad g \in (0,1)
             \end{equation*}
+
+            Both represent "the chance that $\hat{y}=+1$". $\sigma(u)$ makes a prediction, while $y$ uses the known result:
+
+            \begin{itemize}
+                \item If $\hat{y}=+1$, there's a \orgg{100\% chance} that $\hat{y}=+1$.
+                    \begin{itemize}
+                        \item So, the "true" output is $y = 100\%=1$
+                    \end{itemize}
+                \item If $\hat{y}=-1$, there's a \orgg{0\% chance} that $\hat{y}=+1$. 
+                    \begin{itemize}
+                        \item So, the "true" output is $y=0\%=0$
+                    \end{itemize}
+            \end{itemize}
         \end{notation}
         
-        So, if the correct is $1$, then we want $\sigma(u)$ to be \textbf{high}. If the correct answer is $0$, we want $\sigma(u)$ to be \textbf{low}.
+        In this problem, it's easier to think in terms of "goodness" of the result. We'll use a "goodness" function $G(g,y)$.  
+            \note{To get the loss function, we just take the negative of it later.}
+
+        \begin{itemize}
+            \item We want the "true" and "predicted" probabilities to be as close as possible.
+                \begin{itemize}
+                    \item If the correct answer is \red{$y=1$}, then we want $g=\sigma(u)$ to be \red{high}.
+                    \item If the correct answer is \blu{$y=0$}, we want $g=\sigma(u)$ to be \blu{low}.
+                \end{itemize}
+        \end{itemize}
         
-        For \textbf{one} data point, then, we can consider, "how likely did we think the right answer was?"
+        We represent this as
         
         \begin{equation}
             G(g,y) = 
@@ -1377,10 +1487,23 @@
                 1-g & \text{else } (y=0)
             \end{cases}
         \end{equation}
+
+        \begin{remark}
+
+            This loss function can be interpreted as, "if we had a $g$ chance of picking +1, how often would we have been right?"
+    
+            \begin{itemize}
+                \item If $y=1$, then we want +1. The chance of choosing +1 is $g$.
+                \item If $y=0$, then we want -1. The chance of choosing -1 is $1-g$.
+            \end{itemize}
+    
+            0-1 loss works the same way for a non-random model (one that picks the larger odds every time): what's percentage of the data we get right.
+        \end{remark}
+
         
-        If we to choose 1 with probability $g$, this could also mean, "how likely were we to be \textbf{right}?"
         
-        This $G$ is how "\textbf{good}" our function is, so the \textbf{loss} would need for us to take the \textbf{negative}: we'll do that later.
+        As we mentioned, we'll need to take the negative of this later to get the "loss" function.
+        
         
     \subsection{Loss Function for Multiple Data Points}
     
@@ -1396,7 +1519,7 @@
             The probability of two independent events $A$ and $B$ happening at the same time is
             
             \begin{equation*}
-                \p{A \text{ and } B} = \p{A} * \p{B}
+                \prob{A \text{ and } B} = \prob{A} * \prob{B}
             \end{equation*}
         \end{kequation}
 
@@ -1404,15 +1527,16 @@
         So if we want \textbf{all} of them, we just multiply:
         
         \begin{equation}
-            \p{E_{all}} = \p{E_1} * \p{E_2} * ...
-            * \p{E_n}
+            \prob{E_{all}} = \prob{E_1} * \prob{E_2} * ...
+            * \prob{E_n}
         \end{equation}
         
         Written using pi notation, and also $\ex{g}{i}$ for multiple data points:
-            \note{This notation is described in the prerequisites chapter! The short version: instead of adding terms with $\sum$, you multiply with $\prod$.}
+            \note{Pi notation is described in the prerequisites chapter! The short version: instead of adding terms with $\sum$, you multiply with $\prod$.}
             
         \begin{equation}
-            \p{E_{all}} = \prod_{i = 1}^n \p{E_i} = \prod_{i = 1}^n \begin{cases}
+            \prob{E_{all}} = \prod_{i = 1}^n \prob{E_i} = \qquad
+            \prod_{i = 1}^n \begin{cases}
                 \rgi & 
                 \text{if } \byi=1 \\
                 1-\rgi & 
@@ -1443,7 +1567,7 @@
         For one data point:
         
         \begin{equation}
-            \p{E} = 
+            \prob{E} = 
             \overbrace{
                 \red{g} ^ { \blu{y} } 
             }^{y=1}
@@ -1458,9 +1582,9 @@
         We've gotten rid of the piecewise function! Let's add back in the product:
         
         \begin{equation}
-            \p{E_{all}} = 
+            \prob{E_{all}} = 
             \prod_{i = 1}^n
-            \p{E_i}
+            \prob{E_i}
             =
             \prod_{i = 1}^n
             \rgi ^ {\byi}
@@ -1475,9 +1599,12 @@
     \subsection{Getting rid of the product}
     
         Our exponents look pretty \textbf{ugly}. Can we do something about that?
+
+        \begin{itemize}
+            \item More important than ugliness: \textbf{products} are also pretty unpleasant: we can't use \textbf{linearity}! 
+                \note{Linearity makes lots of problems easy to work with, so we try to keep it.}
+        \end{itemize}
         
-        More importantly, \textbf{products} are also pretty unpleasant: we can't use \textbf{linearity}! 
-            \note{Linearity makes lots of problems easy to work with, so we try to keep it.}
         
         Linearity uses \textbf{addition} between variables. What sort of \textbf{function} could change a \textbf{product} into a \textbf{sum}?
         
@@ -1494,14 +1621,14 @@
         \end{equation}
         
         Aha! If we take the \textbf{log} of our function, we can turn a \textbf{product} into the \textbf{sum}!
-            \note{The below equation looks complicated, but all we've done is swap the product for a sum!}
+            
 
         \begin{equation}
             \overbrace{
                 \pur{\log}
                 \left(
                     \pur{\prod_{i = 1}^n}
-                    \p{E_i}
+                    p_i
                 \right)
             }^{product}
             =
@@ -1509,12 +1636,30 @@
                 \pur{\sum_{i = 1}^n
                 \log}
                 \left(
-                    \p{E_i}
+                    p_i
+                \right)
+            }^{sum}
+        \end{equation}
+
+        Plugging in $p_i=\prob{E_i}$:
+            \note{The below equation looks complicated, but all we've done is swap the product for a sum!}
+
+        \begin{equation}
+            \overbrace{
+                \pur{\sum_{i = 1}^n
+                \log}
+                \left(
+                    \rgi ^ {\byi}
+                    \left( 
+                        1-\rgi 
+                    \right) 
+                    ^ { 1 - \byi }
                 \right)
             }^{sum}
         \end{equation}
         
-        We can also separate our two \textbf{factors}:
+        We can also separate our two \textbf{factors}, $g^y$ and $(1-g)^(1-y)$.
+        
         \begin{equation}
             \sum_{i = 1}^n
             \Bigg(
@@ -1637,6 +1782,84 @@
             
         \end{kequation}
 
+            \subsection{LLCs and overfitting}
+    
+        In chapter 2, we reduced \textbf{overfitting} by limiting the \textbf{magnitude} of $\theta$ using
+        
+        \begin{equation}
+            R(\theta)=\lambda \norm{\theta}^2
+        \end{equation}
+        
+        In this chapter, it's more clear why reducing \textbf{magnitude} reduces \gren{overfitting}. Let's see what happens when $\theta$ is very \textbf{large}:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=70mm,scale=0.5]{images/classification_images/theta_x20.png}
+            \caption*{Our "squished" LLC: $u(x)=20x$.}
+        \end{figure}
+        
+        This function starts looking more and more like the \textbf{sign} function. This means we very, \textbf{very quickly} go from \gren{confident} in one answer, to confident in another.
+
+        \begin{itemize}
+            \item If we go from $x=-0.5$ to $x=+0.5$, we go from "incredibly sure of $-1$ to "incredibly sure of $+1$".
+            \item That's a small change in input, for a big chance in confidence!
+        \end{itemize}
+        
+        This sort of certainty isn't always appropriate: consider the below example.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=70mm,scale=0.5]{images/classification_images/sigmoid_overfit.png}
+        \end{figure}
+
+        In this case, you definitely want to separate the left and right side. Our $\theta=20$ separator above, would work just fine. 
+
+        \begin{itemize}
+            \item But, is it \orgg{appropriate}? Let's try to use our model to predict new data.
+            
+            \item If you give that model $x=0.5$, then our model believes $\hat{y} = +1$ with $.99995$ confidence.
+            
+            \item When our closest data point to 0 is at $\pm 3$, that's unreasonably high certainty.
+        \end{itemize}
+
+        In other words, the model could create a very sensitive boundary, without having enough data to justify it: this could be a sign of \purp{overfitting}.
+        
+        \subsecdiv
+
+        Why would we train such an extreme model? Is this is even a problem we have to worry about?
+
+        It's more serious than you'd expect: we can see why, by consider how our loss function works: here's an excerpt from earlier.
+
+        \begin{itemize}
+            \item We want the "true" and "predicted" probabilities to be as close as possible.
+                \begin{itemize}
+                    \item If the correct answer is \red{$y=1$}, then we want $g=\sigma(u)$ to be \red{high}.
+                    \item If the correct answer is \blu{$y=0$}, we want $g=\sigma(u)$ to be \blu{low}.
+                \end{itemize}
+        \end{itemize}
+
+        The short version: we want to maximize our confidence in the correct answer. This is directly coded into our loss function, and all of the variations.
+
+        We just discussed that increasing $\theta$ will increase your confidence in the answer. So, this loss function encourages our model to make $\theta$ larger and larger!
+        
+        So, we need to prevent $\theta$ from \textbf{growing} to an unreasonably high value. Thus, we \textbf{penalize} a large $\norm{\theta}$.
+        
+        This means we're \textbf{penalizing} the machine's \textbf{overconfidence} in its answer, so that it \textbf{generalizes} better.\\
+        
+        \begin{concept}
+            In \vocab{classification}, the \vocab{regularizer} follows the form
+            
+            \begin{equation*}
+                R(\theta)=\lambda \norm{\theta}^2
+            \end{equation*}
+            
+            Regularization in this form reduces \purp{overfitting} to our data by
+            \begin{itemize}
+                \item Making the \textbf{transition} between classifications less \gren{sharp}, when it shouldn't be so \textbf{certain} of the boundary.
+                \item It also prevents our model from becoming \purp{overly confident} in its answer.
+            \end{itemize} 
+        \end{concept}
+
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1647,17 +1870,17 @@
     Now, we have developed all the tool we need to do binary classification with LLC:
     
     \begin{itemize}
-        \item A \textbf{linear} model that lets us \textbf{combine} our variables,
+        \item A \textbf{linear} model that lets us combine our \redd{input} variables into a single, predictive \vocab{number}:
             \begin{equation}
                 u(x) = \theta^T x + \theta_0
             \end{equation}
             
-        \item A \textbf{logistic} model that lets us get the \textbf{probability} of a classification,
+        \item A \textbf{logistic} model that turns this \vocab{number} into a  \gren{probability} of a classification,
             \begin{equation}
                 \sigma(u) = \frac{1}{1+e^{-u}}
             \end{equation}
             
-        \item A \textbf{threshold value} we use to determine how to \textbf{classify} our data,
+        \item A \textbf{threshold value} we use to determine how to use this \gren{probability} to \purp{classify}:
             \begin{equation}
                 h(x; \theta) = 
                 \begin{cases}
@@ -1666,7 +1889,7 @@
                 \end{cases}
             \end{equation}
             
-        \item A \textbf{loss function} NLL we use to \textbf{evaluate} our model performance:
+        \item A \textbf{loss function} NLL we use to evaluate the \orgg{quality} of our \purp{classifications}:
         
             \begin{equation*}
                 \loss_{nll}
@@ -1682,7 +1905,7 @@
                 \right)
             \end{equation*}
             
-        \item And an \textbf{objective function} we can \textbf{optimize}:
+        \item And an \textbf{objective function} we can \textbf{optimize} and reduce our \orgg{loss}:
         
             \begin{equation}
                 J_{lr}(\theta,\theta_0;\data)
@@ -1701,10 +1924,9 @@
         We want to do \textbf{gradient descent} to minimize $J_{lr}$
         
         \begin{equation}
-            \pur{ R(\theta) }
-            +
             J_{lr}(\theta,\theta_0)
             =
+            \pur{ R(\theta) } +
             \frac{1}{n}
             \sum_{i=1}^n 
             \loss_{nll}(\rgi ,\quad \byi)
@@ -1745,6 +1967,7 @@
         $x$ \textbf{affects} $u(x)$. $u(x)$ \textbf{affects} $\sigma(u)$. $\sigma(u)=g$ \textbf{affects} $\loss_{NLL}(g,y)$, which finally \textbf{affects} $J(\theta,\theta_0)$. 
         
         How do we represent this \textbf{chain} of functions? With the \textbf{chain rule}:
+            \note{This next line is a generic chain rule: not specific to our problem.}
         
         \begin{equation}
             \pderiv{A}{C} = \pderiv{A}{B} \cdot \pderiv{B}{C}
@@ -1760,7 +1983,7 @@
             \pderiv{\blu{\sigma}}{\theta}
         \end{equation}
         
-        Sigma contains $u$, so we'll use that instead:
+        Sigma contains $u$, so we'll add that to the chain:
 
         \begin{equation}
             \pderiv{ \loss_{NLL} }{ \theta } 
@@ -1819,6 +2042,8 @@
             \Big)
         }
         \end{equation}
+
+        \subsecdiv
         
         Now, we look at $\sigma(u)$:
         
@@ -1844,6 +2069,8 @@
             \sigma (1-\sigma)
         }
         \end{equation}
+
+        \subsecdiv
         
         Finally, our last derivative:
         
@@ -1961,21 +2188,24 @@
                 \pderiv{ J_{lr} (\blu{ \ex{\theta}{t-1} })}{\theta_0}
             \right)
         \end{equation}
+
+        \begin{itemize}
+            \item This chain-rule approach will return when we do Neural Networks in a later chapter. 
+        \end{itemize}
         
-        This also corresponds to some basic math within Neural Networks, which we will return to \textbf{later} in the course.
 
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Handling Multiple Classes}
 
-    Now, we have developed a \textbf{binary} classifier, using logistic regression. But, many (almost all) problems have more than two classes! 
+    Now, we have developed a \textbf{binary} classifier, using logistic regression. But, many (almost all) problems have \orgg{more than two classes}! 
     
     \miniex Different animals, genres of movies, sub-types of disease, etc.
     
     \subsection{Approaches to multi-class classification}
         
-        So, we need to a way to do \textbf{multi-classing}. Consider two main approaches:
+        So, we need to a way to do \orgg{multi-classing}. Consider two main approaches:
         
         \begin{itemize}
             \item \textbf{Train} many binary classifiers on different \textbf{classes} and \textbf{combine} them into a single model.
@@ -1985,7 +2215,7 @@
                 
             \item \textbf Make \textbf{one} classifier that handles the multi-class problem by itself. 
                 \begin{itemize}
-                    \item This model will be A \textbf{modified} version of logistic regression, using a variant of NLL.
+                    \item This model will be a \gren{modified} version of \gren{logistic regression}, using a variant of NLL.
                 \end{itemize}
     \end{itemize}
     
@@ -1993,21 +2223,26 @@
     
     \subsection{Extending our Approach: One-Hot Encoding}
     
-        Rather than being \textbf{restricted} to classes 0 and 1, we'll have $k$ \textbf{distinct} classes. Our \textbf{hypothesis} will be
+        Rather than being \textbf{restricted} to classes 0 and 1, we'll have \orgg{ $k$ distinct classes}. Our \textbf{hypothesis} will be
         
         \begin{equation*}
-            h: \RR^d \rightarrow \{C_1, C_2, C_3, \dots C_k\}
+            h: \RR^d \rightarrow \setty{C_1, C_2, C_3, \dots, C_k }
         \end{equation*}
         
         Where $C_i$ is the $\nth{i}$ class. Meaning, we want to \textbf{output} one of those $k$ \textbf{classes}.
         
-        Because we'll be using our computer to do \textbf{math} to get the \textbf{answer}, we need to represent this with \textbf{numbers}. Before, we would simply \textbf{label} with 0 or 1. 
+        Because we'll be using our computer to do \textbf{math} to get the \textbf{answer}, we need to represent this with \orgg{numbers}. Before, we would simply \textbf{label} with 0 or 1. 
+
+        \begin{itemize}
+            \item We could return $\setty{1,2,3,4,5 , \;..., \; k}$ for each \textbf{label}. But this is \redd{not a good idea}: it implies that there's a natural \gren{order} to the classes, which isn't necessarily true.
+
+            \item If we don't \textbf{actually} think $C_1$ is \gren{closer} to $C_2$ than to $C_5$, we probably shouldn't represent them with numbers that are \textbf{closer} to each other.
+        \end{itemize}
         
-        We could return $\{1,2,3,4,5...k\}$ for each \textbf{label}. But this is \textbf{not} a good idea: it implies that there's a natural \textbf{order} to the classes, which isn't necessarily true.
         
-        If we don't \textbf{actually} think $C_1$ is closer to $C_2$ than to $C_5$, we probably shouldn't represent them with numbers that are \textbf{closer} to each other.
         
-        Instead, each class needs to be a \textbf{separate} variable. We can store them in a vector:
+        
+        Instead, each class needs to be a \textbf{separate} variable. We can store them in a \orgg{vector}:
         
         \begin{equation}
             \begin{bmatrix}
@@ -2075,11 +2310,11 @@
         
     \subsection{Probabilities in multi-class}
     
-        So, we now know our \textbf{problem}: we're taking in a data point $x \in \RR^d$, and \textbf{outputting} one of the classes as a \textbf{one-hot vector}.
+        So, we now know our \textbf{problem}: we're taking in a data point $x \in \RR^d$, and \textbf{outputting} one of the classes as a \gren{one-hot vector}.
         
-        So, now that we know what sorts of data we're \textbf{expecting}, we need to decide on the formats of our \textbf{answer}.
+        So, now that we know what sorts of data we're \textbf{expecting}, we need to decide on the formats of our \purp{answer}.
         
-        We'll be returning a vector of length-$k$: \textbf{one} for each \textbf{class}. When we were doing \textbf{binary} classification, we estimated the \textbf{probability} of the positive class.
+        We'll be returning a vector of length-$k$: \textbf{one} for each \textbf{class}. When we were doing \textbf{binary} classification, we estimated the \purp{probability} of the positive class.
         
         So, it should make sense to do the same \textbf{here}: for each class, we'll return the estimated \textbf{probability} of our data point being in that class.
         
@@ -2087,10 +2322,10 @@
             g
             =
             \begin{bmatrix}
-              \p{x \text{ in } C_1} \\ 
-              \p{x \text{ in } C_2} \\ 
-              \vdots \\ 
-              \p{x \text{ in } C_k} 
+              \prob{x \text{ in } C_1} \\\\
+              \prob{x \text{ in } C_2} \\\\
+              \vdots \\ \\
+              \prob{x \text{ in } C_k} 
             \end{bmatrix}
             =
             \begin{bmatrix}
@@ -2098,10 +2333,10 @@
             \end{bmatrix}
         \end{equation}
         
-        We need one \textbf{additional} rule: the probabilities need to add up to \textbf{one}: we should assume our point ends up in some class or \textbf{another}.
+        We need one \textbf{additional} rule: the probabilities need to \orgg{add up to one}: we should assume our point ends up in some class or \textbf{another}.
         
         \begin{equation}
-            g_1+g_2+...+g_k=1
+            g_1+g_2+...+g_k= \sum_i g_i = 1
         \end{equation}
         
         \begin{concept}
@@ -2122,14 +2357,14 @@
         \begin{clarification}
             It's only true that all of the probabilities for the \purp{same data point} need to add to 1.
 
-            If you have $\p{\text{class 1}}$ for one data point and $\p{\text{class 2}}$ for another data point, those \gren{aren't related}.
+            If you have $\prob{\text{class 1}}$ for one data point and $\prob{\text{class 2}}$ for another data point, those \gren{aren't related}.
         \end{clarification}
         
-        So, we want to scale our values so they add to 1: this is called \textbf{normalization}. How do we do that?
+        So, we want to scale our values so they add to 1: this is called \gren{normalization}. How do we do that?
         
         Well, let's say each class gets a \textbf{value} of $r_i$, before being \textbf{normalized}. For now, let's ignore how we got $r_i$, just know that we have it.
         
-        To make the total 1, we'll \textbf{scale} our terms by a factor $C$:
+        To make the total 1, we'll \gren{scale} our terms by a factor \gren{$C$}:
         
         \begin{equation}
             C(r_1+r_2+...r_k) 
@@ -2176,7 +2411,7 @@
             g = \frac{e^u}{e^u+1}
         \end{equation}
         
-        We'll think of \textbf{binary} classification as a special case of \textbf{multi-class} classification. The above probability could be thought of as $g_1$: the chance of our first class.\\
+        We'll think of \textbf{binary} classification as a \gren{special case} of \textbf{multi-class} classification. The above probability could be thought of as $g_1$: the probabilitiy for our first class.\\
         
         \begin{concept}
             \vocab{Binary classification} is a \purp{special} case of \vocab{multi-class} classification with only \gren{two} classes. 
@@ -2190,25 +2425,31 @@
             g_2 = 1-g= \frac{1}{1+e^{u}}
         \end{equation}
         
-        This follows an $r_i/(\sum r_i)$ format: the numerators (1 and $e^u$) add to \textbf{equal} the denominator ($1+e^u$).
+        This follows an $r_i/(\sum r_i)$ format! The numerators (1 and $e^u$) add to \textbf{equal} the denominator ($1+e^u$).
         
         \begin{equation}
             g = 
             \begin{bmatrix}
-                1/(1+e^u)  \\
-                e^u/(1+e^u)  \\
+                \blu{e^u}/(\blu{e^u}+\red{1})  \\\\
+                \red{1}/(\blu{e^u}+\red{1})  
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+                \blu{r_1} / (\blu{r_1}+\red{r_2}) \\\\
+                \red{r_2} / (\blu{r_1}+\red{r_2})
             \end{bmatrix}
         \end{equation}
         
-        How do we \textbf{extend} this to \textbf{more} classes? Well, 1 and $e^u$ are \textbf{different} functions: this a problem. We want to be able to \textbf{generalize} to many $r_i$. 
+        How do we \purp{extend} this to \textbf{more} classes? Well, 1 and $e^u$ are \textbf{different} functions: this a problem. We want to be able to \purp{generalize} to many $r_i$. 
         
-        How do they make them \textbf{equivalent}? We could say $1=e^0$. So, we could treat both terms as \textbf{exponentials}!
+        How do they make them \textbf{equivalent}? We could say \red{$1=e^0$}. So, we could treat both terms as \textbf{exponentials}!
         
         \begin{equation}
-            g_1 = \frac{e^u}{e^0+e^u}
+            g_1 = \frac{e^u}{e^u+e^0} \qquad \qquad
+            g_2 = \frac{e^0}{e^u+e^0}
         \end{equation}
         
-        We can do this for an \textbf{arbitrary} number of terms. We'll treat them as \textbf{exponentials}, just like for $e^u$ and $e^0$
+        What if we want more classes? We just need more exponentials! They'll fit into the pattern from $e^u$ and $e^0$:
         
         \begin{equation}
              g_i 
@@ -2222,7 +2463,7 @@
     \subsection{Our Linear Classifiers}
     
         What are each of those $u_i$ terms? When we were doing \textbf{binary classification}, we used a \textbf{linear regression} function to help generate the probability:
-            \note{Remember that $u(x)$ is not a probability yet: we used a sigmoid to turn it \textit{into} a probability.}
+            \note{Remember that $u(x)$ is not a probability yet: we use a sigmoid to turn it \textit{into} a probability.}
         
         \begin{equation}
             u(x) = \theta^Tx+\theta_0
@@ -2247,9 +2488,10 @@
             \end{bmatrix}
         \end{equation}
         
-        Each of these models could be seen as a "different perspective" of our data point: what about that data point is prioritized (large $\theta_i$ magnitudes), how do we bias the result ($\theta_0$)?
+        Each of these models could be seen as a "different perspective" of our data point: what about that data point is \gren{prioritized} (large $\theta_i$ magnitudes), and how do we \purp{bias} the result ($\theta_0$)?
+
+        This "\orgg{perspective}" we call $\theta_{(i)}$ will tell us if our data point is "closer" to the \orgg{class} it represents
         
-        This "perspective" we call $\theta_{(i)}$ will tell us if our data point is "closer" to the class it represents. And we compute the result with:
         
         \begin{equation}
             u_1(x) = \theta_{(1)}^T x + \theta_{0(1)}
@@ -2259,7 +2501,13 @@
             u_k(x) = \theta_{(k)}^T x + \theta_{0(k)}
         \end{equation}
 
-        In the last section, we emphasized that we can only use $\sum p_i=1$ for the probabilities of a \textbf{single} data point. Based on this, we'll focus on only one data point.
+        These equations allow us to directly compute each $u_i$.
+
+        \begin{itemize}
+            \item Intuitively, if $u_i(x)$ is \gren{larger than} $u_j(x)$, then our data point $x$ is \gren{more similar to} class $i$ than class $j$.
+        \end{itemize}
+
+        In the last section, we emphasized that we can only use $\sum p_i=1$ for the probabilities of a \textbf{single} data point. Based on this, we'll focus on only one data point.\\
 
         \begin{clarification}
             In this section, $x$ represents only \purp{one data point} $\ex{x}{i}$.
@@ -2273,14 +2521,14 @@
         \begin{equation}
             \theta = 
             \begin{bmatrix}
-                \theta_{(1)} & \theta_{(2)} & \cdots & \theta_{(k)}
+                \red{\theta_{(1)}} & \blu{\theta_{(2)}} & \cdots      & \pur{\theta_{(k)}}
             \end{bmatrix}
             =
             \begin{bmatrix}
-                \theta_{1(1)} & \theta_{1(2)} & \cdots      & \theta_{1(k)}\\ 
-                \theta_{2(1)} & \theta_{2(2)} & \cdots      & \theta_{2(k)}\\ 
+                \red{\theta_{1(1)}} & \blu{\theta_{1(2)}} & \cdots      & \pur{\theta_{1(k)}}\\ 
+                \red{\theta_{2(1)}} & \blu{\theta_{2(2)}} & \cdots      & \pur{\theta_{2(k)}}\\ 
                 \vdots      & \vdots      & \ddots      & \vdots     \\ 
-                \theta_{d(1)} & \theta_{d(2)} & \cdots      & \theta_{d(k)}
+                \red{\theta_{d(1)}} & \blu{\theta_{d(2)}} & \cdots      & \pur{\theta_{d(k)}}
             \end{bmatrix}
         \end{equation}
         
@@ -2298,6 +2546,7 @@
         \end{concept}
         
         This will put all of our terms into a $(1 \times k)$ vector $u$.
+            \note{Which creates a deceptively simple formula: this is one of the perks of matrix multiplication!}
         
         \begin{equation}
             u(x) = 
@@ -2310,33 +2559,39 @@
     
     \subsection{Softmax}
         
-        We now have all the pieces we need. Our \textbf{linear regression} for each class:
+        We now have all the pieces we need.
         
-        \begin{equation}
-            \begin{bmatrix}
-                u_1 \\ u_2 \\ \vdots \\ u_k
-            \end{bmatrix}
-            = 
-            \theta^T x + \theta_0
-        \end{equation}
+        \begin{itemize}
+            \item Our \textbf{linear regression} for each class:
+
+                \begin{equation}
+                    \begin{bmatrix}
+                        u_1 \\ u_2 \\ \vdots \\ u_k
+                    \end{bmatrix}
+                    = 
+                    \theta^T x + \theta_0
+                \end{equation}  
         
-        The \textbf{exponential} terms, to get \textbf{logistic} behavior:
+            \item The \textbf{exponential} terms, to get \textbf{logistic} behavior
+
+                \begin{equation}
+                    r_i = e^{u_i}
+                \end{equation}
+
+            \item The \textbf{averaging} to get the probabilities to add to 1:
+
+                \begin{equation}
+                    g = 
+                    \begin{bmatrix}
+                        r_1/\sum r_i  \\
+                        r_2/\sum r_i  \\
+                        \vdots  \\
+                        r_k/\sum r_i  \\
+                    \end{bmatrix}
+                \end{equation}
+        \end{itemize}
         
-        \begin{equation}
-            r_i = e^{u_i}
-        \end{equation}
         
-        The \textbf{averaging} to get probability = 1:
-        
-        \begin{equation}
-            g = 
-            \begin{bmatrix}
-                r_1/\sum r_i  \\
-                r_2/\sum r_i  \\
-                \vdots  \\
-                r_k/\sum r_i  \\
-            \end{bmatrix}
-        \end{equation}
         
         And so, our multiclass function is...\\
         
@@ -2386,10 +2641,10 @@
         How do we make this work in \textbf{general}? Well, we want to make our two terms have a \textbf{similar} form, so we can generalize to more classes.
         
         \begin{itemize}
-            \item $g$ and $1-g$ are both probabilities: we can think of them as $g_1$ and $g_2$, respectively.
-            \item If $g=g_1$, then we would expect $y=y_1$. And indeed: it gives a 1 if we're in the first class (+1).
+            \item $g$ and $1-g$ are both \purp{probabilities}: we can think of them as $g_1$ and $g_2$, respectively.
                 \begin{itemize}
-                    \item Similarly, $1-y=y_2$.
+                    \item If $g=g_1$, then we would expect $y=y_1$.
+                    \item Similarly, $1-g=g_2$ pairs with $1-y=y_2$.
                 \end{itemize}
         \end{itemize}
         
@@ -2424,27 +2679,29 @@
                 y_j \log(g_j)
             \end{equation*}
             
-            Because of \purp{one-hot encoding}, all terms except one have $y_j=0$, and thus \gren{vanish}.
+            Because of \purp{one-hot encoding} for $y$, all terms except one have $y_j=0$, and thus \gren{vanish}.
         \end{kequation}
         
         Using all of these functions, we can finally do gradient descent on our multi-class classifier. However, we won't go through that work in these notes.
 
+        
     \subsection{A side comment: Sigmoid vs. Softmax}
 
             Let's jump back to softmax real quick and clarify something.
 
-            Usually, we expect to use \textbf{softmax} if we have more than 2 classes, because that's what we built it for.
+            Usually, we expect to use \textbf{softmax} if we have \gren{more than 2} classes, because that's what we built it for.
 
-            However, this isn't always the case. 
-            
-            There's another aspect we haven't focused on: \textbf{softmax} represents $k$ different classes/events. These classes are assumed to be \textbf{mutually exclusive}: you can't be in multiple at the same time.
+            \begin{itemize}
+                \item However, this isn't always the case -- there's another aspect of softmax we haven't focused on:
+                \item \purp{Softmax} represents $k$ different classes/events. These classes are assumed to be \purp{mutually exclusive}: you can't be in multiple at the same time.
+            \end{itemize}
 
-            In other words, they are \textbf{disjoint}.\\
+            In other words, the classes of softmax are \textbf{disjoint}.\\
 
             \begin{definition}
                 If two events are \vocab{disjoint}, they \purp{can't} happen at the \gren{same time}.
 
-                If $n$ events are \vocab{disjoint}, only \purp{one} of them can happen at a time.
+                If $n$ events are \vocab{disjoint}, only \gren{one} of them can happen at a time.
             \end{definition}
 
             \miniex We usually wouldn't classify an animal as both a cat and a dog: it's either one or the other.
@@ -2452,10 +2709,10 @@
             When events are disjoint, their probabilities are separate:\\
 
             \begin{concept}
-                If two events are \vocab{disjoint}, then they have \gren{separate} probabilities: there's no overlap. Since $\p{A \cap B}=0$, we can say:
+                If two events are \vocab{disjoint}, then they have \gren{separate} probabilities: there's no overlap. Since $\prob{A \cap B}=0$, we can say:
 
                 \begin{equation*}
-                    \p{A \cup B} = \p{A}+\p{B}
+                    \prob{A \cup B} = \prob{A}+\prob{B}
                 \end{equation*}
 
                 If we have \gren{every} event and they're all \vocab{disjoint}, then their probabilities sum to 1.
@@ -2468,30 +2725,52 @@
             \miniex If the weather options are rain, cloudy, and sunny, and you have to only choose one, you should expect that:
 
             \begin{equation}
-                \p{\text{Rain}} + \p{\text{Cloudy}} + \p{\text{Sunny}} = 1
+                \prob{\text{Rain}} + \prob{\text{Cloudy}} + \prob{\text{Sunny}} = 1
             \end{equation}
+
+            \subsecdiv
 
             But this only makes sense \textbf{if} events can't happen at the same time.
 
-            But, what if they can? For example: there might be $k$ different people we could find in an \textbf{image}. But, there can be \textbf{multiple} people in the same image! 
+            \begin{itemize}
+                \item In some situations, multiple classes/events can happen at the same time! They might even be \gren{independent}.
+                \item \miniex There might be $k$ different people we could find in an \textbf{image}. But, there can be multiple people in the \gren{same} image! 
+            \end{itemize}
+            
 
-            So, it doesn't make sense to assume that each event is \textbf{mutually exclusive}: multiple events can all happen, which just isn't an option with softmax!
+            So, it doesn't always make sense to assume that each event is \textbf{mutually exclusive}.
 
-            The solution: we still have \textbf{probabilities}, so we just use \textbf{one sigmoid per class}.\\
+            \begin{itemize}
+                \item If our events are not mutually exclusive, then we \redd{shouldn't use softmax}.
+            \end{itemize}
 
+            The solution: for each class, find the \textbf{probability} for that class, vs. the \textbf{absence} of that class.
+
+            \begin{itemize}
+                \item This brings us back to binary classification: we just use \gren{one sigmoid per class}.\\
+            \end{itemize}
+            
             \begin{clarification}
                 \purp{Softmax} is used when each of our $k$ classes is \purp{disjoint} (mutually exclusive).
 
-                However, if they aren't, then we \gren{can't} use softmax.
+                \begin{itemize}
+                    \item However, if they aren't, then we \gren{can't use softmax}.   
+                \end{itemize}
 
-                Instead, we use $k$ \purp{sigmoid} functions: one for each of our $k$ classes. We're using \vocab{binary classification} on each class separately.
+                \subsecdiv
 
-                The $\nth{i}$ sigmoid tells us how likely the \purp{data point} is to be in the $\nth{i}$ class.
+                If our classes are independent, we can use $k$ \purp{sigmoid} functions: one for each of our $k$ classes. We're using \vocab{binary classification} on each class separately.
+
+                \begin{itemize}
+                    \item The $\nth{i}$ sigmoid tells us how likely the \purp{data point} is to be in the $\nth{i}$ class.
+                \end{itemize}
+                
             \end{clarification}
 
             \miniex We might have an algorithm figuring out which \textbf{products} a customer might want. They might want \textbf{multiple}, so we can't treat them as disjoint.
 
-            In this case, each product is a class, and we determine the result based on the matching sigmoid.
+            In this case, each product is a class, and we determine the result based on the matching sigmoid
+                \note{What happens if the events aren't disjoint, but they also aren't independent? You need a more complex model.}
 
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2502,18 +2781,18 @@
     
     In general, we just pick the class we predict with the \textbf{highest} probability.
     
-    And in the real world, we don't care about how close we were to right - we just care about how often we \textbf{were} right.
+    And in practice, we often don't care about how close we were to right - we just care about how often we \textbf{were} right.
     
     So, we use \textbf{accuracy}.\\
     
     \begin{definition}
-        The \vocab{accuracy} of our model is the \purp{percentage} of the time we get the \gren{right} answer.
+        The \vocab{accuracy} $A$ of our model is the \purp{percentage} of the time we get the \gren{right} answer.
         
         We can write this as 
         
-        \begin{equation}
+        \begin{equation*}
             A(h;D) = 1 - \frac{1}{n} \sum_{i=1}^n \loss\Big(h(\ex{x}),\ex{y}{i} \Big)
-        \end{equation}
+        \end{equation*}
         
         Where $\loss$ is 0-1 loss (\purp{counting} the number of \gren{wrong} answers)
     \end{definition}

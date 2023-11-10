@@ -47,14 +47,14 @@
         Can we use this to create a new model class? For now, unfortunately not: remember that we used this in the last chapter, and we still got a \textbf{linear} separator. The reasons were discussed there.
             \note{We'll show ways we can use this kind of approach, when we discuss Neural Networks.}
     
-        Instead, we can get inspiration from our example of "structural error". For now, let's focus on \textbf{regression} (though classification isn't too different):
+        Instead, we can get inspiration from our example of "structural error". For now, let's focus on \orgg{regression} (though classification isn't too different):
     
         \begin{figure}[H]
             
             \includegraphics[width=70mm,scale=0.5]{images/feature_images/Structural_Linear_Model.png}
             \includegraphics[width=70mm,scale=0.5]{images/feature_images/Structural_Quad_Model.png}
     
-            \caption{A linear function can't represent this dataset. However, a parabola can!}
+            \caption{A linear regression can't represent this dataset. However, a parabola can!}
         \end{figure}
     
         We're still using our input variable $x$, but this time, we've "\textbf{transformed}" it: we have squared $x$, giving us a model of the form
@@ -70,7 +70,9 @@
         \begin{concept}
             We can make our \purp{linear} model more \gren{expressive} by add a squared term, and turning it into a \purp{parabolic} function.
     
-            This concept can be extended even further, to any \vocab{polynomial}.
+            This concept can be extended even further, to any \orgg{polynomial}.
+
+            This is called a \vocab{polynomial transformation} of our input data.
         \end{concept}
 
     \subsecdiv
@@ -85,7 +87,7 @@
     
         Now, we've got something more familiar. We could imagine extending this to any number of terms $\theta_i x^i$: if we needed a cubic function, for example, we could include $\theta_3 x^3$.
 
-        This is starting to look pretty similar to our previous model: in fact, we could even separate out $\theta$ as a variable:
+        This is starting to look pretty similar to our previous model: in fact, we could even separate out $\theta$ as a parameter:
             \note{Notice that $\theta_0$ corresponds to $x^0=1$.}
 
         \begin{equation}
@@ -113,9 +115,10 @@
             \end{bmatrix}
         \end{equation}
 
-        This really \textit{is} starting to look like our linear transformation! That's helpful: we might be able to use the techniques we developed before.
+        This really \textit{is} starting to look like our linear transformation $\theta^T x$. That's helpful: we might be able to use the techniques we developed before.
 
         In fact, we can argue that they're \textbf{equivalent}: we've just changed what our input vector is. Consider our new input $\phi(x)$:
+            \note{Compare the structure of $\theta^T x$ versus $\theta^T \phi(x)$: you've replaced $x$ with $\phi(x)$.}
 
         \begin{equation}
             \blu{\phi(x)}
@@ -131,7 +134,7 @@
             }^{\text{New input}}
         \end{equation}
         
-        This is called \textbf{transforming} our input.\\
+        This is called \textbf{transforming} our input. However, polynomial is only one of our transformations!\\
 
         \begin{definition}
             A \vocab{transformation} $\phi(x)$ takes our input vector $x$ and converts it into a \gren{new} vector.
@@ -139,11 +142,23 @@
             This transformation can be used to:
 
             \begin{itemize}
-                \item Allow our model to handle new, more \purp{complex} situations (more \gren{expressiveness})
-
-                \item \purp{Pre-process} our data to make it \gren{easier} for our model to find \purp{patterns}.
+                \item Allow our model to handle new, more \gren{complex} situations 
                 
-                \item Convert our data into a \purp{usable} format (if, say, the original format doesn't fit into our equations)
+                    \begin{itemize}
+                        \item \miniex Polynomial transformations
+                    \end{itemize}
+
+                \item \gren{Pre-process} our data to make certain \gren{patterns} more obvious, and easy for our model to detect.
+
+                    \begin{itemize}
+                        \item \miniex Radial transformations (to be discussed later!)
+                    \end{itemize}
+                
+                \item Convert our data into a \gren{usable} format (if the original format doesn't fit into our equations)
+
+                    \begin{itemize}
+                        \item \miniex One-hot encoding
+                    \end{itemize}
                 
             \end{itemize}
         \end{definition}
@@ -156,32 +171,48 @@
 
     \subsection*{Features}
         
-        One benefit of only changing out input is that we can continue to use our linear representation: we will be able to optimize a "linear" model $\theta$, over data that has been made \textbf{nonlinear}.
+        One benefit of only changing the input is that everything else we know about the model is still true: we can continue to use our linear representation.
+            \begin{itemize}
+                \item We will be able to optimize a "linear" model $\theta$, over data that has been made \textbf{nonlinear}.
+            \end{itemize}
 
-        These transformations can be complex, especially for multi-dimensional inputs. In this first case, we only combined one input with \textbf{itself}. But, often, we can combine multiple together!
+        These transformations can be complex, especially for \orgg{multi-dimensional} inputs. In this first case, we only combined one input ($x=x_1$) with \textbf{itself}. But, often, we can combine multiple $x_i$ together!
+            \note{We'll cover this multi-dimensional polynomial transformation later in the chapter.}
 
-        Thus, we should be careful to distinguish each input variable from each other. We often call these "\textbf{features}". However, we need to be careful:\\
+        So, we need to be careful of our input variables $x_i$. 
+        
+        \begin{itemize}
+            \item We sometimes call a single input variable, a single "\textbf{feature}". However, we need to be careful: this word can have multiple meanings.\\
+        \end{itemize}
 
         \begin{clarification}
             We often use the word \vocab{feature} in related (but not identical) contexts:
 
             \begin{itemize}
-                \item A \vocab{feature} can be one \gren{aspect} of our \purp{original data}: for example, whether or not something is a cat or a dog, or the height of a patient. 
+                \item A \vocab{feature} can be one unprocessed \gren{aspect} of the \purp{data}: 
+                    \begin{itemize}
+                        \item \miniex Whether or not something is a cat or a dog, or the height of a patient.
+                    \end{itemize}
 
-                \item A \vocab{feature} can also be one mathematical \gren{variable} in our \purp{transformed input}. $x_i$ is a feature of the data, while each variable of $\phi(x)$ is a feature of the transformed data.
+                \item A \vocab{feature} can also be one mathematical \gren{variable} in our \purp{transformed input}. 
+                    \begin{itemize}
+                        \item $x_i$ is a \gren{feature} of the \orgg{data}.
+                        \item $\phi(x)_j$ (one variable in $\phi(x)$) is a \gren{feature} of the \orgg{transformed data}.
+                    \end{itemize}
             \end{itemize}
 
-            Just like how we have an input space, we call the collection of possible values for our features the \vocab{feature space}.
+            Just like how we have an \redd{input space} and a \redd{hypothesis space}, we call the collection of possible values for our features the \redd{feature space}.
         \end{clarification}
-
-        \miniex $x$ in our previous example was a feature of the data, while $x^i$ is a feature of our transformed vector.
     
-        Combined, this is why we called this technique the \textbf{feature transformation}: we apply some \textit{transform} to the \textit{features} of a data, to create a new set of \textit{features}.
+        Combined, this is why we called this technique the \textbf{feature transformation}: 
+            \begin{itemize}
+                \item We apply a transform to the \textbf{features} $x$ of our data, and create a new list of \textbf{features} $\phi(x)$.
+            \end{itemize}
 
-        Since these transforms only apply to our features, we can keep the structure of a linear function:\\
+        Since these transforms only apply to our features, they don't affect the rest of our model. So, we can still use \textbf{linear} tools:\\
 
         \begin{definition}
-            \vocab{Feature transformation} allows us to do \gren{linear} regression or classification on a set of \purp{features} we have \gren{non-linearly} \purp{transformed}:
+            \vocab{Feature transformation} allows us to do \gren{linear} regression or classification on a list of \purp{features} we have \gren{non-linearly} \purp{transformed}:
 
             \begin{equation*}
                 h(x) = 
@@ -189,7 +220,10 @@
             \blu{\phi(x)}
             \end{equation*}
 
-            $\phi(x)$ is our (often nonlinear) transformation of our features $x$.
+            \begin{itemize}
+                \item The $\theta^T u$ operation is still linear $(u=\phi(x))$.
+                \item All non-linearity is stored in $\phi(x)$.
+            \end{itemize}
         \end{definition}
 
     \secdiv
@@ -198,55 +232,101 @@
 
     \section{Gaining intuition about feature transformations}
 
-        Now that we understand the general idea of feature transformations, we can begin work with them, particularly for classification.
+        Now that we understand the general idea of feature transformations, we can begin work with them, particularly for \orgg{classification}.
 
-        Our goal is often to take data that linear models couldn't handle, and make it \textbf{separable.} 
+        Our goal is often to take data that linear models couldn't handle, and make them \textbf{more accurate}.
 
-        So, we'll consider maybe the simplest (solvable) case of a nonlinear data set:
+        So, we'll consider maybe the simplest (solvable) case of a nonlinear data set in 1-D:
+            \note{The y-axis doesn't exist, it just has vertical height to make it easier to view on a page.}
 
         \begin{figure}[H]
             \centering
             \includegraphics[width=120mm,scale=0.5]{images/feature_images/inseparable.png}
+            \caption{In this state, there's no 0-d plane (point) that would \textbf{separate} these data points.}
         \end{figure}
 
-        In its current state, there's no one plane that would go through these data points: this is where our transform comes in. We'll try using a polynomial transform with $x^2$. It turns out, $-x^2+2$ works pretty well.
+        This is where our transform comes in: we can't separate using just $x$. So, we'll introduce a second variable: $x^2$.
+            \note{We're replacing 
+
+                \phantom{}
+                
+                $\theta x + \theta_0 >0$ with 
+
+                \phantom{}
+                
+                $\theta_2x^2 + \theta_1 x + \theta_0>0$.}
+
+        \begin{itemize}
+            \item We want a function that lets us classify some data points as positive, and some as negative.
+            \item For the dataset in this image, $-x^2+2>0$ gives us 100\% accuracy. Let's see it in action:
+                
+
+            \begin{center}
+                    \begin{tabular}{c || c || c}
+                    $x=2$ & y= $-(2)^2+2 = -2$ & $y<0 \implies Negative$ \\
+                    $x=0$ & $y = -(0)^2+2 = 2$ & $y>0 \implies Positive$ \\
+                    $x=-2$ & $y= -(-2)^2+2 = -2$ & $y<0 \implies Negative$ \\
+                    \end{tabular}
+                \end{center}
+                
+        \end{itemize}
 
         How do we visualize this? It turns out, there are different perspectives:\\
 
         \begin{clarification}
             There are \gren{two} different ways we can \vocab{graph} a transformation:
+
+            We transform the \purp{hyperplane}:
+            
             \begin{itemize}
-                \item We transform the \purp{separator}: if our model is $-x^2+2$, we just graph that function over the data.
+                \item \miniex If our model is \orgg{$f(x)=-x^2+2$}, we just graph $y=f(x)$ as our separator in 2D space.
+                    
                     \begin{itemize}
-                        \item This is the approach we used above: we wanted a line that \gren{fit} to our data.
+                        \item This is the approach we used to start the chapter: we wanted a line that \gren{fit} to our data.
+                        \item In practice, this bends our \gren{hyperplane} into a curve: at the start of the chapter, we transformed a line into a parabola.
                     \end{itemize}
-                \item We transform the \purp{data}: we graph each data point according to our model $-x^2+2$.
+            \end{itemize}
+            
+            Or, we transform the \purp{data}:
+            
+            \begin{itemize}
+                \item \miniex We plot each data point in 2D as \orgg{$[x, -x^2+2]$}.
                     \begin{itemize}
-                        \item This model allows us to keep a "\gren{linear} separator": we effectively "shift" the data to be linear.
+                        \item This model allows us to keep a "\gren{linear} separator": we "shift" the data nonlinearly, \textbf{then} linearly separate it.
                     \end{itemize}
             \end{itemize}
 
             These models are mathematically \gren{equivalent}, and we'll switch the approach we're using based on which is easier/more useful to graph.
         \end{clarification}
 
-        It may seem concerning to transform the data, rather than the model. However, keep in mind that:
+            \note{See our plot examples for each below.}
+
+        Note that our nonlinear transformation "adds" dimensions: we had a 1D problem, and we used a second dimension to separate it.
+
+        It may seem concerning to transform the \textbf{data}, rather than the \textbf{model}. The data is what we're using to make decisions, after all. 
+        
+        However, keep in mind that:
 
         \begin{itemize}
-            \item If you switch perspectives, they're the same: a different model will just "transform" the data when calculating its output.
+            \item Our model already was a sort of \orgg{transformation}: even the linear model $\theta$ "transforms" each data point $x$ into $y=\theta^T x$.
             
-            \item Usually, we try to preserve the original structure of the data, so we don't lose information: we just add more.
+            \item Usually, we try to preserve the \gren{original structure} of the data, so we don't lose information: we just add more.
                 \begin{itemize}
-                    \item For example, $[1,x,x^2]$ still contains the information $x$: we just add $x^2$.
+                    \item For example, $[1,x,x^2]$ still contains the information $x$: we just append 1 and $x^2$.
                 \end{itemize}
         \end{itemize}
 
-        \miniex Let's show both of these in action.
+        \miniex Let's show both of these in action, using the 1-D dataset we showed above.
 
         \subsecdiv
 
         \subsection{Transforming our separator}
     
-            First, we transform our linear separator as desired: graphing $-x^2+2=0$ on our plot. 
+            First, we transform our linear separator as desired: graphing $-x^2+2=f(x)$.
+
+            \begin{itemize}
+                \item Our separator points are still on the x-axis: they "separate" our data wherever $f(x)=0$.
+            \end{itemize}
     
             \begin{figure}[H]
                 \centering
@@ -254,11 +334,17 @@
                 \caption*{In this version, we've taken our hyperplane separator and transformed it nonlinearly.}
             \end{figure}
     
-            In this case, we have assigned $-x^2+2<0$ as positive.
+            To correctly classify, we assign $-x^2+2>0$ as positive.
     
-            In this version, we preserve the structure of the data, making it easier to see the original shape. However, it's not as easy to think about the shape and orientation of the "plane" now that it's been deformed. 
+            In this version, we preserve the structure of the data, making it easier to see the original shape. 
+
+            However, it's not as easy to think about the direction and orientation of the "plane" now that it's been deformed into a parabola. 
             
-            For example, we don't really have a good "normal" vector, even if we know which side is positive. This is why, to keep our model "linear", we can transform the data, and find the corresponding plane. We'll do that next.
+            \begin{itemize}
+                \item For example, we don't really have a good "normal" vector, even if we know which side is positive.
+            \end{itemize}
+            
+            This is why, to keep our model "linear", we can transform the \textbf{data}, instead of the separator. We'll do that next.
     
             \subsecdiv
 
@@ -267,19 +353,21 @@
             In this case, every data point gets plotted on $[x,x^2]$. Our hyperplane is given by 
     
             \begin{equation}
-                -x^2+2 = 
+                -x^2+2 =\;
                 \overbrace{
-                \begin{bmatrix}
+                \red{\begin{bmatrix}
                     0 \\ -1
-                \end{bmatrix}^T
+                \end{bmatrix}^T}
                 }^{\theta^T}
-                \begin{bmatrix}
+                \blu{\begin{bmatrix}
                     x \\ x^2
-                \end{bmatrix}
+                \end{bmatrix}}
                 + 2
+                =
+                \red{\theta^T}\blu{\phi(x)} + \theta_0
             \end{equation}
     
-            Thus, we get a $\theta$ pointing downward, with an offset of 2.
+            Thus, we get a $\theta$ plane pointing downward, with an offset of 2.
     
             \begin{figure}[H]
                 \centering
@@ -290,7 +378,7 @@
             Note that our transformation makes the data linearly separable!\\
     
             \begin{concept}
-                Features transformations allow us to \purp{non-linearly} transform our data, in order to make that data \vocab{linearly separable}, or at least, more \gren{accurate} with a linear separator.
+                Features transformations allow us to \purp{non-linearly} transform our data, in order to make that data \gren{linearly separable}, or at least, more \gren{accurate} with a linear separator.
     
                 Often, we do this by transforming into a \purp{higher dimensional} space.
             \end{concept}
@@ -332,37 +420,58 @@
         Now that we've established feature transformations, let's consider a couple options for how we'd want to do it, and how we can generalize to higher dimensions. 
 
         Here, we'll present two common ways to construct features, in a way that's consistent across problems, or "systematic".
-            \note{We could also call this "problem independent": it works regardless of what kind of problem you have. Though, that doesn't mean problem time won't affect performance.}
+            \note{We could also call this "problem independent": it works regardless of what kind of problem you have. Though, that doesn't mean problem type won't affect performance.}
 
         \subsection{Polynomial Basis}
 
-            At the start of this chapter, we introduced the idea of polynomial transformations. If a linear function isn't "expressive" enough to solve a problem, then we can create a more complex model, based on how many $x^i$ we include. This can be written as:
+            At the start of this chapter, we introduced the idea of polynomial transformations.
+            
+            If a linear function isn't "expressive" enough to solve a problem, then we can create a more complex model, based on how many $x^i$ we include. This can be written as:
 
             \begin{equation}
                 h(x) =
                 \sum_{i=1}^{k}
-                \theta_i x^i
+                \red{\theta_i} \blu{x^i}
                 =
+                \red{
                 \begin{bmatrix}
                  \theta_0 \\ \theta_1 \\ \theta_2 \\ \vdots \\ \theta_k
                 \end{bmatrix}
-                \cdot 
+                }
+                \cdot
+                \blu{
                 \begin{bmatrix}
                     1 \\ x \\ x^2 \\ \vdots \\ x^k
                 \end{bmatrix}
+                }
+                =
+                \red{\theta_0} + \red{\theta_1}\blu{x^2} + \red{\theta_2}\blu{x^2} + \cdots + \red{\theta_k}\blu{x^k}
             \end{equation}
 
-            Another word for this might be a "polynomial \textbf{basis}".\\
+            Another word for these $x_i$ terms might be a "polynomial \textbf{basis}".
 
-            \begin{definition}
-                A "\vocab{basis}" is the set of basic, \gren{distinct} elements where every \purp{linear} combination creates a unique item in the \purp{space}.
-            \end{definition}
+            \begin{itemize}
+                \item Why call it a basis? Well, we can use our $x_i$ terms to create a polynomial, using
+            \end{itemize}
 
-            In this case, each term $x^i$ is part of the "basis": we can use any combination $$\sum_i \theta_i x^i$$ to create a unique polynomial. This allows us to cover our "feature space".
+            \begin{equation}
+                \sum_i \theta_i x^i
+            \end{equation}
 
+            \begin{itemize}
+                \item Using this procedure, we can combine \gren{basic} elements $x_i$ to create any \gren{polynomial}.
+            \end{itemize}
 
+            \begin{equation}
+                \setty{1, x_1, x_2, \cdots x_k}
+            \end{equation}
 
-            \subsecdiv
+            \begin{itemize}
+                \item This is what defines it as a \purp{basis}: the ability to combine these terms, make any polynomial we want.
+            \end{itemize}
+            
+
+    
             
             \subsubsection{Order}
             
@@ -376,7 +485,7 @@
                     Every higher exponential $x^{j}$ can be thought of as having a coefficient $\theta_k=0$: as far as we're concerned, it \gren{doesn't exist}.
                 \end{definition}
 
-                \miniex We can compare different orders, by looking at the feature vector they create:
+                \miniex We can compare different orders, by looking at the feature vector they create.
                     \note{Note that, while we chose every coefficient to be nonzero here, they don't have to be! $-x^2+2$ from before is a valid second-order polynomial.}
 
                 Here's a table of the first few:\\
@@ -385,17 +494,19 @@
                     \begin{tabular}{c c c}
                     Order & $d=1$ & Example \\
                     \hline
-                    0 & $[1]$ & $3.5$  \\
-                    1 & $[1,x]^T$ & $2.5x-1$ \\
-                    2 & $[1,x,x^2]^T$ & $4.1x^2-10x+1$ \\
-                    3 & $[1,x,x^2,x^3]^T$ & $x^3+8x^2+x-\sqrt{2}$ \\
-                    $\vdots & \vdots & \vdots$
+                    0 & $[1]$ & $\red{3.5}$  \\
+                    1 & $[1,x]^T$ & $\red{2.5x}-1$ \\
+                    2 & $[1,x,x^2]^T$ & $\red{4.1x^2}-10x+1$ \\
+                    3 & $[1,x,x^2,x^3]^T$ & $\red{x^3}+8x^2+x-\sqrt{2}$ \\
+                    $\vdots$ & $\vdots$ & $\vdots$ \\
+                    k & $[1, x, x^2, \cdots, x^k]$ & $\sum_{j=1}^k \theta_jx^j$ \\
+                    $\vdots$ & $\vdots$ & $\vdots$
                     \end{tabular}
                 \end{center}
 
                 \phantom{}
 
-                The order we choose is an important decision choice.
+                The order we choose is an important design choice.
                 
             \subsecdiv
 
@@ -461,15 +572,17 @@
 
                 Until now, we've only been focusing on the 1-D case of data. Let's change that. Let's consider a 2D dataset $[x_1,x_2]^T$.
 
-                Our typical model
+                We start with our typical 2D model:
 
                 \begin{equation}
                     \theta^Tx + \theta_0 = \theta_1x_1 + \theta_2x_2 + \theta_0
                 \end{equation}
 
-                Is "order 1": the largest exponent is 1. This is still a "linear" model. 
+                Is polynomial basis, with "order 1": the largest exponent is 1. This is still a "linear" model.
 
-                If we want to move up to order 2, we increase the max exponent, adding $x_1^2$ and $x_2^2$ to the basis.
+                \subsecdiv
+
+                If we want to move up to order 2, we increase the \gren{largest exponent}, adding $x_1^2$ and $x_2^2$ to the basis.
 
                 However, this doesn't take full advantage of the expressiveness of our model: this only creates parabolas aligned with the $x_1$ and $x_2$ axes. How do we create other options?
 
@@ -487,7 +600,7 @@
 
                 \begin{equation}
                     \begin{bmatrix}
-                        1 & x_1 & x_1^2 & x_2 & x_2x_1 & x_2^2
+                        1 & \red{x_1} & \red{x_1^2} & \blu{x_2} & \blu{x_2}\red{x_1} & \blu{x_2^2}
                     \end{bmatrix}^T
                 \end{equation}
 
@@ -510,7 +623,18 @@
                 If we count 1 as a factor, we can say that the exponents always add up to $k$ (since $1^j$ has no effect). So, we have $d+1$ different numbers, which add up to exactly $k$.
                     \note{We have $d$ variables, so $d+1$ if we include 1 as a variable.}
 
-                This is a well-known problem in combinatorics: how many ways are there to add up $m$ numbers to total $n$? The solution to this problem gives us:
+                For example, here's how this would look for $d=2$, $k=2$ (5.10 above). All you need to notice is that the exponents add to 2.
+
+                \begin{equation}
+                    \begin{bmatrix}
+                        1^{\pur{2}}x_2^{\blu{0}}x_1^{\red{0}} & 1^{\pur{1}}x_2^{\blu{0}}x_1^{\red{1}} & 
+                        1^{\pur{0}}x_2^{\blu{0}}x_1^{\red{2}} & 1^{\pur{1}}x_2^{\blu{1}}x_1^{\red{0}} & 1^{\pur{0}}x_2^{\blu{1}}x_1^{\red{1}} & 
+                        1^{\pur{0}}x_2^{\blu{2}}x_1^{\red{0}}
+                    \end{bmatrix}^T
+                \end{equation}
+
+
+                This is a well-known problem in combinatorics: how many ways are there to add up $d+1$ numbers to total $k$? The solution to this problem gives us:
                     \note{Explaining the math here is beside the point of this course. If you're curious, search up "stars and bars math", or visit \href{https://en.wikipedia.org/wiki/Stars_and_bars_(combinatorics)}{here}.}
 
                 \begin{equation}
@@ -525,17 +649,17 @@
                 \begin{definition}
                     The \vocab{polynomial basis} of order $k$ and dimension $d$ includes \purp{every feature}
 
-                    \begin{equation}
+                    \begin{equation*}
                         \prod_{i=1}^d x_i^{c_i}
-                    \end{equation}
+                    \end{equation*}
 
                     Where all of the integer exponents $c_i\geq 0$ add up to \gren{at most} $k$.
 
                     Creating features such as:
 
-                    \begin{equation}
+                    \begin{equation*}
                         x_1^k, \;\; x_1x_2, \;\; x_2x_3^3x_6, \;\; 1, \;\; \dots
-                    \end{equation}
+                    \end{equation*}
                 \end{definition}
 
                 We can represent this in a table:
@@ -545,11 +669,11 @@
                     \begin{tabular}{c c c}
                     Order & $d=1$ & in general ($d>1$) \\
                     \hline
-                    0 & $[1]$ & \red{$[1]$}\\
-                    1 & $[1,x]^T$ & \red{$[1,x_1, \ldots, x_d]^T$}\\
-                    2 & $[1,x,x^2]^T$ & \red{$[1,x_1, \ldots, x_d,
+                    0 & $[1]$ & \blu{$[1]$}\\
+                    1 & $[1,x]^T$ & \blu{$[1,x_1, \ldots, x_d]^T$}\\
+                    2 & $[1,x,x^2]^T$ & \blu{$[1,x_1, \ldots, x_d,
                                         x_1^2, x_1x_2, \ldots]^T$}\\
-                    3 & $[1,x,x^2,x^3]^T$ & \red{$[1,x_1, \ldots,
+                    3 & $[1,x,x^2,x^3]^T$ & \blu{$[1,x_1, \ldots,
                                         x_1^3, x_1x_2, \ldots,
                                         x_1x_2x_3, \ldots]^T$} \\
                     $\vdots$ & $\vdots$ & $\vdots$ \\
@@ -557,6 +681,7 @@
                 \end{center}
 
             \subsecdiv
+
 
         \subsubsection{Polynomial Basis in Action}
 
@@ -581,6 +706,10 @@
                 \caption*{We start with the waveform we showed at the start of the chapter: on the left, we see a bunch of datapoints we want to take a regression over. With $k=8$, we get a pretty good result.}
             \end{figure}
 
+            For 2D separators, it's easier to show only the +/- classification, rather than the transformed data/boundary. That means, these below graphs are hiding the numeric outputs.
+            
+            Light indicates "positive" for the model, dark indicates "negative" for the model.
+
             \begin{figure}[H]
                 \centering
                 
@@ -592,7 +721,7 @@
                 \centering
                 
                 \includegraphics[width=70mm,scale=0.5]{images/feature_images/better_xor.png}
-                \caption*{This time we use gradient descent and a random initialization to get a less 'perfect', but still effective classification. }
+                \caption*{This time we use gradient descent and a random initialization to get a less rigid, but still effective classification. }
             \end{figure}
 
              \begin{figure}[H]
@@ -698,6 +827,8 @@
             
     \secdiv
     
+
+
             
     \pagebreak
     \section{Hand-constructing features for real domains }
@@ -862,7 +993,7 @@
                     \item When using a linear model $\theta^T\phi(x)$, each class  matches a different $\theta_i$.
                         \note{$\theta_i$ scales the $\nth{i}$ variable. So, each class can be scaled differently!}
                         
-                    \item Despite not behaving like numbers, "higher" classes in the order still keep track of all of the classes below them.
+                    \item Despite not behaving like numbers, "higher" classes in the order still keep track of all of the classes "below" them.
                         \begin{itemize}
                             \item \miniex Class 2-4 all share the feature $\text{Class}(x)\geq 2$ (equivalent to $\text{Class}(x)>1$).
                         \end{itemize}
@@ -900,7 +1031,7 @@
                         \item The $\nth{i}$ class has $i$ \purp{ones}.
                     \end{itemize}
 
-                    \phantom{}
+                    \subsecdiv
 
                     \begin{itemize}
                         \item This transformation is only appropriate if the data 
@@ -940,7 +1071,7 @@
 
                 We introduced this technique in the \textbf{previous} chapter:
                 
-                When there's no clear way to \textbf{simplify} our data, we accept the current discrete classes, and \textbf{convert} them to a number-like form.
+                When there's no clear way to \textbf{simplify} our data, we accept the current discrete classes, and \textbf{convert} them to a number-like form that implies no order.
 
                 \begin{itemize}
                     \item Examples:
@@ -1068,7 +1199,7 @@
                     \theta^T x = \sum_i \theta_i x_i
                 \end{equation}
 
-                The vector format $\theta^Tx$ is just a way to \textbf{condense} our equation: the ordering goes away when we compute the sum.\\
+                The vector format $\theta^Tx$ is just a way to \textbf{condense} our equation: addition ignores ordering of elements!\\
 
                 \begin{concept}
                     \vocab{Order} of elements in a vector \purp{don't} affect the behavior of our model.
@@ -1076,7 +1207,7 @@
                     This is because a linear model is a \gren{sum}, and sums are the same regardless of \purp{order}.
                 \end{concept}
 
-                If our model has the same math regardless of order, then it can't use order information.
+                If our model has the same math regardless of order, then it doesn't encode that ordering.
 
                 \miniex We'll take a vector, and rearrange it.
                     \note{Despite shuffling, these two equations are equivalent!}
@@ -1138,9 +1269,9 @@
             \subsecdiv
             \subsubsection{Factored Code}
 
-                Now, we move away from number-like properties. Instead, what other patterns of our feature could be \textbf{useful}?
+                Now, we move away from number-like properties. Instead, what other \gren{patterns} of our feature could be useful?
 
-                Sometimes, a single feature will contain multiple pieces of information. Separating those pieces (or \textbf{factors}) from each other can make it easier for our machine to understand.
+                Sometimes, a single feature will contain \orgg{multiple} pieces of information. Separating those pieces (or \vocab{factors}) from each other can make it easier for our machine to understand.
 
                 \begin{itemize}
                     \item A \textbf{car} is often described by the "make" (brand) and "model" (which exact type of car by that brand). 
@@ -1165,9 +1296,9 @@
                 \begin{definition}
                     \vocab{Factored code} is a \purp{feature transformation} where we take one \gren{discrete class} and break it up into other discrete classifications, called \purp{factors}.
 
-                    \begin{equation}
+                    \begin{equation*}
                         \text{Class } m \text{ and } n \longrightarrow \text{Class } m, \text{Class } n
-                    \end{equation}
+                    \end{equation*}
 
                     \begin{itemize}
                         \item This transformation is only appropriate if
@@ -1341,32 +1472,40 @@
                 \end{concept}
 
                 \miniex Income might be in the range of tens of thousands (10,000-100,000), while age is a two-digit number(20-100). Income will be weighed more heavily.
+                    \note{You could try to solve this by scaling down $\theta$. 
+
+                    \phantom{}
+                    
+                    But, we're already using regularization to bias against large $\theta$: that will affect small variables (big $\theta_i$) more than larger ones (small $\theta_i$).}
 
                 How do we solve that problem? We need to do two things:
 
                 \begin{itemize}
-                    \item \textbf{Shift} the data so that our range is not too high/low. Our goal is to have it centered on 0.
+                    \item \purp{Shift} the data so that our range is not too high/low. Our goal is to have it centered on 0.
                         \begin{itemize}
                             \item We want it centered on 0 so we can distinguish between the above-average and below-average data points.
-                                \note{Plus, it's easier to get all of our data to 0, rather than picking some arbitrary value.}
                                 
-                            \item We do this by subtracting the \textbf{mean}, or the \textbf{average} of all of our data points.
+                            \item We do this by \purp{subtracting the mean}, or the \textbf{average} of all of our data points.
                         \end{itemize}
                         
                     \begin{equation}
                         \phi_1(x) = x - \overline{x}
                     \end{equation}
 
-                    \item Scale the \textbf{range} of possible values, so they all vary by roughly the same amount.
+                    \item \gren{Scale} the \textbf{range} of possible values, so they all vary by roughly the same amount.
+
+                    \begin{itemize}
+                        \item: So, if one variable tends to \gren{vary} by a \textbf{larger} amount, it doesn't have a bigger impact on the result.
+
+                        \begin{equation}
+                            \phi(x_i) = \frac{x_i - \overline{x}_i}{\sigma_i}
+                        \end{equation}
+    
+                        Where $\sigma$ is the \textbf{standard deviation}, a measure of how much our data varies.
+                            \note{Note that each feature has its own $\sigma_i$: we have to compute this equation for each feature.}
+                    \end{itemize}
                     
-                    \item: So, if one variable tends to vary by a \textbf{larger} amount, it doesn't have a bigger impact on the result.
-
-                    \begin{equation}
-                        \phi(x_i) = \frac{x_i - \overline{x}_i}{\sigma_i}
-                    \end{equation}
-
-                    Where $\sigma$ is the \textbf{standard deviation}.
-                        \note{Note that each feature has its own $\sigma_i$: we have to compute this equation for each feature.}
+                    
                 \end{itemize}
 
                 If you are interested, we define \textbf{standard deviation} below.\\

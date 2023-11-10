@@ -1,5 +1,5 @@
 
-\usepackage{amsmath,amsthm,amssymb,graphicx,mathtools,tikz,hyperref,unicode-math,mathdots}
+\usepackage{amsmath,amsthm,amssymb,graphicx,mathtools,tikz,hyperref,mathdots}
 
 \usepackage[normalem]{ulem}
 
@@ -79,7 +79,6 @@
 \newcommand{\derivslash}[2]{{\dd #1}/{\dd #2}}
 \newcommand{\pderivslash}[2]{{\partial #1}/{\partial #2}}
 
-\newcommand{\p}[1]{ \mathbf{P} \left\{ #1 \right\} }
 
 \newcommand{\pderiv}[2]{\frac{\partial #1}{\partial #2}}
 \newcommand{\pdderiv}[2]{\frac{\partial^2 #1}{\partial #2^2}}
@@ -140,6 +139,12 @@
 
 \newcommand{\boxdiv}[0]{\centerline{\uwave{\uwave{\hspace{10cm}}}}}
 
+\newcommand{\setty}[1]{\Bigl\{#1\Bigr\}}
+\newcommand{\prob}[1]{ \mathbf{P} \Bigl\{#1\Bigr\}}
+\newcommand{\given}[2]{ \mathbf{P} \Bigl\{#1 \;\; \Big| \;\; #2 \Bigr\}}
+
+\newcommand{\smashedoverbrace}[2]{\smash{\overbrace{#1}^{#2}}\vphantom{#1}}
+\newcommand{\smashedunderbrace}[2]{\smash{\underbrace{#1}_{#2}}\vphantom{#1}}
 
 % \newcommand{\loss}[0]{\mathcal{L}}
 

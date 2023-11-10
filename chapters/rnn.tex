@@ -1,8 +1,8 @@
 
 
-\setcounter{chapter}{8} %Makes the prereq chapter chapter 0
+\setcounter{chapter}{10-1} %Makes the prereq chapter chapter 0
 
-\chapter{Recurrent Neural Networks - Explanatory Notes}
+\chapter{Recurrent Neural Networks}
 
     \subsection{Review: Neural Networks So Far}
 
@@ -893,33 +893,7 @@ possible a training set of input-output {\em sequences}.
 
 
 
-\section{ChatGPT}
-    
-    \subsection{Linear Time-Invariant Systems}
-    
-    Another common structure used in signal processing and control is a \vocab{linear time-invariant (LTI) system}. In this case, all the quantities are real-valued vectors: $\mathcal S = \R^m$, $\mathcal X = \R^l$ and $\mathcal Y = \R^n$. The functions $f_s$ and $f_o$ are linear functions of their inputs. The transition function is described by the state matrix $A$ and the input matrix $B$, and the output function is defined by the output matrix $C$, each with compatible dimensions. In discrete time, they can be defined by a linear difference equation:
-    
-    \begin{equation}
-    s_t = f_s(s_{t-1}, x_t) = A s_{t-1} + B x_t
-    \end{equation}
-    
-    \begin{equation}
-    y_t = f_o(s_t) = C s_t
-    \end{equation}
-    
-    These systems can be implemented using state to store relevant previous input and output information.
-    
-    \subsection{Recurrent Neural Networks}
-    
-    Recurrent neural networks (RNNs) are similar to LTI systems, but they are non-linear in nature. In this section, we will explore how to use RNNs to model sequential temporal behavior. We will define the architecture and weight matrices in a neural network to enable modeling of state machines.
-    
-    \subsubsection{Sequence to Sequence RNNs}
-    
-    We can also use RNNs for training sequence to sequence models. We will present a loss function that may be employed for training these types of RNNs. Applications of RNNs in language translation and recognition will also be discussed in this section.
-    
-    \subsubsection{Backpropagation Through Time}
-    
-    Finally, we will see how to use gradient-descent methods to train the weights of an RNN so that it performs a transduction that matches as closely as possible a training set of input-output sequences. This method is called \vocab{backpropagation through time} (BPTT).
+
 
 \section{Sequence-to-Sequence Recurrent Neural Networks}
     \label{sec:seq2seq_rnn}

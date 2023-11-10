@@ -23,11 +23,15 @@
         Remember that we store our \textbf{parameters} in a vector $\Theta$: this vector defines our \textbf{model} within our \textbf{model class}.
         
         This $\Theta$ is what we hope to be able to improve, and use to find a \textbf{better model}.
+
+        \begin{itemize}
+            \item Depending on how \textbf{precise} we want to be, remember that we can write our hypothesis as $h(x)$ \redd{or} $h(x; \Theta)$: both are \textbf{valid}, the latter emphasizes the fact that $\Theta$ is a \textbf{variable.}
+            \item We'll focus on $\Theta$ more if we assume we know which \textbf{hypothesis class} we're in - if we know that, $\Theta$ fully \textbf{defines} our model.
+                \note{Often, people will treat $\Theta$ and $h$ as almost interchangeable: be careful when you're doing this!}
+        \end{itemize}
         
-        Depending on how \textbf{precise} we want to be, remember that we can write our hypothesis as $h(x)$ \redd{or} $h(x; \Theta)$: both are \textbf{valid}, the latter emphasizes the fact that $\Theta$ is a \textbf{variable.}
         
-        We'll focus on $\Theta$ more if we assume we know which \textbf{hypothesis class} we're in - if we know that, $\Theta$ fully \textbf{defines} our model.
-        \note{Often, people will treat $\Theta$ and $h$ as almost interchangeable: be careful when you're doing this!}
+        
         
     \subsection{The Problem of Regression}
     
@@ -111,9 +115,11 @@
         \end{equation}
         \note{This particular feature transformation is called \textbf{one-hot encoding}! We'll return to it later.}
         
-        We do our feature transformation with a function: we often notate this function as $\varphi(x)$. 
-        
-        There are many different feature transformations for different needs. We will come back to this in a later chapter. 
+        We do our feature transformation with a function: we often notate this function as $\varphi(x)$.
+
+        \begin{itemize}
+            \item There are many different feature transformations for different needs. We will come back to this in a later chapter. 
+        \end{itemize}
         
         For now, we will simply assume that all of our inputs $x$ are already in $\RR^d$ (vectors of real numbers).
         
@@ -143,19 +149,21 @@
         In the last chapter, we discussed that we use our past \textbf{training data} to learn a good \textbf{model} for our future \textbf{testing data}.
         
         So, even though the training data is what we have in front of us, the \textbf{testing data} is what we care the most about. We want our machine to handle new situations.
-        
-        We'll assume our data are \textbf{IID}, so that we can \textbf{learn} and \textbf{generalize} effectively. And we'll evaluate ourselves using a \textbf{loss function} $\loss$, a measure of how poorly our model is running.
+
+        \begin{itemize}
+            \item We'll assume our data are \textbf{IID}, so that we can \textbf{learn} and \textbf{generalize} effectively. And we'll evaluate ourselves using a \textbf{loss function} $\loss$, a measure of how poorly our model is running.
+        \end{itemize}
         
         We care about \textbf{expected loss}, so we'll take an \red{average}. We'll start with our training data, so we call it \vocab{training error}:\\
         
         \begin{kequation}
         
-        \vocab{Training Error} is written as:
+        \vocab{Training Error} $\trainerr$ is written as:
         
-            \begin{equation}
+            \begin{equation*}
                 \trainerr(h) = \red{ \frac{1}{n}  \sum_{i=1}^n } \ex{Loss}{i} = 
                 \frac{1}{n}  \sum_{i=1}^n \loss \left( \pur{ h(\ex{x}{i}), \ex{y}{i} } \right)
-            \end{equation}
+            \end{equation*}
         \end{kequation}
         
         
@@ -165,8 +173,10 @@
             $\vocab{h}$ is a \gren{function} that takes a \gren{variable}, $x$, as its input. This is the usual format.
             
             \vocab{$\trainerr$} is also a \redd{function}, but it takes in $h$, a \redd{different function}, as an input!
-            
-            That means one function is using another function as an input. This can sometimes cause confusion.
+
+            \begin{itemize}
+                \item That means one function is using another function as an input. This can sometimes cause confusion.
+            \end{itemize}
             
             Make sure to keep track of the difference as you go through this chapter - the idea will come back later.
         \end{clarification}
@@ -185,12 +195,12 @@
         
         \begin{kequation}
         
-            \vocab{Testing Error} is written as:
+            \vocab{Testing Error} $\testerr$ is written as:
             
-            \begin{equation}
+            \begin{equation*}
                 \testerr(h) =
                 \frac{1}{m}  \sum_{i\purp{=n+1}}^{\purp{n+m}} \loss \left( h(\ex{x}{i}), \ex{y}{i} \right) 
-            \end{equation}
+            \end{equation*}
         \end{kequation}
         
         
@@ -210,17 +220,20 @@
     
     \subsection{Objective Function}
     
-        Our goal is to minimize our loss. But, \textbf{training loss} is not our main goal: to compensate for that, we might include other terms to make it more \textbf{general}.
+        Our goal is to minimize our loss. But, \textbf{training loss} is not our main goal: to compensate for that, we might include other terms to make it more \textbf{general} (work better for more situations).
+        
         \note{In later sections, we will introduce something called a \textbf{regularizer} to do just that!}
         
         To distinguish between our \textbf{loss} versus our overall goal, we will define an \textbf{objective} function.\\
         
         \begin{definition}
             An \vocab{objective function} is the function we are \purp{optimizing} for: usually, this means that our goal is \purp{minimizing} it.
+
+            \begin{itemize}
+                \item This term usually contains the \gren{loss}, and sometimes, a \gren{regularizer}.
+            \end{itemize}
             
-            This term usually contains the \gren{loss}, and sometimes, a \gren{regularizer}.
-            
-            We minimize our objective function using our \gren{parameters} $\Theta$, so we take that as an input: \purp{J($\Theta$)}
+            We minimize our objective function using our \orgg{parameters} $\Theta$, so we take that as an input: \purp{J($\Theta$)}
         \end{definition}
         
         \note{We will be seeing a lot of $\Theta$ for a while.}
@@ -228,8 +241,12 @@
     \subsection{Parts of an Objective Function}
     
         For now, we will just consider loss, so our \textbf{objective function} will be the same as our \textbf{training error}, dependent only on the \textbf{loss function}.
+
+        \begin{itemize}
+            \item Since we are focusing more on $\Theta$ then before, we'll replace $h(\ex{x}{i})$ with \blu{$h(\ex{x}{i}; \Theta)$}:
+        \end{itemize}
         
-        Since we are focusing more on $\Theta$, we'll replace $h(\ex{x}{i})$ with \blu{$h(\ex{x}{i}; \Theta)$}:
+        
         
         \begin{equation*}
             J(\Theta) = \text{Training Error} = 
@@ -259,29 +276,60 @@
                 \right)
                 +
                 \blu{\lambda} \red{ R(\Theta)}
-        \end{equation*}
+            \end{equation*}
+
+            \begin{itemize}
+                \item The left term is the \purp{loss}: how well we perform on training data.
+                \item The right term is the \orgg{regularization}: it improves how "general" (good for new situations) our model might be.
+            \end{itemize}
         \end{kequation}
         
         
         In the long run, this is the function we want to \textbf{optimize}.
         
-        Notice that our objective function depends on our training data $\data$ as well: what data we have affects what the best result is.
+        Notice that our objective function \textbf{depends} on our training data $\data$ as well: our data determines how well we're doing.
+            \note{A good solution for a political science exam is probably pretty bad for a geology exam.}
+
+        \begin{itemize}
+            \item Just like how we can use ";" when writing $h(x;\Theta)$, we'll use the same notation here: \redd{$J(\Theta;\data)$}
+            
+            \item $\Theta$ is our "main" input variable, but if we switch out our data $\data$, we would get a different result.\\
+        \end{itemize}
         
-        Just like how we can use $h(x;\Theta)$, we'll use the same notation here: \redd{$J(\Theta;\data)$}
         
-        $\Theta$ is our "main" input variable, but if we switch out our data $\data$, we would get a different result.\\
+        
+        
         
         \begin{clarification}
-           Students often get confused by the fact that our \purp{objective function} $J$ is a function of $\Theta$, while \purp{training error} $\trainerr$ is a function of $h$.
+           Students often get confused by the fact that our \purp{objective function} $J$ is a function of $\Theta$, while \orgg{training error} $\trainerr$ is a function of $h$.
+
+           \begin{equation*}
+               \overbrace{
+                    J(\Theta)}^{\text{Uses } \Theta} 
+                =
+                \overbrace{
+                    \trainerr(h)}^{\text{Uses } h} 
+                + \lambda R(\Theta)
+           \end{equation*}
             
-            This may seem strange: if \purp{training error} is included in the \purp{objective function}, why have different variables?
+            The difference is that \orgg{training error} $\trainerr(h)$ is \gren{more general} than the \purp{objective function} $J(\Theta)$, and \orgg{$h$} is \gren{more general} than \purp{$\Theta$}.
+
+            \begin{itemize}
+                \item By "more general", we mean that there are more situations where we can use $h$ than $\Theta$.
+                \begin{itemize}
+                    \item $\Theta$ is a list of parameters: we only use it if we have a \purp{parametric model}.
+                    \item $h$ is used if we have \orgg{any kind of model}.
+                \end{itemize}
+            \end{itemize}
+
             
-            The difference is that \purp{training error} is \gren{more general} than the \purp{objective function}, and \purp{$h$} is \gren{more general} than \purp{$\Theta$}.
+            So, let's compare $\trainerr(h)$ and $J(\Theta)$:
             
             \begin{itemize}
-                \item \purp{Training error} can be used for a \gren{non-parametric model}. Since we don't know if we have parameters, we can't assume $\Theta$, our vector of \gren{parameters}. So, we use $h$.
+                \item \orgg{Training error} 
+                can be used for any model $h$, so we don't want to use $\Theta$: our model could be \gren{non-parametric}.
                 
-                \item Our \purp{objective function} \gren{assumes} we have parameters $\Theta$: since we want to optimize with $\Theta$, we use it instead.
+                \item Our \purp{objective function} \gren{assumes} we have parameters $\Theta$: we know our model class $H$, we just want to optimize $\Theta$.
             \end{itemize}
             
         \end{clarification}
@@ -293,6 +341,8 @@
         To show our point, we'll use the following example:
         
         \miniex Take $f(x)=(x-1)^2$. The minimum output is 0, which happens at $x=1$. So, we have a minimum at $(1, 0)$.
+
+        \subsecdiv
         
         \begin{itemize}
             \item What is the \textbf{minimium} value of $J$ we can find \textbf{by adjusting $\Theta$}?
@@ -314,9 +364,13 @@
         \begin{equation}
             \min_x{ \red{(x-1)^2} } = \red{0}
         \end{equation}
+
+        0 is the minimum value of $J$ we can find by adjusting $\Theta$.
+
+        \subsecdiv
         
         \begin{itemize}
-            \item What \textbf{value} of $\Theta$ gives us \textbf{minimum} $J$?
+            \item What \textbf{value} of $x$ gives us \textbf{minimum} $J$? 
         \end{itemize}
         
         \begin{notation}
@@ -335,8 +389,22 @@
         \begin{equation}
             \argmin{\red{x}}{ (x-1)^2 } = \red{1}
         \end{equation}
+
+        1 is the value of $x$ which gives the minimum $J$.\\
+
+        \begin{clarification}
+            Why is it called "\vocab{argmin}"?
+
+            "\gren{Argument}" is used as another word for "\gren{input variable}".
+
+            And our argmin function returns the \gren{argument} with the \purp{minimum} output. Hence, \gren{arg} \purp{min}.
+        \end{clarification}
         
-        Why is it called "argmin"? Well, "argument" is used as another word for "input variable". And our argmin function returns the \textbf{argument} with the \textbf{minimum} output.
+          
+
+        
+
+        \subsecdiv
         
     \subsection{Optimal Value Notation}
         
@@ -384,12 +452,17 @@
             y = mx+b
         \end{equation}
         
-        A linear equation: $m$ tells us how much our input affects our output. $b$ accounts for everything unrelated to $x$: what is $y$ when $x=0$?
+        A linear equation: 
         
-        $b$ and $m$ are our parameters: that means they're part of $\Theta$. We'll rename them $\theta_0$ and $\theta_1$. 
+        \begin{itemize}
+            \item $m$ tells us \textbf{how much} our input $x$ affects our output $y$.
+            \item $b$ accounts for everything \textbf{unrelated} to $x$: what is $y$ when $x=0$?
+        \end{itemize}
+
+        $b$ and $m$ are our parameters: that means they're part of $\Theta$. We'll rename them $b=\theta_0$ and $m=\theta_1$.
         
         \begin{equation}
-            h(x) = \red{\theta_1} x + \red{\theta_0}
+            h(x) = \red{\theta_1} x + \blu{\theta_0}
         \end{equation}
         
     \subsection{The Linear Model, 2-D}
@@ -413,7 +486,7 @@
         \note{This is the "dimension" of our input space: the \textbf{number} of input variables we have.}
         
         \begin{equation}
-            h(x) = \red{\theta_0} + \red{\theta_1}x_1 + \red{\theta_2}x_2 + \red{\theta_3}x_3 + ... + \red{\theta_d}x_d
+            h(x) = \blu{\theta_0} + \red{\theta_1}x_1 + \red{\theta_2}x_2 + \red{\theta_3}x_3 + ... + \red{\theta_d}x_d
         \end{equation}
         
     \subsection{The Linear Model using Vectors}
@@ -426,7 +499,9 @@
                 \begin{bmatrix}
                     \theta_1 \\ \theta_2 \\ \vdots \\ \theta_d
                 \end{bmatrix}
+                }
                 \cdot
+                \blu{
                 \begin{bmatrix}
                     x_1 \\ x_2 \\ \vdots \\ x_d
                 \end{bmatrix}
@@ -436,7 +511,7 @@
         If we write this symbolically, we get:
         
         \begin{equation}
-            h(x) = \theta_0 + \red{\theta \cdot x} 
+            h(x) = \theta_0 + \red{\theta} \cdot \blu{x} 
         \end{equation}
         
         Unfortunately, we had to leave $\theta_0$ out to make it work. $\theta$ is used for the parameters of our \textbf{dot product}, $\Theta$ is \textbf{all} parameters.\\
@@ -498,16 +573,30 @@
         \end{equation}
         
         We call this \vocab{square loss}. It punishes high and low guesses equally, and the punishments become more \textbf{severe} as the \textbf{difference} increases.
-        \note{Our slope $2x$ gets larger as we move away from $x=0$.}
-        
-        We use \textbf{square} distance for a few good reasons:
+        \note{Our slope $\deriv{}{x} x^2 = 2x$ gets larger as we move away from $x=0$.}\\
+
+        \begin{concept}
+             We use \vocab{square} distance for a few good reasons:
         
         \begin{itemize}
             \item Always positive: high and low guesses are treated equally.
-            \item When we have vectors, we can \textbf{represent} it with a \textbf{dot product} $w \cdot w$, or \textbf{matrix multiplication} $w^T w$: tools we like using.
-            \item $\norm{w}$ is not \textbf{smooth}: this isn't good for derivatives! $\norm{w}^2$ \textit{is} smooth.
-            \note{ To see this, compare $\abs{x}$ to $x^2$.}
+            
+            \item When we have vectors, we can \textbf{represent} it with a \purp{dot product} $w \cdot w$, or \purp{matrix multiplication} $w^T w$: tools we like using.
+            
+            \item $\norm{w}$ is \gren{not smooth}: this isn't good for derivatives! $\norm{w}^2$ \textit{is} smooth.
+                \begin{itemize}
+                    \item We can see that $\norm{w}$ isn't smooth at $w=0$.
+                \end{itemize}
+
+            \item The \orgg{slope} is \orgg{small} when you're close to the correct answer: if you're close to right, the loss stays low.
+                \begin{itemize}
+                    \item Inversely, if you're really wrong, then the model really penalizes you for being more wrong.
+                    \item For example: the difference between $2^2$ and $1^1$ ($2^2-1=3$) is much smaller than between 24 and 23 ($24^2-23^2=47$)
+                \end{itemize}
         \end{itemize}
+        \end{concept}
+        
+       
         
     \subsection{Our Goal}
         
@@ -526,7 +615,7 @@
         \begin{equation}
             J(\theta,\theta_0) = 
             \frac{1}{n}  \sum_{i=1}^n 
-            \red{ \loss ( g, } \blu{\ex{y}{i}}  \red{)}
+            \red{ \loss ( \ex{g}{i}, } \blu{\ex{y}{i}}  \red{)}
         \end{equation}
         
         Substitute in \textbf{squared loss}:
@@ -534,7 +623,7 @@
         \begin{equation}
             J(\theta,\theta_0) = 
             \frac{1}{n}  \sum_{i=1}^n 
-            \red{ ( g -} \blu{ \ex{y}{i}} \red{)^2 }
+            \red{ ( \ex{g}{i} -} \blu{ \ex{y}{i}} \red{)^2 }
         \end{equation}
         
         Our guess is given by our \textbf{hypothesis}, $\red{h(} \blu{\ex{x}{i}} \red{;\Theta)}$
@@ -550,13 +639,13 @@
         And finally, we use our linear model, $\theta^T \blu{\ex{x}{i}}  + \theta_0$.\\
         
         \begin{kequation}
-            The \vocab{ordinary least squares} \vocab{objective function} for \vocab{linear regression} is written as 
-            \begin{equation}
+            The \vocab{ordinary least squares} \vocab{objective function} for \purp{linear regression} is written as 
+            \begin{equation*}
                 J(\theta,\theta_0) = 
                 \frac{1}{n}  \sum_{i=1}^n 
                 \left( \red{ (\theta^T} \blu{\ex{x}{i}} \red{ + \theta_0) } 
                 - \blu{\ex{y}{i}} \right)^2 
-            \end{equation}
+            \end{equation*}
         \end{kequation}
         
         To clarify:
@@ -614,14 +703,19 @@
             \caption*{This plane is \textbf{fitted} the same way our line was. Notice that $y$ is our \textbf{height}: this is the \textbf{output} of our regression.}
         \end{figure}
         
-        Higher-dimension versions are hard to visualize. So, instead, we don't try, and call it a \textbf{hyperplane}.\\
+        Higher-dimension versions are hard to visualize. So, instead, we don't even try to. Because they're a higher-dimensional version of a \textbf{plane}, we call it a \textbf{hyperplane}.\\
         
         \begin{definition}
             A \vocab{hyperplane} is a \purp{higher-dimensional version} of a \gren{plane} - a \gren{flat} surface that continues on forever.
             
             We use it to represent our \gren{linear} hypothesis for the purpose of \purp{regression}. 
-            
-            The "\purp{height}" ($\nth{(d+1)}$ dimension) of this \gren{plane} at a certain point represents the \purp{output} of our \gren{linear} hypothesis at that point.
+
+            \begin{itemize}
+                \item We have $d$ dimensions ($d$ variables) in our input.
+                \item To represent our output, we need one additional, $\nth{(d+1)}$ dimension.
+            \end{itemize}
+
+            Thus, the "\purp{height}" of our plane ($\nth{(d+1)}$ dimension) at a particular point in the ($d$-dimensional) \gren{input} space represents the \purp{output} of our linear hypothesis, given those inputs.
         \end{definition}
         
         Our line was a \textbf{1-D} object in a \textbf{2-D} plane. Our plane was a \textbf{2-D} object in a \textbf{3-D} space. So, our hyperplane is a $d$ dimensional object in a $d+1$ dimensional space.
@@ -637,12 +731,14 @@
         \end{equation}
         
         Before, we took $\theta_k$ as just an \textbf{extension} of the $mx+b$ formula: $\theta_k$ tells us how much $x_k$ affects our output.
+
+        \begin{itemize}
+            \item However, we can also think about the \textbf{relative} scale of each $\theta_k$: if $\theta_2$ is \textbf{larger} than $\theta_1$, then $x_2$ has a \textbf{stronger} effect on the output than $x_1$.
+            \item We can say that $x_2$ \textbf{weighs} more heavily in our calculation: it has more say in the \textbf{result}.
+        \end{itemize}
         
-        However, we can also think about the \textbf{relative} scale of each $\theta_k$: if $\theta_2$ is \textbf{larger} than $\theta_1$, then $x_2$ has a \textbf{stronger} effect on the output than $x_1$.
         
-        We can say that $x_2$ \textbf{weighs} more heavily in our calculation: it has more say in the \textbf{result}.
-        
-        Because of that, we sometimes call $\theta_k$ the \textbf{weight} for $x_k$.\\
+        Because of this, we sometimes call $\theta_k$ the \textbf{weight} for $x_k$.\\
         
         \begin{definition}
             A \vocab{weight} is a \gren{parameter} that tells us how \gren{strongly} a variable \purp{influences} our \purp{output}.
@@ -768,8 +864,10 @@
             J = 
             \frac{1}{n}  \sum_{i=1}^n \red{(\theta \ex{x}{i}  - \ex{y}{i} )^2} 
         \end{equation}
-        
-        This is a bit of a hassle - it \textbf{forces} us to use $\ex{x}{i}$ notation, and we have to be conscious of that \textbf{sum}.
+
+        \begin{itemize}
+            \item This is a bit of a hassle - it \textbf{forces} us to use $\ex{x}{i}$ notation, and we have to be conscious of that \textbf{sum}.
+        \end{itemize}
         
         By using \textbf{vectors} above, we were able to work with \textbf{many} variables $\theta_k$ at the same time, making it easier to \textbf{represent} and \textbf{work} with them in the future. 
         
@@ -1003,7 +1101,7 @@
                 \item $J$:        $(1 \times 1)$ - scalar
             \end{itemize}
             
-            If we combine $\theta_0$ into $\theta$, replace every use of $d$ with $d+1$.
+            If we combine $\theta_0$ into $\theta$, replace every use of \red{$d$} with \blu{$d+1$}.
             
         \end{concept}
         
@@ -1057,10 +1155,12 @@
         \end{equation}
         
         If we treat $\theta$ like any ordinary \textbf{variable}, this is just a simple function! How would we find the \textbf{minimum}? 
-        
-        Using \textbf{calculus}! Anywhere there's a local \textbf{minimum}, we typically know the \textbf{derivative} is 0.
-        \note{Assuming a "smooth" surface...}
-        
+
+        \begin{itemize}
+            \item Using \textbf{calculus}! Anywhere there's a local \textbf{minimum}, we typically know the \textbf{derivative} is 0.
+                \note{Assuming a "smooth" surface...}
+        \end{itemize}
+
         Note that we aren't taking $\deriv{}{x}$: we want to change our \textbf{model}, not our \textbf{data}! So, since $\theta$ represents our \textbf{model}, we'll take $\deriv{}{\theta}$.
         
         \begin{equation}
@@ -1145,7 +1245,7 @@
         \note{This approximation formula becomes exact as the step size shrinks: we go from $\Delta \theta$ to $\dd \theta$.}\\
         
         \begin{concept}
-            If our function $J(\theta)$ has \red{$d$} \vocab{different variables} , we can \gren{explicitly} find \vocab{local minima} by getting all of the \purp{equations}
+            If our function $J(\theta)$ has \red{$d+1$} \vocab{different parameters} , we can \gren{explicitly} find \vocab{local minima} by getting all of the \purp{equations}
             
             \begin{equation*}
                 \pderiv{J}{\theta_0} = 0, \;\;\;
@@ -1161,12 +1261,18 @@
             \end{equation*}
             
             ...And solving this \purp{system of equations} for the \gren{components} of $\theta$.
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item Why $d+1$ instead of $d$? Because we're including $\theta_0$ as one additional parameter.
+            \end{itemize}
             
         \end{concept}
         
         \note{Again, we ignore the second requirement of making sure this isn't a \textbf{maximum} or \textbf{saddle} point.}
         
-        The \textbf{solution} to this system of equations will be our \textbf{desired result}, $\theta^*$.
+        The \textbf{solution} to this system of equations will be our \textbf{desired list of parameters}, $\theta^*$.
         
     \subsection{Gradient Notation}
     
@@ -1175,9 +1281,9 @@
         You may recognize these \textbf{component-wise} derivatives as part of the "\textbf{multivariable} version" of the derivative: the \textbf{gradient}.\\
         
         \begin{kequation}
-            The \textbf{gradient} of $J$ with respect to $\theta$ is
+            The \vocab{gradient} of $J$ with respect to $\theta$ is
             
-            \begin{equation}
+            \begin{equation*}
                 \nabla_\theta J =
                 \pderiv{J}{\theta} =
                 \begin{bmatrix}
@@ -1185,7 +1291,7 @@
                     \vdots \\
                     \pderivslash{J}{\theta_d}
                 \end{bmatrix}
-            \end{equation}
+            \end{equation*}
         
         \end{kequation}
         
@@ -1241,7 +1347,6 @@
         \end{equation}
         
         We will not show here how to \textbf{find} these derivatives, but the important rules you need to compute our derivatives are in the \textbf{appendix}.
-        \note{There's a document explaining vector derivatives coming soon!}
         
         Note that \textbf{matrix} derivatives often look \textbf{similar} to \textbf{traditional} derivatives, but they are \textbf{not the same}. Most often, making this mistake will result in \textbf{shape errors}.
         \note{Sometimes, you can guess a derivative by using the familiar rules and fixing shape errors with transposing/changing multiplication order. But be careful!}
@@ -1288,6 +1393,12 @@
                 Y^T
                 }_{n \times 1} 
             \end{equation*}
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item Remember that if we're including $\theta_0$, we replace $d$ with $d + 1$.
+            \end{itemize}
             
         \end{kequation}
         
@@ -1317,7 +1428,7 @@
         \begin{definition}
             A \vocab{regularizer} is an added term to our \gren{loss function} that helps measure how \purp{general} our hypothesis is.
             
-            By \gren{optimizing} with this term, we hope to create a model that works better with \purp{new data}.
+            By \gren{optimizing} with this term, we hope to create a model that works better with \purp{new data} we didn't train with.
             
             This function takes in our \purp{vector of parameters} \gren{$\Theta$} as an input: \purp{$R(\Theta)$}
         \end{definition}
@@ -1328,10 +1439,15 @@
     \subsection{Regularizer for Regression: Prior Knowledge}
         
         Now, the question is, \textbf{how} do we choose our regularizer? What will make our model more \textbf{general}?
+
+        \begin{itemize}
+            \item We want to \textbf{resist} the effects of random \textbf{chance}, like in the \textbf{coin} example above. In that example, we saw the problem with our guess by starting with a \textbf{prior assumption}.
+            
+            \item If you have some \textbf{previous} guess, or past experience, you might have some \textbf{model} you \textbf{expect} to work well: the data has to \textbf{convince} you otherwise.
+            
+        \end{itemize}
         
-        We want to \textbf{resist} the effects of random \textbf{chance}, like in the \textbf{coin} example above. In that example, we improved our guess by starting with a \textbf{prior assumption}.
         
-        If you have some \textbf{previous} guess, or past experience, you might have some \textbf{model} you \textbf{expect} to work well: the data has to \textbf{convince} you otherwise.
         
         So, we might consider a model \textbf{more different} from that past one, $\Theta_{\text{prior}}$, to be \textbf{suspicious}, and less likely to be good.\\
         
@@ -1352,14 +1468,18 @@
     \subsection{Regularizer for Regression: No Prior Hypothesis}
     
         But, what if we \textbf{don't have} a prior hypothesis? What if we have \textbf{no clue} what a \textbf{good} solution looks like?
+
+        \begin{itemize}
+            \item Well, just like in the \textbf{coin} example, we don't expect it to be \textbf{more likely} to be \textbf{weighted} towards heads or tails.
+
+            \item So, even if we \textbf{didn't know} most coins are fair coins, we still would've chosen \textbf{50-50} as our guess.
+
+            \item In this case, as far as we know, every $\theta_k$ term is \textbf{equally likely} to be \textbf{positive or negative} - we have no clue.
+        \end{itemize}
         
-        Well, just like in the \textbf{coin} example, we don't expect it to be \textbf{more likely} to be \textbf{weighted} towards heads or tails.
+        So, \textbf{on average}, we could push for it to be \textbf{closer to zero}, so it doesn't drift in any direction too strongly.
         
-        So, even if we \textbf{didn't know} most coins are fair coins, we still would've chosen \textbf{50-50} as our guess.
-        
-        In this case, as far as we know, every $\theta_k$ term is \textbf{equally likely} to be \textbf{positive or negative} - we have no clue.
-        
-        So, \textbf{on average}, we could push for it to be \textbf{closer to zero}, so it doesn't drift in any direction too strongly.\\
+        For each variable $x_i$, we don't know if it's likely to increase or decrease $y$. So we assume that the most likely effect is "none".\\
         
         \begin{kequation}
             In general, our \vocab{regularizer for regression} will be given by \purp{square magnitude} of $\theta$:
@@ -1367,12 +1487,95 @@
             \begin{equation*}
                 R(\Theta) = \norm{\theta}^2 = \theta \cdot \theta
             \end{equation*}
+
+            In this model, we are biasing our $\norm{\theta}$ towards 0.
             
             This approach is called \vocab{Ridge Regression}.
         \end{kequation}
         
         \note{We'll discuss why it's called "ridge" regression once we find our solution.}
+
+        In practice, this means that we're assuming that no particular variable is likely to affect the output very much.
+
+        \begin{itemize}
+            \item A small amount of change in the output would still be expected, because of random noise.
+        \end{itemize}
+
+        So, we start off assuming that we can't make a more detailed prediction, and allow the data to try to convince us otherwise.
+
+        \begin{itemize}
+            \item If the effect is small, then we're more sure that it's just noise. 
+            \item But, if the effect is large, it'll override the regularizer, and we expect that variable $x_i$ really is affecting $y$.
+        \end{itemize}
+
+
+    \subsection{A second benefit: avoid error amplification}
+
+        Let's demonstrate another possible problem: a large $\theta_k$ can "amplify" the error due to randomness.
+
+        Let's see how this can happen.
+
+        \begin{itemize}
+            \item Suppose that two inputs are \orgg{almost exactly the same}: $x_1^{(1)}=0$, and $x_1^{(2)}=0.01$. 
+                \note{Same variable $x_1$, but two different datapoints $i=1,i=2$}
+                
+            \item But, the outputs are \textbf{somewhat} different.  The outputs are $y^{(1)}=25$, $y^{(2)}=26$.
+        \end{itemize}
         
+        If we assume \textbf{all} of the change in the output is a result of the the \textbf{input}, then it looks like a \gren{tiny} change in $x_1$ has a \purp{huge} effect on the output $y$.
+
+        \begin{equation}
+            \deriv{y}{x} = \frac{\Delta y}{\Delta x} = \frac{1}{.01} = 100
+        \end{equation}
+
+        This suggests that $x_1$ has a \redd{100x} effect on our output! 
+
+        \begin{equation}
+            \theta_1 = 100
+        \end{equation}
+
+        \begin{equation}
+            100 x_1 + 25 = h(x)
+        \end{equation}
+
+        This model perfectly fits our data.
+
+        \begin{itemize}
+            \item But in reality, it's possible (and pretty common in real data) for $y$ to change a bit (for example, $\pm 3$) under the exact same circumstances, just because of \orgg{randomness}. 
+            \item If this is true, $y$ only changed by 1. We probably shouldn't expect this change to give us much information!
+        \end{itemize}
+
+        Now, we have a problem. Even if $x_1$ never mattered, we think it does. We see the effect for our new data point, $x_1^{(3)}=2$.
+
+        \begin{equation}
+            100(2) + 25 = 225
+        \end{equation}
+
+        If we compare to $x^{(1)}$, our result has changed by 800\%. But if $x_1$ didn't really matter, and everything else is the same, then we've made a big mistake: $y^{(3)} \approx 25$.
+
+        This is what we mean by \vocab{error amplification}: a \gren{small} difference in the input of $+2$ becomes a \purp{very large} error in the output of $+200$.\\
+
+        \begin{concept}
+            Regularization guards agains the problem of \vocab{error amplification}.
+
+            Suppose the input $x_1$ changes by a tiny amount, and the output $y$ changes by a larger (but still small) amount.
+
+            \begin{itemize}
+                \item In this situation, $x_1$ looks like it's a very important variable!
+                \item $\theta_1$ becomes large.
+                \item This can happen even if it's just random chance.
+            \end{itemize}
+
+            If $x_1$ changes by a larger amount (again randomly), then you get a \gren{huge change} in the \purp{output}: this can cause a \gren{huge error}!
+
+            Thus, the \orgg{error} resulting from random noise has been \purp{amplified}.
+
+            If we bias $\theta_1$ towards remaining smaller, then we avoid this problem.
+        \end{concept}
+
+        Regularization biases against this kind of issue. Of course, including more data also helps fight overfitting.
+        
+         
     \subsection{Why not include $\theta_0$?}
     
         One thing you might immediately notice is that we used the magnitude of $\theta$ instead of $\Theta$: this omits $\theta_0$. Why would we do that?
@@ -1413,11 +1616,11 @@
         \note{This will be discussed more in-depth in the Classification chapter!}
 
         
-    \subsection{A second benefit of regularization}
+    \subsection{A third benefit of regularization}
     
-        Another benefit of regularization is that it solves a second problem: having \textbf{multiple optimal solutions}.
+        Another benefit of regularization is that it solves a more abstract problem: having \textbf{multiple optimal solutions}.
         
-        If we have \textbf{multiple} best outcomes, we have to pick which one to \textbf{choose}. We can make this choice by \textbf{picking} the one with the \textbf{smallest} magnitude.
+        If we have \textbf{multiple} best outcomes, we have to pick one of them. We can make this choice by \textbf{picking} the one with the \textbf{smallest} magnitude.
         
         We can \textbf{visualize} the problem of "multiple best solutions" a couple different ways:
         
@@ -1532,7 +1735,7 @@
         
         Just like before, we'll switch from a \textbf{sum} to a \textbf{matrix} in order to solve this problem.
         
-        Creating an \textbf{equation} for both $\theta$ and $\theta_0$ is, frankly, \textbf{annoying} to \textbf{derive}. \textbf{Instead}, we'll cheat a little, and keep $\theta_0$ in and create our \textbf{matrix-form} objective function:
+        Creating an \textbf{equation} for both $\theta$ and $\theta_0$ is, frankly, annoying to \textbf{derive}. \textbf{Instead}, we'll cheat a little, and keep $\theta_0$ in and create our \textbf{matrix-form} objective function:
         
         \begin{equation}
             J = \frac{1}{n}
@@ -1654,11 +1857,13 @@
     
         There's something we ignored earlier: how do we pick the \textbf{best} value of $\lambda$? We didn't go into detail, but that value of $\lambda$ will affect our algorithm's \textbf{performance}.
         
-        This $\lambda$ adjusts exactly how we \textbf{learn}: how much more do we learn \textbf{specifically}, versus \textbf{generally}?
-    
-        We mentioned that different $\lambda$ values have different \textbf{tradeoffs}, so we need to figure out which $\lambda$ value is best for our problem.
+        \begin{itemize}
+            \item We mentioned that different $\lambda$ values have different \textbf{tradeoffs}, so we need to figure out which $\lambda$ value is best for our problem.
+            
+            \item This $\lambda$ adjusts exactly how we learn: how do we balance learning from \textbf{data} against the need to \textbf{generalize}?
+        \end{itemize}
         
-        We'll need to \textbf{optimize} our $\lambda$ value! Let's figure out how to go about that.
+        So, we need to \textbf{optimize} our $\lambda$ value. Let's figure out how to go about that.
         
     \subsection{Tradeoffs: Estimation Error}
     
@@ -1752,10 +1957,16 @@
         \end{concept}
         
         However, \textbf{regularization} also \textbf{limits} the possible models we can use - those it views as less "general", it \textbf{penalizes}.
+
+        \begin{itemize}
+            \item That means the scope of possible models is \textbf{smaller} - some models are no longer \textbf{acceptable}. What if the only valid solution was in that space we \textbf{restricted}? Well, then we can't \textbf{find} it.
+            
+            \item That means there are certain \textbf{structural} limits on our model: that means that regularization \textbf{increases} structural error!\\
+        \end{itemize}
         
-        That means the scope of possible models is \textbf{smaller} - some models are no longer \textbf{acceptable}. What if the only valid solution was in that space we \textbf{restricted}? Well, then we can't \textbf{find} it.
         
-        That means there are certain \textbf{structural} limits on our model: that means that regularization \textbf{increases} structural error!\\
+        
+        
         
         \begin{concept}
             A \vocab{small $\lambda$} means \purp{less regularization}: we care less about a more \gren{general} model, allowing more \gren{specific} data to come into play.
@@ -1793,7 +2004,7 @@
         \begin{clarification}
             When we \vocab{evaluate a hypothesis} using \purp{testing error}, we are \gren{done training}: our hypothesis will not change.
             
-            Because of this, we \textbf{do not} include the \purp{regularizer} when \gren{evaluating} our hypothesis.
+            Because of this, we \orgg{do not} include the \orgg{regularizer} when \gren{evaluating} our hypothesis.
         \end{clarification}
         
     \subsection{$\lambda$'s purpose: learning algorithms}
@@ -1801,7 +2012,7 @@
         Notice that we \textbf{removed} regularization when we were \textbf{evaluating} our hypothesis: regularization was used to \textbf{create} our hypothesis, but it is not \textbf{part} of that hypothesis.
         \note{Our hypothesis only includes the parameters $\Theta$: not $\lambda$!}
         
-        That's because $\lambda$ is part of our \textbf{algorithm}: it determines how we run our algorithm. So, let's talk about that.\\
+        That's because $\lambda$ is part of our \textbf{algorithm}: it determines how we find our hypothesis. So, let's talk about that.\\
         
         \begin{definition}
             A \vocab{learning algorithm} is our procedure for \purp{learning} from data. It uses that data to create a \gren{hypothesis}. We can diagram this as:
@@ -1833,14 +2044,23 @@
         $$ x \rightarrow \boxed{h} \rightarrow y $$
         
         In a way, our learning algorithm is a function, that outputs another function!
-        \note{This is similar to $\trainerr$, which instead \textbf{takes in} a function!}
+        \note{This is similar to $\trainerr$, which instead takes a function as \textbf{output}!}
+
+        \begin{itemize}
+            \item Our \gren{hypothesis} can be adjusted with our \purp{parameter} $\Theta$: if we change $\Theta$, we change our \textbf{performance}.
+            
+            \item Our \gren{learning algorithm} depends on $\lambda$: so, $\lambda$ is like a \purp{parameter}. But, it's different from $\Theta$: $\Theta$ \orgg{is} our model, $\lambda$ controls how we \orgg{choose} our model.
+                \begin{itemize}
+                    \item So, it's a parameter ($\lambda$) that affects other parameters ($\Theta$). Because of that, we call it a \textbf{hyperparameter}.
+                        \note{It affects our hypothesis by pressuring it to have lower magnitude!}\\
+                \end{itemize}
+        \end{itemize}
         
-        Our \textbf{hypothesis} can be adjusted with our \textbf{parameter} $\Theta$: if we change $\Theta$, we change our \textbf{performance}.
         
-        Our \textbf{learning algorithm} depends on $\lambda$: so, it's like a \textbf{parameter}. But, it's different from $\Theta$: $\Theta$ \textbf{is} our model, $\lambda$ controls how we \textbf{choose} our model.
         
-        So, it's a parameter ($\lambda$) that affects other parameters ($\Theta$). Because of that, we call it a \textbf{hyperparameter}.
-        \note{It affects our hypothesis by pressuring it to have lower magnitude!}\\
+        
+        
+        
         
         \begin{definition}
             \purp{Parameters} are \gren{variables} that adjust the behavior of \purp{our model}: our hypothesis.
@@ -1861,36 +2081,48 @@
         How do we measure it? Well, the job of our \textbf{learning algorithm} is to \textbf{pick good hypotheses}.\\
         
         \begin{concept}
-            We can \vocab{evaluate} the performance of a \vocab{learning algorithm} using \purp{testing loss}: a good learning algorithm will create \gren{hypotheses} with \purp{low testing loss}.
+            We can \vocab{evaluate} the performance of a \vocab{learning algorithm} using \orgg{testing loss}: a good learning algorithm will create \gren{hypotheses} with low testing loss.
         \end{concept}
         
         You could think of this as measuring the \textbf{skill} of a \textbf{teacher} (the learning algorithm) by the \textbf{success} of their \textbf{student} (the hypothesis) on a \textbf{test} (testing loss).
         
     \subsection{Validation: Evaluating with lots of data}
     
-        When we were creating hypotheses, \textbf{randomness} caused some problems: you might not get \textbf{training data} that matched the \textbf{testing data} very well.
+        When we were creating hypotheses, \purp{randomness} caused some problems: you might not get \textbf{training data} that matched the \textbf{testing data} very well.
         
         The \textbf{same} can happen here, when \textbf{evaluating} your \textbf{algorithm}: maybe your model happened to create a bad (or unusually good!) hypothesis because of \textbf{luck}.
         
-        The easy solution to \textbf{randomness} is to add \textbf{more data}: we get more \textbf{consistency} that way.
+        The easy solution to \textbf{randomness} is to add \gren{more data}: we get more \textbf{consistency} that way.
         
-        So, we \textbf{repeatedly} get new training data and test data. For each, we \textbf{train} a different hypothesis. We can \textbf{average} their performance out, and use that to \textbf{estimate} the quality of our algorithm.\\
+        So, we \textbf{repeatedly} get new training data and test data. For each, we train a \orgg{different hypothesis}. We can \textbf{average} their performance out, and use that to \textbf{estimate} the quality of our algorithm.\\
         
         \begin{definition}
             \vocab{Validation} is a way to \vocab{evaluate a learning algorithm} using \vocab{large amounts of data}.
             
             We do this by \gren{running} our algorithm \purp{many times} with new data, and \gren{averaging} the testing error of all the hypotheses.
+
+            \begin{itemize}
+                \item This process is often requires having \purp{lots of data} to train with, but is a \textbf{provably} good approach.
+            \end{itemize}
             
-            This process is often requires having \purp{lots of data} to train with, but is a \textbf{provably} good approach.
         \end{definition}
         
     \subsection{Our Problem: When data is less available}
         
-        As mentioned, this takes up \textbf{lots of data}. What if we can't get as much: it's \textbf{expensive}, or not even possible? In this case, we have some \textbf{finite} data, $\data_n$. We \textbf{can't get more}.
+        As mentioned, this takes up \textbf{lots of data}. What if our data is limited?
+            \note{Data is often \textbf{expensive}. It might even be impossible to get more!}
+
+        In this case, we'll assume that have some \textbf{finite} data, $\data_n$. We \textbf{can't get more}.
         
-        We solved the \textbf{randomness} problem by using \textbf{more} training and testing \textbf{data}. So, we need some way to \textbf{get} more \textbf{distinct} hypotheses.
+        Previously, we solved validation by using \textbf{more data}, and generating \gren{multiple hypotheses}.
+
+        \begin{itemize}
+            \item One set of data gives us one \textbf{hypothesis}.
+
+            \item But, what if, rather than using \textbf{completely} new data for each hypothesis, we used \orgg{slightly different} data each time?
+        \end{itemize}
         
-        One set of data gives us one \textbf{hypothesis}. But, what if, rather than using \textbf{completely} new data, we used \textbf{slightly different} data each time?
+         
         
         First, need to break $\data_n$ into a chunk for training, and a chunk for testing.
         
@@ -1903,9 +2135,9 @@
         
     \subsection{Cross-Validation}
     
-        We mentioned that we just want \textbf{different} hypotheses. Our hypotheses depend on our \textbf{training data}. So we want to \textbf{change} our training data.
+        We mentioned that we want \textbf{different} hypotheses. Our hypotheses depend on our \textbf{training data}. So we want to \textbf{change} our training data.
         
-        We can't \textbf{add} data to it, because then we \textbf{lose} testing data. We shouldn't \textbf{remove} data, because then we're just making a hypothesis that's \textbf{less well-informed}.
+        We can't \textbf{add} data to it, because then we \textbf{lose} testing data. We shouldn't \textbf{remove} training data, because then we're just making a hypothesis that's \textbf{less well-informed}.
         
         Instead, we'll \textbf{swap} some of the training data for testing data.
         
@@ -1926,16 +2158,19 @@
         We now have \textbf{four different hypotheses} for the price of one!\\
         
         \begin{definition}
-            \vocab{Cross-validation} is a way to \vocab{evaluate a learning algorithm} using \vocab{limited data}.
-            
-            We do this by \purp{breaking} our data it into \gren{chunks} to create \purp{multiple hypotheses} from one dataset.
-            
-            For each \gren{chunk}, we train one dataset on all the data \textbf{not in that chunk}. We get our \purp{test error} using the chunk \textbf{we left out}.
+            \vocab{Cross-validation} is a way to \gren{evaluate} a learning algorithm using \purp{limited data}.
+
+            \begin{itemize}
+                \item We do this by \purp{breaking} our data it into \gren{chunks} to create \orgg{multiple hypotheses} from one dataset.
+                
+                \item For each \gren{chunk}, we train one dataset on all the data \orgg{not in that chunk}. We get our \purp{test error} using the chunk \textbf{we left out}.
+            \end{itemize}
             
             For $k$ chunks, we end up with $k$ hypotheses. By \gren{averaging} out their performance, we can \purp{approximate} the quality of our algorithm.
         \end{definition}
         
-        This approach is much \textbf{less expensive}, and very common in machine learning! But, some of the theoretical \textbf{benefits} of validation are not \textbf{proven} to be true for cross-validation.\\
+        This approach is much \textbf{less expensive}, and very common in machine learning! 
+            \note{But, some of the theoretical \textbf{benefits} of validation are not \textbf{proven} to be true for cross-validation.}\\
         
         \begin{clarification}
             Note that the goal of validation and cross-validation is \textbf{not} to evaluate \purp{one hypothesis}.
@@ -1947,7 +2182,9 @@
     
         Now, we know how to \textbf{evaluate} a learning algorithm, just like how we \textbf{evaluate} a hypothesis. 
         
-        Once we knew how to evaluate a hypothesis, we started \textbf{optimizing} our parameters for the \textbf{best} hypothesis. So, we could do the same for our \textbf{learning algorithm}.
+        Once we knew how to evaluate a hypothesis, we started optimizing our \gren{parameters} for the \textbf{best} hypothesis. So, we could do the same for our \textbf{learning algorithm}.
+
+        How do we \orgg{optimize} a learning algorithm?
         
         Each $\lambda$ value creates a slightly \textbf{different} learning algorithm: we can \textbf{optimize} this \textbf{hyperparameter} to create the \textbf{best} learning algorithm.
         
@@ -1958,7 +2195,7 @@
         
         We don't always have \textbf{simple} equations to work with: with all of our data, it's hard to come up with \textbf{manageable} equations. So, we \textbf{won't} try doing it \textbf{analytically}.
         
-        So, we could \textbf{randomly} try $\lambda$ values and pick the \textbf{best} one. This is pretty \textbf{close} to what we usually end up doing. For each value we pick, we'll use \textbf{cross-validation} to evaluate.
+        So, we could \textbf{randomly} try $\lambda$ values and pick the \textbf{best} one. This is pretty \textbf{close} to what we usually end up doing. For each value we pick, we'll use \gren{cross-validation} to evaluate.
         
         For now, we'll systematically go through $\lambda$ values: $\lambda=.1, .2, .3 \dots$\\
         
@@ -1973,25 +2210,64 @@
     \subsection{Hyperparameter Tuning: Two kinds of optimization}
     
         There's something often \textbf{confusing} about hyperparameter tuning to students:
+            \note{In case the word "optimization" starts to look like gibberish in this section, remember: it just means, "find the best option".}
+
+        \begin{itemize}
+            \item When we're \textbf{optimizing} $\lambda$, we try many values $\lambda_j$. Each $\lambda_j$ create a \purp{learning algorithm} we have to evaluate. 
+            
+            \item But a single learning algorithm is already an optimization problem: the learning algorithm is supposed to find $\Theta$.
+
+                \begin{itemize}
+                    \item So, we have to \orgg{optimize} $\Theta$, while we're in the middle optimizing $\lambda$.
+                \end{itemize}
+        \end{itemize}
         
-        When we're \textbf{optimizing} $\lambda$, we have to determine the quality of \textbf{each} learning algorithm.
         
-        But, to get the \textbf{quality} of that algorithm, we have to optimize $\Theta$ based on that \textbf{single} learning algorithm.
-        \note{If we do cross-validation, then we have to optimize $k$ times!}
-        
-        That means, \textbf{every time} we try a different $\lambda$ value, we have to do one optimization problem. But trying different $\lambda$ values is a \textbf{different} kind of optimization.
+        That means, \textbf{every time} we try a different $\lambda$ value, we have to do one optimization problem. Optimizing $\Theta$ many times, lets you optimize $\lambda$ once.
+            \note{Remember that, in this situation, $\Theta$ and $h$ are almost(but not quite) the same thing.}
+
+        \begin{equation*}
+                \begin{rcases}
+                \begin{matrix}
+                    \data_n \longrightarrow 
+                    \boxed{\text{learn alg using $\red{\lambda_1}$}} 
+                    \longrightarrow \Theta_1
+                    \longrightarrow
+                    \boxed{\text{Test error }}
+                    \longrightarrow 
+                    \overbrace{\testerr(h_1)} ^{\text{Evaluates }\red{\lambda_1}} \\\\
+                    \data_n \longrightarrow 
+                    \boxed{\text{learn alg using $\red{\lambda_2}$}} 
+                    \longrightarrow \Theta_2
+                    \longrightarrow
+                    \boxed{\text{Test error }}
+                    \longrightarrow 
+                    \overbrace{\testerr(h_2)} ^{\text{Evaluates }\red{\lambda_2}} \\
+                    \vdots \\
+                    \data_n \longrightarrow 
+                    \boxed{\text{learn alg using $\red{\lambda_n}$}} 
+                    \longrightarrow \Theta_n
+                    \longrightarrow
+                    \boxed{\text{Test error }}
+                    \longrightarrow 
+                    \overbrace{\testerr(h_n)} ^{\text{Evaluates }\red{\lambda_n}}
+                \end{matrix}
+                \end{rcases}\text{Pick best $\lambda_j$ using $\testerr$}  
+            \end{equation*}
         
         That means we have \textbf{two layers} of optimization!\\
         
         \begin{clarification}
             We \purp{optimize} $\lambda$ by trying many values.
-            
-            But, for each $\lambda$ value, we have to \gren{optimize} $\Theta$.
+
+            \begin{itemize}
+                \item But, for each $\lambda$ value, we have to \gren{optimize} $\Theta$.
+            \end{itemize}
             
             So, we have to optimize $\Theta$ \purp{repeatedly} in order to optimize $\lambda$ \purp{once}! This gives us $\lambda^*.$
         \end{clarification}
         
-        But, our goal is to get a \textbf{hypothesis}. So we use that $\lambda^*$ to, finally, get our $\theta^*$
+        Once we've found our best hyperparameter $\lambda^*$, we can use it to get our best parameters: $\theta^*$.
         
     \subsection{Pseudocode Example}
         

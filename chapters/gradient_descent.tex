@@ -22,7 +22,7 @@
         \end{itemize}
         
         \begin{concept}
-            Most \vocab{problems} we come across cannot be solved \vocab{analytically}.
+            Most \purp{problems} we come across cannot be solved \gren{analytically}.
         \end{concept}
         
         Well, if we can't \textbf{directly} find the \textbf{best} answer, what's the next best thing? Finding a \textbf{better} solution than your current one.
@@ -34,7 +34,8 @@
             
             \item If we don't need \textbf{all} of our data to get the answer, we don't need to spend as much time. If our answer is \textbf{good} and not getting better, we can \textbf{stop}.
             
-            \item It's easier to find a \textbf{better} answer than the \textbf{best} answer: our equations will be \textbf{simpler}. In some case, it might not have even been \textbf{possible} without this gradual approach!\\
+            \item It's easier to find a \textbf{better} answer than the \textbf{best} answer: our equations will be \textbf{simpler}. In some case, it might not have even been \textbf{possible} without this gradual approach!
+            \\
         \end{itemize}
         
         \begin{concept}
@@ -107,6 +108,7 @@
     \subsection{The name: "gradient descent"}
     
         Our goal is to gradually \textbf{decrease} $J$, step-by-step. We do this using the \textbf{gradient}, hence "gradient descent". Why the gradient? We'll discuss that later.
+            \note{Reminder: Why are we "decreasing" $J$? Because $J$ represents the "badness" of our model. We want it to be, simply put, "less bad".}
         
         But why the word "\textbf{descent}"? 
         
@@ -151,20 +153,33 @@
         
         \begin{definition}
             The \vocab{parameter space} is our set of all \gren{possible} parameter combinations.
+
+            
             
             This is the same as the \vocab{hypothesis space}, because our parameters \gren{define} our hypothesis.
             
-            When we \gren{optimize} our hypothesis, we are "\purp{exploring}" the hypothesis space. 
+            When we \gren{optimize} our hypothesis, we are "\purp{exploring}" the hypothesis space.
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item This can be seen as the "collection of \orgg{all possible models} in our model class".
+                \item Why do we call it a "parameter \purp{space}", not a "parameter set"?
+                    \begin{itemize}
+                        \item It's the \gren{structure}: the fact that some hypothesis are "closer" to each other: $\theta=1$ is closer to $\theta=2$ than $\theta=10$
+                    \end{itemize}
+            \end{itemize}
         \end{definition}
         
-        This also gives us an idea of which hypotheses are "\textbf{similar}": those which are \textbf{closer} in parameter space (which we used, when we were doing regularization $\norm{\theta-\theta_{old}}$).
+        We mentioned one useful feature: we have a concept of which hypotheses are "\textbf{similar}": those which are \textbf{closer} in parameter space.
+            \note{We've already used this fact! When normalizing towards the previous hypothesis, $\theta_{old}=0$, we minimized $\norm{ \theta-\theta_{old} }$.}
         
         This is the \textbf{space} we're exploring, as we try to move \textbf{downhill}. \\
         
         \begin{clarification}
             Pay attention to your \purp{axes}! 
             
-            Sometimes, we're doing a 2-D or 3-D plot of $J$, and our inputs are $\theta_k$. Other times, we're plotting hypothesis $h$, with our axes $x_i$.
+            Sometimes, we're doing a 2-D or 3-D plot of $J$, and our inputs are $\theta_k$. Other times, we're plotting hypothesis $h$, with our input axes $x_i$.
             
             These two plots could have the same surface, but they \gren{represent} completely different things.
         \end{clarification}
@@ -185,7 +200,7 @@
         
         We'll make improvements in small \textbf{steps}. And, we measure our improvement against the \textbf{loss function}, $J$: that's what we want to \textbf{optimize}.
         
-        In calculus, we found that, over \textbf{small} enough steps, you can \textbf{approximate} as function as a straight line.\\
+        In calculus, we found that, over \textbf{small} enough steps, you can \textbf{approximate} a smooth function as a straight line.\\
         
         \begin{figure}[H]
             \includegraphics[width=70mm,scale=0.5]{images/gradient_descent_images/function_approximation_linear.png}
@@ -428,8 +443,8 @@
         \begin{equation*}
                 \red{ \theta_{new} } = 
                 \blu{ \theta_{old} } - 
-                \grn{\eta} 
-                \left( \deriv{J}{ \blu{ \theta_{old} }} \right)
+                \grn{\eta} \cdot
+                \left( \deriv{J}{ \theta } \Bigg|_{\theta=\blu{ \theta_{old} }} \right)
             \end{equation*}
         
         We've got our gradient descent \textbf{update} rule in 1-D!
@@ -465,6 +480,8 @@
         It turns out, if our function is \textbf{nice} enough, and we pick the \textbf{right} value of $\eta$, we can guarantee convergence!\\
         
         \begin{theorem}
+            \vocab{Gradient Descent Convergence Theorem}
+        
             We want to optimize function $J$. If J is 
             \begin{itemize}
                 \item Smooth enough
@@ -477,11 +494,14 @@
                 \item $\eta$ is small enough
             \end{itemize}
             
-            Then gradient descent \textbf{will} converge to the \textbf{global minimum}!
+            Then gradient descent \purp{will} converge to the \orgg{global minimum}!
+
+            \subsecdiv
+
+            \begin{itemize}
+                \item "Small enough" seems vague, but it basically means, "if the first \gren{two statements} are true, then there \purp{exists} a choice of $\eta$ that converges."
+            \end{itemize}
         \end{theorem}
-        
-        "Small enough" seems vague, but it basically means, "an $\eta$ small enough to converge \textbf{exists}". 
-            \note{If we want to say it in a mathy way, we can say "\textbf{there exists} an $\eta$ small enough to converge"} 
         
         Or, if your $\eta$ is too \textbf{big}, you can keep trying \textbf{smaller} ones, until it works. 
         
@@ -529,7 +549,7 @@
             A \vocab{local} minimum is one that is the \gren{lowest} point among those points that are \purp{near} it.
             
             \begin{itemize}
-                \item For \vocab{local minima}, if you add or subtract a \purp{small} amount $\epsilon$, the value will \gren{increase}.
+                \item For \vocab{local minima}, if you add or subtract a \purp{tiny} amount $\epsilon$ to the input, the output will \gren{increase}.
             \end{itemize}
             
         \end{definition}
@@ -545,7 +565,7 @@
         If we have a \textbf{different} starting position, we can find a \textbf{different} local minimum.\\
         
         \begin{concept}
-            \vocab{Gradient descent} finds \purp{local} minima near the initialization, not \purp{global} minima.
+            \vocab{Gradient descent} often finds \purp{local} minima near the initialization, not necessarily \purp{global} minima.
             
             This means, if our function has \vocab{multiple local minima} (not fully convex), our \vocab{initialization} can affect our \gren{solution}.
         \end{concept}
@@ -570,7 +590,7 @@
         
         Before, in 1-D, we found that, if you \textbf{zoomed} in enough on a function (using a "\textbf{local} view"), we could \textbf{approximate} it as a \textbf{straight line}, and move up or down that slope.
         
-        There are \textbf{two} ways we can \textbf{approximate} like we want to in 2-D:
+        There are \textbf{two} ways we can view our \textbf{approximation} in 2-D:
             \note{Remember that, by 2-D, we mean two \textbf{parameters}/inputs to $J$. If we add in the \textbf{height} of our function, that means our plot will \textbf{look} like 3-D!}
         
         \begin{itemize}
@@ -610,6 +630,10 @@
         \begin{concept}
             If we have \vocab{two input variables} (a 2-D problem), we can \purp{approximate} our surface as a \vocab{plane} if we \gren{zoom} in enough.
         \end{concept}
+
+        If you look closely enough at any smooth surface in 3D space, it will look roughly "flat".
+
+        \miniex The earth tends to look flat up close, even though it's a sphere.
         
         These \textbf{approximations} will allow us to \textbf{optimize}.
 
@@ -734,13 +758,21 @@
         So, in that case, your step will move more in the $\theta_1$ direction: it's a more \textbf{efficient} way to get a \textbf{better} hypothesis!
         
         But for now, we \textbf{don't know} that this is necessarily the \textbf{optimal} way to change $\theta$ - we'll explore that later.
+            
         
         
     \subsection{Gradient Descent in n-D}
     
         This idea can be built up in \textbf{any number} of dimensions: each variable $\theta_k$ creates a \textbf{different} line we can use to \textbf{approximate}.
         
-        And, we can combine them into a \textbf{flat} hyperplane: so, we can \textbf{add up} all of the different \textbf{derivatives}.\\
+        And, we can combine them into a \textbf{flat} \purp{hyperplane}
+            \note{A hyperplane is just the equivalent of a plane in a higher dimensional space.
+            
+            \phantom{}
+        
+            In 3-D space, a plane fills one "slice" of 2-D space. In 4-D space, the hyperplane fills up one "slice" of 3-D space.}
+        : so, we can \textbf{add up} all of the different \textbf{derivatives}.
+            \\
         
         \begin{kequation}
             In \vocab{n-D}, you can optimize your function $J$ using this rule:
@@ -763,7 +795,7 @@
 
     \subsection{The Gradient}
     
-        We call this \textbf{gradient} descent because that right term \textbf{is} the gradient!\\
+        We call this \textbf{gradient} descent because that right term we just invented \textbf{is} the gradient!\\
         
         \begin{definition}
             
@@ -833,7 +865,7 @@
     
         How do we get the optimal direction?
         
-        The \textbf{total} change in $J$ is gotten by just \textbf{adding} the change in each direction (thank you planes!):
+        The \textbf{total} change in $J$ is gotten by just \textbf{adding} the change in each direction (planes are simple, which makes this possible!):
         
         \begin{figure}[H]
         
@@ -856,7 +888,7 @@
             \Delta \theta_2 \pderiv{J}{\theta_2}
         \end{equation}
         
-        Now we've got a useful equation: the total change. As a bonus we can see a clear \textbf{pattern} ($\nth{i}$ $\theta$ matches $\nth{i}$ derivative). 
+        Now we've got a useful equation: the total change. As a bonus we can see a clear \textbf{pattern} ($\Delta \theta_i$ matches $\nth{i}$ derivative). 
         
         So, \textbf{condense} this pattern, like we did for our linear model: using a \textbf{dot product}.
         
@@ -878,16 +910,24 @@
         The \textbf{gradient} shows up! Interesting. But what does that \textbf{mean}?
         
         Well, we want to \textbf{maximize} (or minimize!) our $\Delta J$. How do we maximize a \textbf{dot product}?
+
+        \begin{itemize}
+            \item A dot product $a \cdot b$ is maximized when the directions of $a$ and $b$ are \purp{the same}!
+            \item The direction of the gradient was given to us by our calculations.
+            \item So, we want \gren{$\Delta \theta$} to match the \gren{gradient}! That way, they're in the same direction.
+        \end{itemize}
         
-        By making sure the directions are \textbf{the same}! So, we can confirm that the \textbf{gradient} gives us the \textbf{best} direction.
+        Maximizing this dot product means maximizing $\Delta J$, which is our goal.
         
-        So, all we have to do is to \textbf{flip} the sign to \textbf{minimize} $\Delta J$.
-            \note{And so, gradient descent is already complete!}\\
+        So, we just demonstrated that the \textbf{gradient} gives us the \textbf{best} direction for $\Delta \theta$.
+        
+        So, all we have to do is to \textbf{flip} the sign to \orgg{minimize} $\Delta J$.
+            \note{And so, gradient descent is complete!}\\
         
         \begin{concept}
-            The \vocab{gradient} $\nabla J$ is the \vocab{direction of greatest increase} for $J$.
+            The \gren{gradient} $\nabla J$ is the \gren{direction of greatest increase} for $J$.
             
-            That means means the opposite direction $-\nabla J$ is the \vocab{direction of greatest decrease} in $J$.
+            That means means the opposite direction $-\nabla J$ is the \purp{direction of greatest decrease} in $J$.
         \end{concept}
         
         This is the single \textbf{most important concept} in this entire chapter!
@@ -918,56 +958,84 @@
 
     \subsection{Another explanation of gradient (OPTIONAL)}
     
-        Some students may not like the \textbf{first} explanation given for why gradient is the \textbf{direction of greatest increase}. So here, we use a slightly \textbf{different} approach, one that's more \textbf{geometric}. 
+        Some students may not like the first explanation given for why gradient is the \textbf{direction of greatest increase}. So here, we use a slightly \textbf{different} approach, one that's more \textbf{geometric}. 
         
         Feel free to skip this section if you are not interested.
         
-        We look at a random vector, $\Delta \theta$ - no assurances about how good or bad it is.
+        We look at a random 2-D vector, $\Delta \theta$ - no assurances about how good or bad it is.
         
-        Currently, our vector \textbf{components} are based on $\theta_1$ and $\theta_2$. But, we want to \textbf{switch} perspectives.
+        Currently, our vector \gren{components} are based on $\theta_1$ and $\theta_2$. But, it can be useful to \textbf{switch} perspectives.
         
-        Our vector can \textbf{also} be broken up into \textbf{parts} based on whether it \textbf{affects} $J$. This will let us take a \textbf{look} at the "best direction" we're trying to \textbf{find}.
+        Our vector can \textbf{also} be broken up into \gren{parts} based on whether it \purp{affects} $J$. This will let us take a \textbf{look} at the "best direction" we're trying to \textbf{find}.
         
         \begin{itemize}
             \item Uphill: the "best" direction $\hat{u}_{best}$ (magnitude $\Delta B$)
             
             \item Same height: the direction with no effect, $\hat{u}_{none}$ (magnitude $\Delta N$)
         \end{itemize}
+
+        As we established before, these two directions are perpendicular on the plane.
+            \note{What about higher dimensions?
+            
+            \phantom{}
+            
+            If we have $k$ more dimensions, we just include $k$ more unit vectors which add nothing to $\Delta J$.}
         
         \begin{equation}
             \Delta \theta
             =
             \underbrace{
-                \Delta B \red{ \hat{u}_{best} }
+                \red{u_{best}} 
             }_{\text{Full effect on J}} 
             + 
             \underbrace{
-                \Delta N \red{ \hat{u}_{none} }
+                \blu{u_{none}}
             }_{ \text{No effect on J} } 
+            =
+            \Delta B * \red{ \hat{u}_{best} }
+            + 
+            \Delta N * \blu{ \hat{u}_{none} }
         \end{equation}
         
-        So, all of the change in $J$ just comes from $\hat{u}_{best}$. We \textbf{don't care} about the other direction!\\
+        So, all of the change in $J$ just comes from $u_{best}$. We \textbf{don't care} about the other direction!\\
         
         \begin{concept}
-            In a \vocab{local planar approximation}, the \purp{only} component of $\Delta \theta$ that \gren{affects} $J$ is the \vocab{direction of greatest increase}, $\hat{u}_{best}$.
+            In a local planar approximation, the \purp{only} component of $\Delta \theta$ that \gren{affects} $J$ is the \vocab{direction of greatest increase}, $u_{best}$.
             
             So, we can determine $\Delta J$ using \purp{only that component}.
+
+            \subsecdiv
+
+            Thus, $u_{best}$ gives us the "direction of greatest increase": if we rotate our vector, we replace some of $u_{best}$ with $u_{none}$.
+            
+            \begin{itemize}
+                \item In which case, we're losing some $\Delta J$. So, we don't want to change direction like that.
+            \end{itemize}
         \end{concept}
-        
-        But, $\nabla_{\theta} J$ \textbf{also} gives us change in $\Delta J$: it contains all of the \textbf{derivatives}, and thus gives us the effect $\theta$ has on $\Delta J$.
-        
-        So we can find:
-        
+
+        \subsecdiv
+
+        However, this is the same kind of behavior as the dot product:
+
         \begin{equation}
-            \Delta \theta \cdot \deriv{J}{\theta} 
-            = \Delta J = 
-            \left( 
-                \Delta \theta \cdot \hat{u}_{best} 
-            \right) 
-            \deriv{J}{B}
+            \Delta J \approx \Delta \theta \cdot \nabla_{\theta} J
         \end{equation}
+
+        \begin{itemize}
+            \item When we do the dot product $a \cdot b$, we take the \purp{projection} of $a$ onto $b$: we only take the component of $a$ in the same direction as $b$.
+            \item In this case, we ony include the \textbf{component} of $\Delta \theta$ which matches $\nabla_{\theta} J$.
+        \end{itemize}
+
+        So, let's compare the two.
+
+        \begin{itemize}
+            \item The \orgg{$u_{best}$} component of $\Delta \theta$ is the only part that matters for \purp{$\Delta J$}.
+            \item The \orgg{$\nabla_{\theta} J$} component of $\Delta \theta$ is the only part that matters for the \purp{dot product}, which equals $\Delta J$.
+        \end{itemize}
+
+        They're the same!
+
         
-        $\Delta \theta$ is being dotted with both the \textbf{gradient} and the \textbf{best direction}: they both give the change in $J$. To keep the \textbf{dot product} consistent as $\Delta \theta$ changes, they need to be in the \textbf{same direction}.
 
 \pagebreak
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1110,6 +1178,12 @@
                     \nabla_\theta J ( \blu{ \theta_{old} } )
                 }_{(d \times 1)}
             \end{equation*}
+
+            The derivative $\deriv{J}{\theta_0}$ is based on $\theta_0$, a constant. So, the shape must be $(1 \times 1)$.
+
+            \begin{equation*}
+                \red{ \theta_0^{(t)} } = \theta_0^{(t-1)} - \grn{\eta} \deriv{J}{\theta_0} \Bigg|_{\theta_0=\theta_0^{(t-1)}}
+            \end{equation*}
         \end{concept}
     
     \subsection{Computational Gradient}
@@ -1129,15 +1203,15 @@
         
         We can \textbf{approximate} by taking $h$ to be a small, \textbf{finite} number.
         
-        Instead of $h$, we'll call this $\delta$.
+        Instead of $h$, we'll call this $\delta$.\\
         
         \begin{concept}
             When \vocab{approximating} the derivative, we can choose a \purp{small} finite width to measure, called $\delta$, so that
             
-            \begin{equation}
+            \begin{equation*}
                 \deriv{f}{x} \approx
                 \frac{f(x+\delta)-f(x)}{\delta} , \qquad \delta << 1
-            \end{equation}
+            \end{equation*}
         \end{concept}
         
         So, let's \textbf{extend} that to the \textbf{gradient}:
@@ -1227,7 +1301,7 @@
             
             \begin{equation*}
                 \deriv{J}{\theta_k} \approx
-                \frac{J(\theta+\delta_k)-f(\theta)}{\delta}
+                \frac{J(\theta+\delta_k)-J(\theta)}{\delta}
             \end{equation*}
             
             Where 
@@ -1245,7 +1319,7 @@
         
         We've discussed a couple: diverging, oscillating, and converging slowly. We also have to worry about \textbf{local minima} that aren't as good as other answers.
         
-        But there's also a \textbf{limitation}: our loss function has to be \textbf{smooth} and \textbf{differentiable}. If it isn't, we can't take the \textbf{gradient} of it.\\
+        But there's also a \textbf{requirement}: our loss function has to be \textbf{smooth} and \textbf{differentiable}. If it isn't, we can't take the \textbf{gradient} of it.\\
         
         \begin{concept}
             \vocab{Gradient descent} requires for your \gren{functions} to be (at least mostly) \vocab{smooth and differentiable.}
@@ -1258,22 +1332,20 @@
 \section{Stochastic Gradient Descent}
 
     \subsection{Another problem with gradient descent}
-        One \textbf{advantage} we mentioned for gradient descent at the beginning of the chapter is that we can \textbf{stop early} if we think we're done, saving on \textbf{time}.
-        
-        This is helpful for really \textbf{large} datasets, and it's also more \textbf{computationally manageable} than inverting a gigantic $XX^T$ matrix.
-        
-        But, we \textbf{haven't} taken \textbf{full advantage} of it: above, we used a \textbf{sum} to get our gradient - we're assuming we'll use all of our \textbf{data points}.
-        
-        But, what if we don't want to have to use all of them at once? That might be \textbf{expensive}. 
-        
-        And in fact, there are \textbf{other} reasons not to: maybe the gradient will change directions after only a \textbf{small} distance. 
-        
-        Right now, we're getting \textbf{lots of data} before even taking a \textbf{single step}: if we start moving \textbf{immediately}, our program could \textbf{adapt} to the "terrain" more quickly!
-        
+    
+        Some \gren{benefits} of gradient descent come from the fact that GD \purp{gradually} improves: 
+
+        \begin{itemize}
+            \item You can pause early to check progress, or quit early if you model is good enough. We save on computation time.
+        \end{itemize}
+
+        But we can improve this feature: currently, we use a \purp{sum} of all data points to get our gradient. Meaning, we have to compute all of our data before we take a single step. 
+
+
     \subsection{A better way: stochastic GD}
         
         Instead, why wait until we have \textbf{added} up over all the data? We could just \textbf{compute} the gradient over \textbf{one} data point \textbf{at a time}. In fact, to be fair, we'll do it \textbf{randomly}. 
-            \note{To compensate, our steps will have to be \textbf{smaller}!}
+            \note{To compensate for using less data, our steps will have to be \textbf{smaller}!}
         
         But wait, this \textbf{seems} like it would be \textbf{less} effective - after all, how much does \textbf{one} data point tell you? 
         
@@ -1288,10 +1360,10 @@
         \note{Stochastic is just a very mathematically precise word for "random".}
         
         There are more possible benefits, too: \textbf{randomly} choosing data points adds some \textbf{noise}, and random movement might be able to pull us out of local minima we don't want.
-            \note{We mean "noise" in the signals sense: random \textbf{variation} in our data that \textbf{isn't} part of what we're trying to pay attention to: in this case, the \textbf{distribution}.}
+            \note{We mean "noise" in the signals sense: random \textbf{variation} in our data. Randomly choosing data points is more unpredictable than using all of our data.}
             
         This sort of \textbf{noise} and \textbf{randomness} can make it hard for our model to \textbf{perfectly} fit the training data: this can reduce \textbf{overfitting}, too!
-            \note{For example, it's hard to focus on the details of someone's eyelashes (unimportant details) if your vision is blurry.}
+            \note{The random selection makes the data "look different" each time, so it's hard to perfectly match it.}
             
         \begin{concept}
             There are many \vocab{benefits} to \vocab{SGD} (Stochastic Gradient Descent) over regular BGD (Batch Gradient Descent).
@@ -1302,7 +1374,7 @@
                         \item It can also let us address problems \gren{early} if the model \purp{isn't} improving.
                     \end{itemize}
                     
-                \item The noise produced by the random sampling in SGD can sometimes help it \vocab{avoid local minima} that aren't very good models, 
+                \item The noise produced by the random sampling in SGD can sometimes help it \vocab{avoid local minima}.
                     \begin{itemize}
                         \item This is because the model might be moved in a \purp{random direction} in \gren{parameter space}, and randomly \gren{pulled out} of that minimum, even if BGD would have gotten \purp{stuck}.
                     \end{itemize}
@@ -1344,7 +1416,11 @@
         \end{itemize}
         
         One option is $\eta(t)=1/t$. But often, we use rules that \textbf{decrease} more \textbf{slowly}, so that it doesn't take as \textbf{long}.
-            \note{But technically, we're no longer guaranteed convergence!}
+            \note{In this case, though, we're often \redd{no longer} guaranteed convergence.
+
+            \phantom{}
+            
+            Why? Because of our third condition, $\sum_t \eta(t) < \infty$. If $\eta(t)$ decreases too slowly, this sum goes to infinity, and our GD algorithm might \orgg{diverge}.}
 
 \section{Terms}
     

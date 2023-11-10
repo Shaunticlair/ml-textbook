@@ -1,4 +1,4 @@
-\setcounter{chapter}{6-1}
+\setcounter{chapter}{7-1}
 
 \chapter{Neural Networks 1 - Neurons, Layers, and Networks}
 
@@ -35,22 +35,28 @@
                 \end{itemize}
             \item Data analysis
                 \begin{itemize}
-                    \item \miniex \textbf{Compressing} data, or processing it to isolate the \textbf{important} aspects, without the noise.
+                    \item \miniex \textbf{Compressing} data, or processing it to discover the \textbf{important} information.
                 \end{itemize}
         \end{itemize}
         
-        As you can see, \textbf{neural networks} are used in a wide array of very \textbf{difficult} problems. No wonder it's rapidly becoming so popular!
+        As you can see, \textbf{neural networks} are used in a wide array of very \textbf{difficult} problems. No wonder it's become so popular!
         
     \subsection{Neural Network Perspectives: The brain}
     
-        So, what \textit{is} a neural network? Well, there's a \textbf{couple} ways of looking at it:
+        So, what \textit{is} a neural network? There are several perspectives we can take.
         
-        First, the name comes from the fact that NNs are inspired by the \textbf{brain}: we call the basic units of a neural network a \textbf{neuron}.
+        First, the \textbf{name} comes from the fact that NNs are inspired by the \textbf{brain}: 
         
-        This gives us some general idea of the \textbf{structure} of a neural network:
+        \begin{itemize}
+            \item We call the basic unit of a neural network, a \textbf{neuron}.
+
+            \item This gives us some general idea of the \textbf{structure} of a neural network:
+                \begin{itemize}
+                    \item Just like in the \textbf{brain}, we take many individual units, called \textbf{neurons}, which we connect together to do more \textbf{complicated} tasks. That combined structure is a \textbf{neural network}.
+                        \note{Funny enough, as effective as neural networks are, we now think they don't work very much like the human brain! But we keep the terminology.}\\
+                \end{itemize}
+        \end{itemize}
         
-        Just like in the \textbf{brain}, we take many individual units, called \textbf{neurons}, which we connect together to do more \textbf{complicated} tasks. That combined structure is a \textbf{neural network}.
-            \note{Funny enough, as effective as neural networks are, we now think they don't work very much like the human brain! But we keep the terminology.}\\
         
         \begin{concept}
             \vocab{Neural networks} are inspired by the brain and its \purp{neurons}, in an effort to do better, \gren{human-like} computation.
@@ -64,18 +70,29 @@
         In this class, we \textbf{won't} focus on the brain analogy, though it did inspire the model.
         
         Instead, we will mostly think of \textbf{neural networks} in terms of what they're able to do, and how they work.
+
+        \begin{itemize}
+            \item Our biggest problem so far is the "nonlinear task": tasks that can't be solved by our \gren{linear} regression/classification models.
+
+            \item In short: some problems require solutions outside of our \purp{hypothesis space}.
+        \end{itemize}
+
+        Before, we used \purp{feature representation} to solve this problem. Through the polynomial basis, we found a \gren{richer} hypothesis class.
+
+        \subsecdiv
+
+        In this chapter, we present a different (but related) way of creating a richer hypothesis class. In this case, rather than transforming the input, we use a different \gren{structure} for the model.
+
+        \begin{itemize}
+            \item By combining lots of simple \textbf{units} ("neurons"), we can get a very \textbf{complex} model for solving our problems.
+        \end{itemize}
         
-        One problem we have struggled with is certain tasks that can't be handled by \textbf{linear} models. We have used \textbf{feature representations} to work on this problem.
         
-        Simply, some problems are outside our \textbf{hypothesis} space. But, there's another way: this is where \textbf{neural networks} come in.
-        
-        By combining lots of simple \textbf{units} ("neurons"), we can get a very \textbf{complex} model for solving our problems.
-        
-        With such a \textbf{rich} hypothesis class, combined with the power of \textbf{gradient descent}, we can create a model that can do \textbf{classification} or \textbf{regression} for very difficult problems!
+        With such a \textbf{rich} hypothesis class, combined with the power of \textbf{gradient descent}, we can create a model that can do \textbf{classification} or \textbf{regression} for much more difficult problems.
             \note{Reminder: "richness" or "expressiveness" of a hypothesis reflect how wide our options are. Neural networks give us many possibilities for models. With more options, we can handle more problems!}\\
             
         \begin{concept}
-            \vocab{Neural Networks} can create a very \vocab{rich hypothesis class} by combining many simple \gren{units}.
+            \vocab{Neural Networks} make up a very \orgg{rich} hypothesis class, by combining many simple \gren{units}.
             
             With this \gren{hypothesis class}, we can handle \purp{regression} or \purp{classification} for very challenging \gren{problems}.
         \end{concept}
@@ -84,7 +101,7 @@
         
         Let's make sense of what we said above, and \textbf{visualize} what a neural network might look like.
         
-        We start with one function: a \textbf{neuron}. This function could be, for example, one we've used before: our logistic \textbf{classifier}, or linear \textbf{regression}. We'll ignore the details for now.
+        We start with one function: a \gren{neuron}. This function could be, for example, one we've used before: our logistic \textbf{classifier}, or linear \textbf{regression}. We'll ignore the details for now.
        
         \begin{figure}[H]
             \centering
@@ -93,15 +110,15 @@
        
         One neuron might not be very powerful, or \textbf{expressive}. It's useful, but limited. We've seen its weaknesses.
        
-        We could try to use \textbf{feature transformations} to help us. But, let's think in a more \textbf{general} way: a transformation is just another \textbf{function} we apply to our input!
+        We could try to use \gren{feature transformations} to help us. But, let's think in a more \textbf{general} way: a transformation is just another \purp{function} we apply to our input!
        
         \begin{figure}[H]
             \centering
             \includegraphics[width=80mm,scale=0.4]{images/nn_images/feature_transform.png}
         \end{figure}
        
-        This gives us an \textbf{idea}: rather than trying to think of a single, more \textbf{complex} model, we could \textbf{combine} multiple simple models!
-            \note{Note that feature transformations are a bit complex for what we'd usually put in a neuron. But, it gives us the right inspiration.}
+        This gives us an \textbf{idea}: rather than trying to think of a single, more \textbf{complex} model, we could combine \purp{multiple} simple models!
+            \note{Feature transformations, like polynomial or radial basis, are a bit more \textbf{complex} than what we'd usually put in a \textbf{neuron}. But, it gives us the right inspiration.}
        
         \begin{figure}[H]
         \centering
@@ -130,18 +147,23 @@
         Because we had two \textbf{inputs}, we had to add two new \textbf{links} when we added the output neuron. This is getting difficult to \textbf{view}!
         
         We'll stop here for now, but you can imagine repeatedly \textbf{adding} more neurons in \textbf{parallel} (with the same inputs/outputs) or in \textbf{series} (as an input or output).
+
+        \begin{itemize}
+            \item And we each addition, the function gets more and more \textbf{complex}: you can create a \textbf{richer} hypothesis class!
+        \end{itemize}
         
-        And we each addition, the function gets more and more \textbf{complex}: you can create a \textbf{richer} hypothesis class!
         
         We'll explore how to do this \textbf{systematically} later in the chapter.
-            \note{By "systematic", we just mean "in a way that's consistent and makes sense".}\\
+            \note{By "systematic", we just mean "in a way that we can develop with simple instructions".}\\
         
         \begin{definition}
             \vocab{Neural Networks} are a \purp{class} of models that can be used to solve \gren{classification}, \gren{regression}, or other interesting problems.
             
             They create very \purp{rich} hypothesis classes by combining many \gren{simple} models, called \vocab{neurons}, into a \gren{complex} model.
-            
-            We do this combination \purp{systematically}, so that it is easy to \gren{analyze} and work with our \purp{model}.
+
+            \begin{itemize}
+                \item We do this combination \purp{systematically}, so that it is easy to \gren{analyze} and work with our model.
+            \end{itemize}
             
             This creates a very \purp{flexible} hypothesis, which can be \gren{broken down} into its \purp{simple} parts and what \gren{connects} them.
         \end{definition}
@@ -149,12 +171,20 @@
     \subsection{Neural Network Perspectives: Predictions with Big Data}
     
         Our last major \textbf{perspective} on neural networks is one that you see in lots of modern \textbf{applications}. We won't work much with this perspective in this \textbf{class}, but our techniques \textbf{enable} it.
+
+        \begin{itemize}
+            \item Neural networks, because they can create such \textbf{sophisticated} models, can be used for problems in very \textbf{complex} domains: the kind of \textbf{applications} we discussed at the beginning of this chapter.
+
+            \item These applications require a lot of \textbf{data} to build a good \textbf{model}, however. So, machine learning models often take \textbf{huge} amounts of data, with lots of energy and time to train them.
+
+            \item But, once they are fully \textbf{trained}, they can give predictions very \textbf{quickly}, and often very \textbf{accurately}.\\
+        \end{itemize}
         
-        Neural networks, because they can create such \textbf{sophisticated} models, can be used for problems in very \textbf{complex} domains: the kind of \textbf{applications} we discussed at the beginning of this chapter.
         
-        These applications require a lot of \textbf{data} to build a good \textbf{model}, however. So, machine learning models often take \textbf{huge} amounts of data, with lots of energy and time to train them.
         
-        But, once they are fully \textbf{trained}, they can give predictions very \textbf{quickly}, and often very \textbf{accurately}.\\
+        
+        
+        
         
         \begin{concept}
             \vocab{Neural networks} can be seen as a way to make \purp{predictions} based on huge amount of \gren{data} for very \purp{complex} problems.
@@ -222,7 +252,7 @@
             = Ax+B 
             \qquad \qquad \qquad
             \overbrace{
-                f_1(x)
+                f_2(x)
             }^{\text{Neuron 2}}
             = Cx+D
         \end{equation}
@@ -384,22 +414,33 @@
         We'll continue building our neuron based on what we've done \textbf{before}. When doing linear regression, that linear unit was all we had. 
         
         But, once we do classification, we found that it was helpful to have a second, \textbf{non-linear} component: we used \textbf{sigmoid} $\sigma(u)$.
+            \note{You might remember that we had a problem with the logistic linear model still behaving linear, despite having a nonlinear function.
+            
+            \phantom{}
+            
+            We'll show how we fix this later on.}
+
+        \begin{itemize}
+            \item We might not necessarily want the \textbf{same} nonlinear function, so instead, we'll just generalize: we have \textit{some} second component, which is allowed to be \textbf{nonlinear}.
+        \end{itemize}
         
-        We might not necessarily want the \textbf{same} nonlinear function, so instead, we'll just generalize: we have \textit{some} second component, which is allowed to be \textbf{nonlinear}.
         
         We call this component our \textbf{activation} function. Why do we call it that? It comes from the historical \textbf{inspiration} of neurons in the brain.
         
-        Biological neurons only "fire" (give an output) above a certain threshold of \textbf{input}: that's when they \textbf{activate}.
-            \note{Some activation functions reflect this, but they don't have to.}\\
+        \begin{itemize}
+            \item Biological neurons only "fire" (give an output) above a certain threshold of \textbf{input}: that's when they \textbf{activate}.
+            \note{Some activation functions reflect this, but they don't have to. }\\
+        \end{itemize}
+        
             
         \begin{definition}
-            Our \vocab{neuron} contains a potentially \purp{nonlinear} function $f$ called an \vocab{activation function} as its \gren{second} component.
+            Our \vocab{neuron} contains a potentially \purp{nonlinear} function $f$, called an \vocab{activation function}, as its \gren{second} component.
             
             We notate this as 
             
-            \begin{equation}
+            \begin{equation*}
                 \pur{a} = f(\red{z})
-            \end{equation}
+            \end{equation*}
             
             Where $z$ is the \gren{output} of the \purp{linear} component, and $a$ is the \gren{output} of the \purp{activation} component.
             
@@ -593,7 +634,7 @@
     
         Let's go through some \textbf{examples}. We mentioned in the \textbf{beginning} of this chapter that our neuron could be most of the simple \textbf{models} we've worked with.
         
-        So, let's give that a go: we'll start by doing \textbf{linear regression}.
+        So, let's give that a go: the most simple version that's useful. We'll start by doing \textbf{linear regression}.
         
         \begin{equation*}
             h(x) = \theta^T x + \theta_0
@@ -608,10 +649,13 @@
         So, our linear component is \textbf{done}: $(\theta, \theta_0) = (w, w_0)$.
         
         What about our \textbf{activation} function?
+
+        \begin{itemize}
+            \item Well, activation allows for \textbf{nonlinear} functions. But, we don't \textbf{want} to make it nonlinear. 
+            
+            \item In fact, we've already got what we \textbf{want}: we don't want the \textbf{activation} to do anything at \textbf{all}.
+        \end{itemize}
         
-        Well, activation allows for \textbf{nonlinear} functions. But, we don't \textbf{want} to make it nonlinear. 
-        
-        In fact, we've already got what we \textbf{want}: we don't want the \textbf{activation} to do anything at \textbf{all}.
         
         So, we'll use \textbf{this} function:\\
         
@@ -798,8 +842,13 @@
         
         Our first neuron takes in a whole \textbf{vector} of values, $x = [x_1, x_2, ..., x_m]^T$. But, it only \textbf{outputs} a single value, $a$.
             \note{Remember that while we only see one arrow from $x$, each data point $x_i$ is included.}
+
+        \begin{itemize}
+            \item That means the second neuron only receives \textbf{one} value.
+        \end{itemize}
         
-        That means the second neuron only receives \textbf{one} value, but it's capable of handling a full \textbf{vector}. We can add more values!
+        
+        But, just like our first neuron, it's capable of handling a full \textbf{vector}. We can add more values!
         
         Let's add \textbf{another} neuron.
         
@@ -865,7 +914,7 @@
                         \item This \purp{next layer} could also be the \gren{final output} of the neural network.
                     \end{itemize}
                 
-                \item And none of these neurons are directly \purp{connected} to each other.
+                \item And none of the neurons in the same layer are directly \purp{connected} to each other.
             \end{itemize}
         \end{definition}
         
@@ -892,11 +941,11 @@
         In short, we have:
         
         \begin{itemize}
-            \item A \vocab{neuron}, made of a linear and an activation component
+            \item A \orgg{neuron}, made of a linear and an activation component
             
-            \item A \vocab{layer}, made of many neurons in parallel
+            \item A \gren{layer}, made of many \orgg{neurons} in parallel
             
-            \item A \vocab{neural} network, made of many layers in series
+            \item A \purp{neural} network, made of many \gren{layers} in series
         \end{itemize}
         
         Our goal is some kind of structure that looks something like this:
@@ -989,6 +1038,8 @@
         
         \begin{definition}
             A layer is \vocab{fully connected} if every neuron has the \purp{same input vector}.
+
+            In other words, every neuron in our layer is connected to every input value.
         \end{definition}
         
         \miniex If one of our neurons \textbf{ignored} $x_1$, but the others did \textbf{not}, the layer would not be \textbf{fully connected}.
@@ -1019,7 +1070,7 @@
             w_0
         \end{equation*}
         
-        In this case, our neuron has \textbf{one} output variable $f(z)$, but \textbf{three} inputs $x_1,x_2,x_3$.
+        In this case, our neuron has \textbf{one} output variable $f(z)$, but \textbf{three} inputs $x_1,x_2,x_3$. Input dimension 3, output dimension 1.
         
         Thus, our output dimension has been separated from our input dimension. Instead, it is the number of neurons.
         
@@ -1033,6 +1084,8 @@
                 
                 \item The \gren{output} dimension \vocab{$n$} is equal to the \purp{number of neurons} in the \gren{current} layer: $A \in \RR^n$
             \end{itemize}
+
+            These dimensions can be any pair of numbers: the value of $m$ doesn't affect the value of $n$.
         \end{notation}
         
         \miniex Suppose you have an \textbf{input} vector $x=[x_1, x_2, x_3]$ and two \textbf{neurons}. The dimensions are $m=3$, and $n=2$.
@@ -1097,7 +1150,7 @@
             \end{bmatrix}
         \end{equation}
             
-        Each needs to be used to \textbf{compute} $a_i$, but having so many objects is annoying.
+        Each weight needs to be used to \textbf{compute} $a_i$, but having so many objects is annoying.
         
         Remember that, when we had \textbf{multiple} data points $\exi$, we worked with them at the \textbf{same time} by stacking them in a \textbf{matrix}. Let's do the same here:
         
@@ -1134,13 +1187,7 @@
         
         We can do this for our \textbf{offsets} too: thankfully, there is only \textbf{one} offset per neuron, so we can write:
         
-        \begin{equation}
-            W_0 = 
-                \begin{bmatrix}
-                  w_{\red{01}} \\ w_{\red{02}} \\ \vdots \\ w_{\red{0n}}
-                \end{bmatrix}
-            \bigggrB{70pt} \text{Each neuron has an offset}
-        \end{equation}
+        
         
         This is our offset vector, with the shape $(n \times 1)$.\\
         
@@ -1149,8 +1196,29 @@
             
             \begin{itemize}
                 \item \purp{Weight} matrix $W$ has the shape $\blu{(m \times n)}$
+
+                \begin{equation*}
+                    W = 
+                    \overbrace{
+                        \begin{bmatrix}
+                          w_{\red{11}} & w_{\red{12}} & \cdots & w_{\red{1n}} \\
+                          w_{\red{21}} & w_{\red{22}} & \cdots & w_{\red{2n}} \\
+                          \vdots       & \vdots       & \ddots & \vdots \\
+                          w_{\red{m1}} & w_{\red{m1}} & \cdots & w_{\red{mn}} \\
+                        \end{bmatrix}
+                    }^{\red{n} \text{ neurons}}
+                    \bigggrB{70pt} \red{m} \text{ inputs}
+                \end{equation*}
                 
                 \item \purp{Offset} matrix $W_0$ has the shape $\blu{(n \times 1)}$
+
+                \begin{equation*}
+                    W_0 = 
+                        \begin{bmatrix}
+                          w_{\red{01}} \\ w_{\red{02}} \\ \vdots \\ w_{\red{0n}}
+                        \end{bmatrix}
+                    \bigggrB{70pt} \text{Each neuron has an offset}
+                \end{equation*}
             \end{itemize}
         \end{notation}
         
@@ -1180,6 +1248,7 @@
         \end{equation}
         
         Because we so carefully kept our weights and offsets separate, we can still do this!
+            \note{You can check for yourself that this behaves the way you expect it to.}
         
         \begin{equation}
             W^Tx + W_0 = Z
@@ -1499,13 +1568,19 @@
         Here is the computation we do for layer $\ell$:\\
         
         \begin{kequation}
-            The calculations done by layer $\ell$ are given by
+            The calculations done by layer $\ell$ are broken into two parts:
+
+            \begin{itemize}
+                \item Input $\red{A^{\ell-1}}$ turns into pre-activation $\blu{Z^\ell}$
+            \end{itemize}
             
             \begin{equation*}
                 \blu{Z^\ell} = (\blu{W^\ell})^T \red{A^{\ell-1}} + \blu{W_0^\ell} 
             \end{equation*}
             
-            and
+            \begin{itemize}
+                \item Pre-activation $\blu{Z^\ell}$ turns into $\blu{A^\ell}$
+            \end{itemize}
             
             \begin{equation*}
                 \blu{A^\ell} = f(\blu{Z^\ell})
@@ -1537,7 +1612,7 @@
                 \item \gren{Output} $A^L$ (final output)
             \end{itemize}
             
-            You can't see \purp{hidden layers} from outside the network.
+            You can't see the output of the \purp{hidden layers} from outside the network.
 
             Based on this definition,the \gren{number of hidden layers} in a network is the layer count, minus one: \grn{$L-1$}.
         \end{definition}
@@ -1856,7 +1931,7 @@
                     \item This function is basically a \textbf{sign} function, but uses $\{0, 1\}$ instead of $\{-1, +1\}$.
                     
                     \item Step functions were a common early choice, but because they have a \textbf{zero} gradient, we can't use \textbf{gradient descent}, and so we basically \textbf{never} use them.
-                        \note{Same reason we replaced the sign function with sigmoid.}
+                        \note{Same reason we replaced the sign function with sigmoid, when were were doing linear logistic classifiers.}
                 \end{itemize}
             
             
@@ -1939,7 +2014,7 @@
                 \end{equation}
                 
                 \begin{itemize}
-                    \item Behaves a like a \textbf{multi-class} version of \textbf{sigmoid}.
+                    \item Behaves like a disjoint, \textbf{multi-class} version of \textbf{sigmoid}.
                     
                     \item Appropriately, we use it as the \textbf{output neuron} for \textbf{multi-class} classification.
                     
@@ -2019,7 +2094,7 @@
     \begin{concept}
         Each of our \vocab{tasks} requires a different \purp{loss} and output \gren{activation} function.
         
-        We emphasize that we specifically mean the \red{output} activation function: the activation function used in \gren{hidden layers} doesn't have to match the loss function.
+        We emphasize that we specifically mean the \redd{output} activation function: the activation function used in \gren{hidden layers} doesn't have to match the loss function.
 
         \phantom{}
         
