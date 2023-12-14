@@ -1428,10 +1428,10 @@
         But we have a serious problem: which state is $\blu{s'}$?\\
 
         \begin{concept}
-            Our \gren{state transition} is \gren{non-deterministic}.
+            Our \gren{state transition} is \gren{probabilistic}.
 
             \begin{itemize}
-                \item That means that we could end up in \gren{several new states} $\blu{s'}$. 
+                \item That means that there are \gren{several new states} $\blu{s'}$ we could transition to.
             \end{itemize}
 
             So, we can't just directly use $\pur{R} \Big( \blu{s'},\grn{\pi}\big(\blu{s'}\big) \Big)$: we don't know which $\blu{s'}$ will be, and thus our reward.

@@ -733,7 +733,7 @@
                 If we want to fully expand $A_t$, it's easiest to use a sum:
 
                 \begin{equation*}
-                    A_T = \sum_{t=0}^T \red{\gamma^{(T-t)}} \cdot \blu{(1-\gamma)^t} \cdot g_t
+                    A_T = \sum_{t=0}^T \red{\gamma^{(T-t)}} \cdot \blu{(1-\gamma)} \cdot g_t
                 \end{equation*}
             \end{concept}
             You can compare this formulation against what we computed above.
@@ -1229,7 +1229,7 @@
                 The "real" weighted average, that ignores $A_0$, has to un-do the deflation caused by including fake, starting data:
 
                 \begin{equation*}
-                    \widehat{A}_0 = A_0 \cdot \frac{1}{1-\gamma^t}
+                    \widehat{A}_t = A_t \cdot \frac{1}{1-\gamma^t}
                 \end{equation*}
             \end{concept}
 

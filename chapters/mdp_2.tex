@@ -251,7 +251,7 @@
         We'll come up with a new name for this: a \vocab{Q-value function}.\\
 
         \begin{definition}
-            A \vocab{Q-value function} $Q^h\big(\red{s},\bro{a}\big)$ is \textbf{similar} to a value function $V^h_{\pi}\big(\red{s}\big)$, but instead of using the \gren{same policy} for every step, we:
+            A \vocab{Q-value function} $Q^h\big(\red{s},\bro{a}\big)$ (a.k.a "\vocab{state-action value function}") is \textbf{similar} to a value function $V^h_{\pi}\big(\red{s}\big)$, but instead of using the \gren{same policy} for every step, we:
 
             \begin{itemize}
                 \item Choose one action $\bro{a}$
@@ -620,7 +620,7 @@
                 \;\;+\;\
                     \pur{\sum_{s'}}  
                         \;\;
-                        T \Big(          s,\pi\big(s\big),s' \Big)
+                        T \Big(          s,a,s' \Big)
                         \;\cdot\; 
                         \bro{ \max_{a'} \Big( \pur{Q^{1}\big(s',a' \big)} \Big)}
         \end{equation}
@@ -633,7 +633,7 @@
                 \;\;+\;\;
                     \red{\sum_{s'}}  
                         \;\;
-                        T \Big(          s,\pi\big(s\big),s' \Big)
+                        T \Big(          s,a,s' \Big)
                         \;\cdot\; 
                         \bro{ \max_{a'} \Big( \red{Q^{H-1}\big(s',a' \big)} \Big)}
         \end{equation}
@@ -679,7 +679,7 @@
                 \;\;+\;\;
                     \red{\sum_{s'}}  
                         \;\;
-                        T \Big(          s,\pi\big(s\big),s' \Big)
+                        T \Big(          s,a,s' \Big)
                         \;\cdot\; 
                         \bro{ \max_{a'} \Big( \red{Q^{H-1}\big(s',a' \big)} \Big)}
         \end{equation}
@@ -794,24 +794,42 @@
                 \;\;+\;\;
                     \red{\sum_{s'}}  
                         \;\;
-                        T \Big(          s,\pi\big(s\big),s' \Big)
+                        T \Big(          s,a,s' \Big)
                         \;\cdot\; 
                         \bro{ \max_{a'} \Big( \red{Q^{H-1}\big(s',a' \big)} \Big)}
         \end{equation}
 
         All we do is \purp{remove the horizon}, and \gren{add the discount factor}. 
-    
+
+        \begin{itemize}
+            \item In this situation, we take one action, and then take \purp{optimal} actions for every step after, forever (or until our model terminates).
+            \item We notate this "optimal value" as $Q$.
+        \end{itemize}
+
         \begin{equation}
-            \grn{Q\big(s,a \big)} \;\;=\;\; 
+            \pur{Q^*\big(s,a \big)} \;\;=\;\; 
                     R \Big( s,a \Big)
                 \;\;+\;\;
                 \gamma
-                \grn{\sum_{s'}}  
+                \pur{\sum_{s'}}  
                     \;\;
-                    T \Big(          s,\pi\big(s\big),s' \Big)
+                    T \Big(          s,a,s' \Big)
                     \;\cdot\; 
-                    \bro{ \max_{a'} \Big( \grn{Q\big(s',a' \big)} \Big)}
+                    \bro{ \max_{a'} \Big( \pur{Q^*\big(s',a' \big)} \Big)}
         \end{equation}
+
+        \begin{definition}
+            $Q^*\big(\red{s},\bro{a} \big)$ is the \vocab{total discounted reward}, assuming you:
+
+            \begin{itemize}
+                \item Take action $\bro{a}$ in state $\red{s}$.
+                \item Choose the \gren{optimal action} for all future states.
+            \end{itemize}
+        \end{definition}
+
+        
+    
+        
 
         Now, our $Q$-value function is an equation of \purp{itself}.\\
 
@@ -819,15 +837,15 @@
             The \vocab{$Q$-value function} for \purp{infinite horizon} can be written as:
 
             \begin{equation*}
-                \grn{Q\big(s,a \big)} \;\;=\;\; 
-                        R \Big( s,a \Big)
-                    \;\;+\;\;
-                    \gamma
-                    \grn{\sum_{s'}}  
-                        \;\;
-                        T \Big(          s,\pi\big(s\big),s' \Big)
-                        \;\cdot\; 
-                        \bro{ \max_{a'} \Big( \grn{Q\big(s',a' \big)} \Big)}
+                \pur{Q^*\big(s,a \big)} \;\;=\;\; 
+                    R \Big( s,a \Big)
+                \;\;+\;\;
+                \gamma
+                \pur{\sum_{s'}}  
+                    \;\;
+                    T \Big(          s,a,s' \Big)
+                    \;\cdot\; 
+                    \bro{ \max_{a'} \Big( \pur{Q^*\big(s',a' \big)} \Big)}
             \end{equation*}
         \end{kequation}
 
@@ -849,168 +867,612 @@
         Our goal is to look for one of these "stationary" optimal policies.
             \note{There can be several optimal policies. We're only looking for one.}
 
-    \subsection{Finding an Optimal Policy}
+
+    \subsection{Finding an Optimal Policy: Value Iteration}
 
         We have a problem, though. When computing the \purp{infinite value function}, we were able to solve a system of \gren{linear equations}.
 
-        But our $Q$-value function is \gren{non-linear} this time, because of the \brow{max} operation. We can't solve that!
+        \begin{itemize}
+            \item But our $Q$-value function is \gren{non-linear} this time, because of the \brow{max} operation. We can't solve that!
+        \end{itemize}
 
-    
+        Is there even a solution, in this complex system? It turns out there \purp{definitely is}:\\
 
+        \begin{theorem}
+            Our system of $Q$-values has a \purp{unique solution}.
+
+            This allows us to compute an \gren{optimal policy}.
+        \end{theorem}
+
+            \note{There may be more than one optimal policy, but they'll all have the same, \gren{unique} $Q$-values.
+            
+            \phantom{}
+            
+            In other words, each policy is worth the same average reward.}
+
+        \subsecdiv
+
+        Instead of linear solving, we'll try something different:
+
+        \begin{itemize}
+            \item Our $Q$-value function could be said to have an "infinitely far" horizon, with a $1-\gamma$ chance of terminating every timestep.
+
+            \item We could \purp{approximate} this by computing horizon $h=1,2,3,\dots$: as our horizon gets really big, we hope this is \purp{similar} to an infinite horizon.\\
+         \end{itemize}
+
+         \begin{concept}
+             We want to approximate an \gren{infinite horizon} with a \vocab{really large, finite horizon}.
+
+             To match the infinite case, we'll include a chance of \purp{termination}, $(1-\gamma)$.
+         \end{concept}
+
+         This is identical to our equations for finite horizon, but with a $\gamma$ term included.
+
+        \begin{equation}
+            \grn{Q^{H}\big(s,a \big)} \;\;=\;\; 
+                    R \Big( s,a \Big)
+                \;\;+\;\;
+                    \red{\gamma}
+                    \blu{\sum_{s'}}  
+                        \;\;
+                        T \Big(          s,a,s' \Big)
+                        \;\cdot\; 
+                        \bro{ \max_{a'} \Big( \blu{Q^{H-1}\big(s',a' \big)} \Big)}
+        \end{equation}
+
+        This is called \purp{value iteration}.
+
+        However, we don't really care about the $H$ of our fake, \textbf{finite} horizon: our goal is to approximate the infinite-horizon $Q$.\\
+
+        \begin{notation}
+            For each step of our \vocab{value iteration} process, we'll distinguish between two parts of our $Q^*$ approximation:
+
+            \begin{itemize}
+                \item $Q_{old}$: the $H-1$ horizon: it's our \purp{previous}, less-accurate $Q^*$ approximation. 
+                    \begin{itemize}
+                        \item We use it to compute $Q_{new}$.
+                    \end{itemize}
+
+                \item $Q_{new}$: the $H$ horizon: it's our \gren{newest}, more accurate approximation.
+                
+            \end{itemize}
+
+            \subsecdiv
+
+            After each timestep, $Q_{new}$ \orgg{replaces} $Q_{old}$:
+
+            \begin{itemize}
+                \item Every approximation is used to create a new, better approximation. 
+            \end{itemize}
+        \end{notation}
+
+        With this, we can properly represent $Q^*$.
+
+        \begin{equation}
+            \grn{Q_{new}\big(s,a \big)} \;\;=\;\; 
+                    R \Big( s,a \Big)
+                \;\;+\;\;
+                    \red{\gamma}
+                    \blu{\sum_{s'}}  
+                        \;\;
+                        T \Big(          s,a,s' \Big)
+                        \;\cdot\; 
+                        \bro{ \max_{a'} \Big( \blu{Q_{old}\big(s',a' \big)} \Big)}
+        \end{equation}
+
+        \begin{definition}
+            \vocab{Infinite-horizon value iteration} is a process where we approximate the \purp{infinite horizon $Q$-value} $Q^*$ with a \gren{large, finite horizon $Q$-value} $Q^H$.
+
+            To accomplish this, we compute $Q^H$, combined with a \purp{termination} chance $(p=1-\gamma)$, from the \textbf{infinite horizon} problem.
+
+            \begin{itemize}
+                \item Each $Q^h$ term is used to aim for a \orgg{better approximation} of $Q^*$ than the one before.
+            \end{itemize}
+
+            \subsecdiv
+
+            It's more accurate to call these approximations of $Q^*$, rather than finite-horizon values $Q^h$. So, we'll change up our notation:
+
+            \begin{itemize}
+                \item We use $Q_{old}$ (our old approximation) to compute $Q_{new}$ (a new approximation), using the \gren{finite-horizon equation} (discounted with $\gamma$).
+            \end{itemize}
+
+            
+        \end{definition}
+
+        Throughout the process, we use the following equation:\\
+
+        \begin{kequation}
+            The equation for \vocab{infinite-horizon value iteration} is:
+
+            \begin{equation*}
+                \grn{Q_{new}\big(s,a \big)} \;\;=\;\; 
+                        R \Big( s,a \Big)
+                    \;\;+\;\;
+                    \red{\gamma}
+                    \blu{\sum_{s'}}  
+                        \;\;
+                        T \Big(          s,a,s' \Big)
+                        \;\cdot\; 
+                        \bro{ \max_{a'} \Big( \blu{Q_{old}\big(s',a' \big)} \Big)}
+            \end{equation*}
+
+            Once our $Q$ value is \gren{close to $Q^*$}, we can find an \purp{optimal policy}:
+            
+            \begin{equation*}
+                Q_{new} \approx Q^* \qquad \implies \qquad 
+                \grn{\pi^*}\big(\redd{s}\big) = 
+                \bro{\argmax{a}}{} \Big( 
+                    Q_{new}\big(\red{s}, \bro{a} \big) 
+                \Big)
+            \end{equation*}
+
+            
+        \end{kequation}
+
+        \note{How do we know that value iteration converges at all? We have a \textbf{theorem} for that, in 12.2.14.}
+
+        Next, we'll figure out when to \redd{stop} value iteration: when are we ready to use our $Q^*$ approximation?
+
+
+    \pagebreak
+
+    \subsection{Convergence of Value Iteration}
+
+        How do we know when to stop running our value iteration? We want $Q_{new}$, to \purp{converge} to $Q^*$: it gets \gren{close} to the answer we want!
+
+        How do we know \textit{when} we're converging?
+
+        \begin{itemize}
+            \item We can use gradient descent as an example:
+                \note{We start at the blue x on the right. Each red line shows us "moving" to a new, better position.}
+        \end{itemize}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=70mm,scale=0.5]{images/gradient_descent_images/good_converge_oscillate.png}
+
+            \caption*{As we get \gren{close} to the solution, our steps have to become \purp{very small}. }   
+        \end{figure}
+            \note{If we're close to the solution and take a \purp{big} step, we'd get \gren{further away} again! So, our steps \redd{must} get smaller.}
+
+        We can see a pattern as we converge:\\
+
+        \begin{concept}
+            As we get close to \vocab{convergence}, our sequence will typically \gren{stabilize}: the values become more and more \textbf{similar}.
+
+            We can use this "slowing down" progress to \orgg{detect} convergence.
+        \end{concept}
         
+        Let's translate this to \vocab{value iteration}:
 
-    
+        \begin{itemize}
+            \item As we converge, each $Q_{new}$ value will be \orgg{very close} to the previous one.
 
+            \item So, we'll detect convergence by seeing when our approximation is \purp{changing by a very small amount}.\\
+        \end{itemize}
+
+        \begin{concept}
+            We \vocab{terminate} our value-iteration process when our \orgg{newest approximations} $Q_{new}$ become \gren{very similar} to each other.
+
+            If our approximations are similar (they change very little between timesteps), that means we're \purp{converging} to $Q^*$.
+         \end{concept}
+
+            \note{Even if $Q_{new}$ converges, how do we know it converges to $Q^*$? We have \textbf{another theorem} for that, in 12.2.14.}
+
+
+
+    \pagebreak
+
+    \subsection{Value Iteration: Termination Condition}
+
+         Let's figure out how to represent this mathematically.
+
+         \begin{itemize}
+             \item We'll compare the two most recent approximations: $Q_{new}$ and $Q_{old}$.
+             \item We want these two \orgg{value functions} to be \gren{similar}. How do we measure this?\\
+         \end{itemize}
+
+         \begin{concept}
+                 To compare two functions, we see how different their \purp{outputs} are, for each \brow{input}.
+
+                 \begin{equation*}
+                     \Big|\Big|
+                        f(x) - g(x)
+                     \Big|\Big|
+                 \end{equation*}
+             \end{concept}
+
+             So, we'll compare the values that we get for each $(s,a)$ pair.
+
+             \begin{equation}
+                \Big|\Big|
+                    Q_{new}(\red{s},\bro{a}) - Q_{old}(\red{s},\bro{a})
+                \Big|\Big|
+             \end{equation}
+
+         We want our value functions to be \gren{similar}: that means they need to be similar for \purp{all inputs}.
+         
+         \begin{itemize}
+             \item We'll set a \gren{maximum} for how different each output can be, called $\eps$.\\
+         \end{itemize}
+
+         
+
+         \begin{definition}
+            We want to see when $Q_{new}$ and $Q_{old}$ are \gren{similar}.
+
+            We'll say that they're similar if \purp{every output} is closer than a distance of $\eps$:
+
+            \begin{equation*}
+                \overbrace{
+                    \red{\forall s}: \bro{\forall a}:
+                    }^{\text{Every $(s,a)$ pair}}
+                    \qquad \qquad
+                \overbrace{
+                    \Big|\Big|
+                        Q_{new}(\red{s},\bro{a}) - Q_{old}(\red{s},\bro{a}) 
+                    \Big|\Big|
+                    < \eps
+                }^{\text{...Must be at least this similar}}
+             \end{equation*}
+         \end{definition}
+         
+         If we want to check if \textbf{all} of them are similar, we can focus on the \redd{worst case}:
+
+         \begin{itemize}
+             \item Which $(s,a)$ makes them the \purp{most different}?
+         \end{itemize}
+
+         \begin{equation}
+            \pur{\max_{s,a}}
+            \Bigg(
+            \Big|\Big|
+                Q_{new}(\red{s},\bro{a}) - Q_{old}(\red{s},\bro{a})
+            \Big|\Big|
+            \Bigg)
+         \end{equation}
+
+         \begin{notation}
+             When we need to take the maximum over \purp{multiple inputs}, we include \gren{both of them} underneath the \textbf{max} notation.
+
+             \begin{equation*}
+                 \max_{x,y} \Big( f\big(x,y\big) \Big)
+             \end{equation*}
+
+             The above asks, "if we can choose $x$ and $y$ to be anything, what's the \purp{largest value} of $f$ we can get?"
+         \end{notation}
+
+         This equation will tell us whether we're finished.\\
+
+         \begin{kequation}
+            The following equation tells us, "if we compare $Q_{new}$ to $Q_{old}$, what's the \purp{biggest difference} between their outputs?"
+            
+             \begin{equation*}
+                 \pur{\max_{s,a}}
+                    \Bigg(
+                    \Big|\Big|
+                        Q_{new}(\red{s},\bro{a}) - Q_{old}(\red{s},\bro{a})
+                    \Big|\Big|
+                    \Bigg)
+             \end{equation*}
+
+             \subsecdiv
+
+             If their "biggest difference" is small $(< \eps)$, then you could say the two functions are \gren{similar} for every input.
+
+             \begin{equation*}
+                 \pur{\max_{s,a}}
+                    \Bigg(
+                    \Big|\Big|
+                        Q_{new}(\red{s},\bro{a}) - Q_{old}(\red{s},\bro{a})
+                    \Big|\Big|
+                    \Bigg) < \eps
+             \end{equation*}
+
+             This is our \purp{termination condition}: once we reach this condition, our $Q^*$ approximation is "good enough".
+
+             
+         \end{kequation}
+
+         Finally, we have a complete value-iteration process.\\
+
+         \begin{definition}
+             To do \vocab{$Q$-value iteration}, we follow these steps:
+
+             \begin{enumerate}
+                 \item Start with $Q_{new}=0$.
+                 \item Set $Q_{old} = Q_{new}$. This moves us forward 1 timestep. 
+                 \item Update $Q_{new}$.
+
+                 \begin{equation*}
+                    \grn{Q_{new}\big(s,a \big)} \;\;=\;\; 
+                            R \Big( s,a \Big)
+                        \;\;+\;\;
+                        \red{\gamma}
+                        \blu{\sum_{s'}}  
+                            \;\;
+                            T \Big(          s,a,s' \Big)
+                            \;\cdot\; 
+                            \bro{ \max_{a'} \Big( \blu{Q_{old}\big(s',a' \big)} \Big)}
+                \end{equation*}
+
+                \item Repeat step 2-3 until we \purp{converge}:
+
+                    \begin{equation*}
+                         \pur{\max_{s,a}}
+                            \Bigg(
+                            \Big|\Big|
+                                Q_{new}(\red{s},\bro{a}) - Q_{old}(\red{s},\bro{a})
+                            \Big|\Big|
+                            \Bigg) < \eps
+                     \end{equation*}
+
+                 \item Return the optimal policy. 
+
+                    \begin{equation*}
+                        \grn{\pi^*}\big(\redd{s}\big) = 
+                        \bro{\argmax{a}}{} \Big( 
+                            Q^{*}\big(\red{s}, \bro{a} \big) 
+                        \Big)
+                    \end{equation*}
+             \end{enumerate}
+         \end{definition}
+
+        If we write this as pseudocode:
+         
+        \begin{codebox}
+        \Procname{$\proc{Infinite-Horizon-Value-Iteration}(\mathcal S, \mathcal A, T, R, \gamma, \epsilon)$}
         
+        \li \For $\red{s \in \mathcal{S}}, \bro{a \in \mathcal{A}}:$ \qquad \qquad \# Every input pair
+            \Do 
+                \li $Q_{\text{old}}(\red{s}, \bro{a}) = 0$ \qquad \qquad \# Start from $Q^0=0$
+            \End
 
-
+        \li
+            
+        \li \While True: \# Continue until converged
+        \li 
+            \Do
+                \li \For $s \in \mathcal{S}, a \in \mathcal{A}:$ \qquad \qquad \# Update $Q_{new}$
+                \Do
+                    \li
+                    \li $Q_{\text{new}} \big(\red{s}, \bro{a} \big) =       R \big( \red{s}, \bro{a} \big) \;\;+\;\; 
+                    \gamma\sum_{s'} \;\;
+                        T \Big(\red{s}, \bro{a}, \blu{s'} \Big)
+                    \;\;\cdot\;\; \pur{\max_{a'}}
+                        \Big( Q_{\text{old}} \big( \blu{s'}, \pur{a'} \big) \Big)$
+                \End
+        \li
         
-
+        \li \If $\pur{\max_{s,a}}
+                            \Big(
+                            \big|\big|
+                                Q_{new}(\red{s},\bro{a}) - Q_{old}(\red{s},\bro{a})
+                            \big|\big|
+                            \Big) < \eps$  \qquad \qquad \#If converged, we're finished
+            \Do
+                \li return $Q_{\text{new}}$
+            \End
+        \li
         
-
-        
-
-        
-
-    
-
-
-
-
-\pagebreak
-
-\section{Old Material}
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Finding policies for MDPs}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Finding optimal infinite-horizon policies}
-\label{sec:mdp_infinite_horizon_optimal}
-
-In contrast to the finite-horizon case, the best way of behaving in an
-infinite-horizon discounted {\sc mdp} is not time-dependent: at every
-step, your expected future lifetime, given that you have survived
-until now, is $1 / (1 - \gamma)$.
-%
-\question{
-Verify this fact:  if, on every day you wake up, there is a
-probability of $1 - \gamma$ that today will be your last day, then your
-expected lifetime is $1 /  (1 - \gamma)$ days.
-}
-
-An important theorem about {\sc mdp}s is: in the infinite-horizon case, there exists a stationary\index{policy!stationary policy}
-\note{Stationary means that it doesn't change over time; in contrast, the
-  optimal policy in a finite-horizon {\sc mdp} is {\em non-stationary.}}
-optimal policy $\pi^*$ (there may be more than one) such that for all
-$s \in \mathcal S$ and all other policies $\pi$, we have 
-\begin{equation}
- V_{\pi^*}(s) \ge V_{\pi}(s) \;\;.
-\end{equation}
-
-% Let $n = |\mathcal S|$ andd $m = |\mathcal A|$. Algorithm for finding $\pi^*$:
-% \begin{itemize}
-% \item
-% enumerate and test, complexity is $O(m^n)$
-% \item
-% linear programming, complexity is $O(\text{poly}(n, m b))$ where $b$ is the number of bits per element of $T, R$
-% \item
-% policy iteration, complexity is $O(\text{poly}(n, m, \text{bits}(\gamma)))$, requires solving lots of $n \times n$ systems
-% \item
-% {\underline{value iteration}}, complexity is $O\left(\text{poly}(n, m, b, \frac{1}{1 - \gamma}\right)$
-% \end{itemize}
-% The latter is easy to implement and the foundation for many reinforcement-learning methods.
-
-There are many methods for finding an optimal policy for an {\sc mdp}.
-We have already seen the finite-horizon value iteration case.  Here we
-will study a very popular and useful method for the infinite-horizon
-case, {\em infinite-horizon value iteration}.  It is also important to
-us, because it is the basis of many {\em reinforcement-learning}
-methods.
-
-Define $Q^*(s, a)$ to be the expected infinite-horizon discounted
-value of being in state $s$, executing action $a$, and executing
-an optimal  policy $\pi^*$ thereafter.  Using similar reasoning to the
-recursive definition  of  $V_\pi$,  we can express this value
-recursively as
-\begin{equation}
- Q^*(s, a) = R(s, a) + \gamma\sum_{s'}T(s, a, s')\max_{a'}Q^*(s',
-a') \;\;.
-\end{equation} 
-This is also a set of equations, one for each $(s, a)$ pair.  This
-time, though, they are not linear, and so they are not easy to solve.
-But there is a theorem  that says they have a unique solution!
-
-If we knew the optimal action-value function, then  we could derive an
-optimal policy  $\pi^*$ as
-\begin{equation}
- \pi^*(s) = \text{arg}\max_{a}Q^*(s, a) \;\;.
-\end{equation}
-\question{The optimal value function is unique, but the optimal policy
-  is not.  Think of a situation in which there is more than one
-  optimal policy.}
-
-We can iteratively solve for the $Q^*$ values with the infinite-horizon
-value iteration algorithm, shown below:
-
-\begin{codebox}
-  \Procname{$\proc{Infinite-Horizon-Value-Iteration}(\mathcal S, \mathcal A, T, R, \gamma, \epsilon)$}
-  \li     \For $s \in \mathcal{S}, a \in \mathcal{A}:$
-	\Do
-  \li        $Q_{\text{old}}(s, a) = 0$
+        \li $Q_{\text{old}} = Q_{\text{new}}$ \qquad \qquad \#Re-use for next iteration
         \End
-  \li     \While True:
-        \Do
-  \li        \For $s \in \mathcal{S}, a \in \mathcal{A}:$
-           \Do
-  \li           $Q_{\text{new}}(s, a) = R(s, a) + \gamma\sum_{s'}T(s, a, s')\max_{a'}Q_{\text{old}}(s', a')$
-         \End
+        \end{codebox}
 
-  \li      \If $\max_{s, a}\lvert Q_{\text{old}}(s, a) - Q_{\text{new}}(s, a)\rvert < \epsilon:$
-         \Do
-  \li           return $Q_{\text{new}}$
-        \End
-  \li      $Q_{\text{old}} = Q_{\text{new}}$
-	\End
-\end{codebox}
 
-\paragraph*{Theory}
 
-There are a lot of nice theoretical results about infinite-horizon value iteration.
-For some given (not necessarily optimal) $Q$ function, define
-$\pi_{Q}(s) = \text{arg}\max_{a}Q(s, a)$.   
-\begin{itemize}
-\item After executing infinite-horizon value
-iteration with parameter $\epsilon$,  
-\note{Note the new 
-  notation!  Given two functions $f$ and $f'$, we
-  write $\lVert f - f' \rVert_\text{max}$ to mean $\max_x \lvert f(x)
-  - f'(x)\rvert$.   It measures the maximum absolute
-  disagreement between the two functions at any input $x$.}
-\begin{equation}
-\lVert  V_{\pi_{Q_{\text{new}}}} - V_{\pi^*} \rVert_{\text{max}} < \epsilon \;\; .
-\end{equation}
-%
-\item
-There is a value of $\epsilon$ such that
-\begin{equation}
- \Vert Q_{\text{old}} - Q_{\text{new}} \rVert_{\text{max}} <
-\epsilon \Longrightarrow \pi_{Q_{\text{new}}} = \pi^* 
-\end{equation}  
-\item  As the algorithm executes,   
-$\lVert V_{\pi_{Q_{\text{new}}}} - V_{\pi^*} \Vert_{\text{max}}$ decreases
-monotonically on each iteration.
-\item The algorithm  can be executed asynchronously, in parallel: as
-  long as all $(s, a)$ pairs are updated infinitely often in an
-  infinite run, it still converges to optimal value. 
-\note{This is very important for reinforcement learning.}
+    \pagebreak
+    
+    \subsection{Convergence Theorems}
 
-\end{itemize}
+        We've made a couple pretty large \vocab{assumptions}: thankfully, each one has a \purp{theoretical} justification.
 
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "top"
-%%% End:
+        In order to discuss these theorems, we need to clarify some notation:\\
+
+        \begin{notation}
+            Suppose we have run our value iteration for $n$ steps (not necessarily enough for convergence within $\eps$). For simplicity, let's say $Q=Q_{new}$: it's our current best approximation of $Q^*$.
+
+            Our policies:
+
+            \begin{itemize}
+                \item $\pi^*$ is the optimal policy, based on $Q^*$.
+                \item $\pi_Q$ guesses the optimal policy, based on $Q$.
+            \end{itemize}
+
+            Our value functions:
+
+            \begin{itemize}
+                \item $V_{\pi_Q}$ is the reward of using $\pi_Q$ forever.
+
+                \item $V_{\pi^*}$ is the reward of using $\pi^*$ forever.
+            \end{itemize}
+        \end{notation}
+
+        If we succeed, then $Q\approx Q^*$, and $\pi_Q = \pi^*$.
+
+        \subsecdiv
+
+        Our first assumption: "value-iteration makes our approximation better".\\
+
+        \begin{theorem}
+
+            \begin{equation*}
+                 \pur{\max_{s}}
+                    \Bigg(
+                    \Big|\Big|
+                        V_{\pi_Q}(\red{s}) - V_{\pi^*}(\red{s})
+                    \Big|\Big|
+                    \Bigg)
+                \qquad 
+                    \text{ never increases}
+             \end{equation*}
+
+             or,
+
+             \begin{equation*}
+                \overbrace{
+                 \pur{\max_{s}}
+                    \Bigg(
+                    \Big|\Big|
+                        V_{\pi_Q}(\red{s}) - V_{\pi^*}(\red{s})
+                    \Big|\Big|
+                    \Bigg)
+                    }^{\text{Our worst-performing state $\pi(s)$}}
+                \qquad 
+                \overbrace{
+                    \text{ never increases}
+                }^{\text{Never gets worse than this}}
+             \end{equation*}
+
+             
+
+             By taking the max, we're getting the "worst" performing state for $\pi_Q$: we'll call this $\red{s_{bad}}$. 
+
+             \begin{itemize}
+                 \item This sets a \orgg{limit} on how bad our model can be. 
+                 \item Iteration can't make any state worse than $\red{s_{bad}}$ currently is.
+                 \item $\red{s_{bad}}$ can only stay the same, or get better!
+             \end{itemize}
+             
+        \end{theorem}
+
+            \note{Another way to say "never increases" is "decreases monotonically".}
+
+        This seems pretty weak: it's nice to know that value-iteration can't make $\pi_Q$ much worse, but how do we know it gets better? How do we know it converges?\\
+
+        \begin{theorem}
+            When we run \vocab{value iteration} with $\epsilon$, we will eventually \gren{improve} $Q$ enough to meet our requirement: 
+            
+            \begin{equation*}
+                \text{After value iteration, } \qquad
+                \overbrace{
+                \pur{\max_{s}}
+                    \Bigg(
+                    \Big|\Big|
+                        V_{\pi_Q}(\red{s}) - V_{\pi^*}(\red{s})
+                    \Big|\Big|
+                    \Bigg) < \eps
+                }^{\text{$Q$ will approach $Q^*$ (within distance $\eps$)}}
+            \end{equation*}
+
+            This means that if we run value iteration long enough, it \purp{will converge}, and get as close to $Q^*$ as we want.
+        \end{theorem}
+
+        That's great! $Q$ approaches $Q^*$, when we run value iteration.
+
+        We just have one more problem: just because $Q$ is \purp{close} to $Q^*$, doesn't mean they're close enough to get the optimal policy we want, $\pi^*$.
+
+        \begin{itemize}
+            \item Can get that policy?\\
+        \end{itemize}
+
+        \begin{theorem}
+            If we choose the right $\eps$, our policy $\pi_Q$ \purp{will be} the optimal policy $\pi^*$.
+
+            \begin{equation*}
+                \overbrace{
+                    \org{\exists \eps>0}:
+                }^{\text{There is an $\eps$ where}}
+                \qquad 
+                \overbrace{
+                \pi_Q = \pi^*
+                }^{\text{We find the optimal policy}}
+            \end{equation*}
+        \end{theorem}
+
+        We don't know what value of $\eps$ is required, but it's good to know that it always exists: we can always find the optimal policy.
+
+        \subsecdiv
+
+        One last useful computational trick:\\
+
+        \begin{concept}
+            We can run the different parts of value-iteration \gren{in parallel}, out-of-sync with each other.
+
+            As long as we update each $(s,a)$ "infinitely many times" (as many times as we need), we will still \purp{converge}.
+        \end{concept}
+
+
+\section{Terms}
+
+    \subsection*{Section 12.0}
+    \begin{itemize}
+        \item State Machine (Review)
+        \item Finite State Machine (Review)
+        \item Actions
+        \item Deterministic State Machine
+        \item Probabilistic State Machine
+        \item Reward function $R(s,a)$
+        \item State-action pair
+        \item Stochastic (Review)
+    \end{itemize}
+
+    \subsection*{Section 12.1}
+    \begin{itemize}
+        \item Action space
+        \item State space
+        \item Transition Model $T(s,a,s')$
+        \item (Probabilistic) State-Transition Diagram
+        \item Transition Matrix $\mathcal{T}(a)$
+        \item Markov Decision Process $(\mathcal{S},\mathcal{A},T,R,\gamma)$
+        \item Policy $\pi(s)$
+        \item Value Function
+        \item Finite Horizon
+        \item Horizon $h$
+        \item Timestep $t$ (Review)
+        \item MDP Termination
+        \item Finite Horizon Value Function $V_{\pi}^h(s)$
+        \item Expected Value
+        \item Weighted Average (Review)
+        \item Probability Distribution (Review)
+        \item Infinite Horizon
+        \item Infinite Horizon Value Function $V_{\pi}(s)$
+        \item Discounting
+        \item Discount Factor
+        \item Discounted Average
+        \item MDP Lifespan
+        \item Memorylessness 
+        \item Markov Property (Optional)
+        
+    \end{itemize}
+
+    \subsection*{Section 12.2}
+    \begin{itemize}
+        \item Optimal Policy
+        \item Argmax (Review)
+        \item $Q$-Value Function (State-action value function)
+        \item Dynamic Programming
+        \item Value Iteration
+        \item Convergence (Review)
+    \end{itemize}
+    
+
+        
+
+
+
+        
+
+        
+
+    
+
+        
+
+    
+
+        
+
+
+        
+
+        
+
+        
+
+        
+
+    
+
+
