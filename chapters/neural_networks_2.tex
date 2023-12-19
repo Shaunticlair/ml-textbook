@@ -1600,13 +1600,19 @@
                 \item \gren{Dividing by standard deviation}: we compute how "spread out" the data is, and scale by that factor. Our standardized data is always the same amount "spread out".
             \end{itemize}
 
-            We repeat this process in between each layer of our network. Each layer currently receives a set of inputs with mean 0, standard deviation 1. No matter how the earlier layers change.
-                \note{Below, we exclude the $\ell$ superscript in $z^\ell$, $\mu^\ell$, $\sigma^\ell$, and $n^\ell$ for readability.}\\
+            We repeat this process in between each layer of our network. Each layer receives a set of inputs with mean 0, standard deviation 1, no matter how the earlier layers change.
+                \note{Below, we exclude the $\ell$ superscript in $z^\ell$, $\mu^\ell$, $\sigma^\ell$, and $n^\ell$ for readability.}
 
             For now, we'll apply this to the pre-activation $Z$.\\
 
+            \begin{notation}
+                We'll represent the element in the $\nth{i}$ row, $\nth{j}$ column, as $Z_{ij}.$
+            \end{notation}
+
+            \phantom{}
+
             \begin{concept}
-                In order to deal with \vocab{internal covariate shift}, we'll take each mini-batch of $k$ \gren{pre-activations} to each \gren{layer} (pre-activation, not true "input") of our neural network, and we \purp{standardize}/normalize it.
+                In order to deal with \vocab{internal covariate shift}, we'll take each mini-batch of $k$ \gren{pre-activations} to each \gren{layer} of our neural network, and \purp{standardize}/normalize it.
 
                 \begin{itemize}
                     \item Each \orgg{dimension} of the input is standardized \orgg{separately}.
