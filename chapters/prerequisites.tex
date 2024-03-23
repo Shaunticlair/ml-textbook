@@ -216,14 +216,22 @@ If a class has its own prerequisite, then we assume the understanding of that cl
             \begin{equation}
                 P(B|A)
             \end{equation}
-            
+
         This is read as "The probability of B \textbf{given} A".
         % , meaning, the probability of event B \textbf{if} event A is already known to have happened.
+
+        \item We can use this to get the probability of two events at the same time.
+
+            \begin{equation}
+                P(A \text{ and } B)=P(A|B)P(B)
+            \end{equation}
+            
+        
         
         \item Two events are \vocab{independent} if knowing the outcome of one event does not affect the odds of another. You can write this as 
         
             \begin{equation}
-                P(A|B)P(B)=P(A \text{ and } B)
+                P(A|B)=P(A)
             \end{equation}
             
             You can equivalently use the next bullet point's definition.
@@ -232,7 +240,8 @@ If a class has its own prerequisite, then we assume the understanding of that cl
             \begin{equation}
                 P(A \text{ and } B) = P(A)P(B)
             \end{equation}
-            
+
+        
             
         \item The \vocab{sum} of the probabilities of all outcomes \textbf{must add} to 1: otherwise, there's a chance of getting none of the listed outcomes.
         

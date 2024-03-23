@@ -12,7 +12,11 @@
         
             \begin{itemize}
                 \item To create a neural network, we combine many smaller, simpler models together in a systematic, \gren{non-linear} way.
-                    \note{Remember that by "systematic", we mostly just mean "organized": that way, we can do math easier!}
+                    \note{Remember that by "systematic", we mostly just mean "organized":
+                    
+                    \phantom{}
+                    
+                    The parts of our model are cleanly organized, to make our math easier.}
 
                 \item This creates the "\vocab{fully connected}" (FC) neural network.
             \end{itemize}
@@ -26,29 +30,38 @@
         \begin{itemize}
             \item We used \gren{convolution} as a way to represent which elements were "near" each other in space.
         \end{itemize}
+
+
+
+
+    \phantom{}
         
     \subsection{Time in a Neural Network}
     
         We've created models that can model \textit{space}. We might also wonder: can we make it so they understand \orgg{time}, as well?
 
         Right now, our neural networks have no built-in way to \textit{represent} time: each data point stands by itself.
-            \note{Note that we're focused on the \textbf{finished} model: the model changes over time while training, but the final model \textbf{doesn't} keep track of the past.}
+            \note{Note that we're focused on the \textbf{finished} model:
+            
+            \phantom{}
+            
+            The model changes while training, but the fully-trained model \textbf{doesn't} keep track of the past.}
 
         \begin{itemize}
-            \item As we discussed in the last chapter, the \gren{order} of our input variables is mostly \textbf{ignored} by the model.\\
+            \item As we discussed in the CNN chapter, the \purp{order} of our input variables is mostly \textbf{ignored} by the model.\\
         \end{itemize}
 
         \begin{concept}
             A traditional, fully connected \gren{neural network} cannot easily use information about \vocab{time}, or the \purp{past}.
         \end{concept}
 
-        Previously, we addressed the unstructured nature of NNs using \textbf{convolution}. But this \textit{doesn't} work as well in time as it does in space:\\
+        Previously, we added structure to NNs using \textbf{convolution}. But this \textit{doesn't} work as well in time as it does in space:\\
 
         \begin{concept}
             \vocab{Time} and \purp{space} behave differently:
             
             \begin{itemize}
-                \item Information can be spread out over any \textbf{direction} in space.
+                \item Information can be spread out over \orgg{any direction} in space.
                 \item However, information only travels \gren{forward}, not backward, in time.
             \end{itemize}
 
@@ -65,6 +78,8 @@
         \end{itemize}
         
 
+
+    \phantom{}
         
     \subsection{Our plan going forward (\redd{Optional})}
         
@@ -83,7 +98,7 @@
                 \begin{itemize}
                     \item An RNN is a \gren{model} that uses our new system of "states" to \textbf{store} the past, so we can use it in our model.
                     
-                    \item Our RNN makes predictions based the present (input $x_i$) \purp{combined with} the past (state $s_i$).
+                    \item Our RNN makes predictions based the present (input $x_t$) \purp{combined with} the past (state $s_{t-1}$).
                 \end{itemize}
 
             \item \orgg{Ch.11: Transformers}
@@ -96,7 +111,7 @@
             \item \redd{Ch.12: Markov Decision Process}
                 \begin{itemize}
                     \item We go back to using \gren{states} to store past information.
-                    \item With MDPs, our model represents different possible \purp{decisions} it can make, with different possible \textbf{rewards}.
+                    \item With MDPs, our model represents different possible \purp{decisions} it can make over time, with different possible \textbf{rewards}.
                 \end{itemize}
 
             \item \brow{Ch.13: Reinforcement Learning}
@@ -125,9 +140,9 @@
             \item \miniex If I told you "the current time is $t=1563$", that doesn't help you much with decision-making.
         \end{itemize}
 
-        So, what would be a \textbf{useful} representation of time? We've already shown that we don't really care as much about the exact \textbf{index} of time $t$.
+        So, what would be a \textbf{useful} representation of time? We've already shown that we don't really care much about the exact \textbf{index} of time $t$.
 
-        Instead, we care about \gren{what} happened in the past.\\
+        Instead, we care about \gren{what happened} in the past.\\
 
         \begin{concept}
             One simple way to record the past is to ask about \gren{events}, and \purp{when} they happened.
@@ -136,6 +151,8 @@
         \miniex You might keep track of a medical history, or the purchases made by a company over the last year.
 
 
+    \phantom{}
+
     \subsection{States}
 
         Keeping a "history" of events is an \textbf{improvement}. In some contexts, though, it can become \textbf{expensive}: the \textbf{longer} our time frame, the more events will pile up.
@@ -143,7 +160,7 @@
         We could ignore very \gren{old} events, but whether an old event matters depends on the context.
 
         \begin{itemize}
-            \item \miniex If we omit all company profits/expenses from more than 3 years ago, we don't know exactly how much money we have.
+            \item \miniex If we omit all company profits/expenses from more than 3 years ago, we don't know our balance. What if we forgot a debt?
         \end{itemize}
 
         This particular example has a pretty simple solution: just keep track of the \gren{total} amount of money you have.
@@ -177,6 +194,11 @@
         
         There are many other kinds of states: position and velocity of an object, or the progress on a project, etc.
 
+
+
+
+    \phantom{}
+
     \subsection{How states are stored}
 
         Now that we've introduced the idea, we'll start formally notating it.\\
@@ -184,7 +206,7 @@
         \begin{notation}
             Typically, a \vocab{state} \red{$s$} stores our information as a \purp{vector}.
             
-            We represent the \textbf{set} of all \redd{states} as \red{$\mathcal{S}$}. 
+            We represent the \textbf{set} of all possible \redd{states} as \red{$\mathcal{S}$}. 
             
             \begin{itemize}
                 \item We can have a \textbf{finite} or \textbf{infinite} set of states, depending on the situation.
@@ -207,6 +229,11 @@
             \item $\red{\mathcal{S}}$ is a finite or infinite \textbf{set} of possible \textbf{states} \red{$s$}.
             \item $\red{s_0 \in \mathcal{S}}$ is the \textbf{initial state} of the machine. 
         \end{itemize}
+
+
+
+
+    \phantom{}
 
     \subsection{State examples}
         Let's show a couple examples of what states different systems might have.
@@ -246,7 +273,7 @@
 
 
 
-        \pagebreak
+    \pagebreak
 
     \subsection{Input}
 
@@ -269,6 +296,11 @@
                 
             Our input at time $t$ is \bru{$x_t$}.
         \end{definition}
+
+
+
+
+    \phantom{}
 
     \subsection{Transition}
 
@@ -348,6 +380,10 @@
                     \rightarrow \red{\mathcal{S}}
                 \end{equation}
         \end{itemize}
+
+
+
+    \phantom{}
 
     \subsection{Transition Examples}
         
@@ -434,6 +470,10 @@
             \item Instead, we continuously create outputs at each timestep.
         \end{itemize}
 
+
+
+    \phantom{}
+
     \subsection{Output Function}
         
         So now, we need to actually \textbf{compute} our output. This will be based on all the data we have \gren{stored} at the time we're asked for an output.
@@ -481,6 +521,9 @@
         \end{itemize}
 
 
+
+    \phantom{}
+    
     \subsection{Output Examples}
         
         Again, we go to our examples, and give them outputs, completing our state machines:
@@ -585,6 +628,10 @@
             \item How to \gren{get} an \gren{output}.
         \end{itemize}
 
+
+
+    \phantom{}
+
     \subsection{Using a State Machine}
 
         How do we work with a state machine? Well, we have all of the tools we need.
@@ -643,6 +690,10 @@
                 \item Repeat.
             \end{itemize}
         \end{concept}
+
+
+
+    \phantom{}
 
     \subsection{Example Run-Through of a State Machine}
 
@@ -723,6 +774,11 @@
         \end{equation}
         
         Though our transition and output functions might become more complicated, this is the basic idea behind all state machines.
+
+
+
+
+    \phantom{}
 
     \subsection{State Machine Diagram}
     
@@ -837,6 +893,11 @@
         This seemingly limited tool is more powerful than it seems: \textbf{all computers} can be described as finite state machines!
             \note{Even when a computer seems to be describing "infinite" collections of things, it only has a finite amount of space to represent them.}
 
+
+
+
+    \phantom{}
+
     \subsection{State Transition Diagrams}
 
         One nice thing about the simplicity of a finite state machine is that we can represent it \textbf{visually}.
@@ -906,6 +967,11 @@
         \end{definition}
         
             \note{If you're not familiar with "nodes" or "edges", don't worry about it! For our purposes, "point" and "arrow" are good enough.}
+
+
+
+
+    \phantom{}
 
     \subsection{Simplified state transition diagrams: One-input graphs}
         
@@ -1064,6 +1130,10 @@
 
     Just as we did in convolution, we'll add state machines into our neural network system. This will give us the \vocab{Recurrent Neural Network (RNN)}.
 
+
+
+    \phantom{}
+
     \subsection{Building up RNNs}
 
         How do we create a "network" using our state machine system?
@@ -1094,6 +1164,11 @@
                 \item Adds a \purp{nonlinear} component after the linear component both functions.
             \end{itemize}
         \end{concept}
+
+
+
+
+    \phantom{}
 
     \subsection{Offset}
 
@@ -1160,6 +1235,10 @@
             \includegraphics[width=100mm,scale=0.4]{images/rnn_images/rnn_diagram_linear.png}
         \end{figure}
 
+
+
+    \phantom{}
+
     \subsection{Activation Function}
 
         Now, we've covered the linear part of our function. We'll apply a non-linear function $f$ and $g$ to each:
@@ -1184,7 +1263,7 @@
             In previous sections, we've used \grn{$f_s$} and \grn{$f_o$} to indicate the \orgg{entire function} used to compute the state/output, including the \purp{linear} part.
 
             \begin{itemize}
-                \item However, we want to have a distinct \grn{activation function} for each of these two.
+                \item However, we want to separate the linear and \gren{non-linear} parts.
             \end{itemize}
 
             \subsecdiv
@@ -1226,6 +1305,9 @@
                 \end{bmatrix}
             \end{equation*}
         \end{concept}
+
+
+    \phantom{}
 
     \subsection{Shape}
 
@@ -1283,6 +1365,8 @@
                 \item We call it "\purp{recurrent}" because of our states. A state is created by the network to find the output, and then one timestep later, is \purp{re-used} as a new input.
             \end{itemize}
 
+            \phantom{}
+
             Our RNN manipulates input $\bru{x_t \in \RR^\ell}$, and state $\red{s_t \in \RR^m}$, to create an output $\pur{y_t \in \RR^n}$.
 
             Our state and output equations are given as:
@@ -1316,7 +1400,8 @@
 
         Take a moment to compare this model to the more complex one above: they're more similar than they seem.
 
-        
+
+    \phantom{}
 
     \subsection{RNN as a "network"}
 
@@ -1368,7 +1453,10 @@
             \item However, we could think of the $x$-axis as representing "time": the same RNN reused at multiple times.
         \end{itemize}
 
-        
+
+
+
+    \phantom{}
 
     \subsection{RNN fully unpacked}
 
@@ -1988,12 +2076,21 @@
             We say can that our RNN \vocab{transduces} our \brow{input} sequence into our \purp{output} sequence.
         \end{definition}
 
-        Now, we can have \purp{multiple sequences}. But each of our sequences can have multiple timesteps/elements. We'll need to distinguish between these two.
-            \note{And each vector $x_t$ can have multiple elements! We'll ignore this last bit, for our sanity.}
+        Now, we can have \purp{multiple sequences}: for example, we could have our input be, $x=[1,2,3,4]$, or $x=[2,4,6,7]$. Both are valid inputs.
+        
+        \begin{itemize}
+            \item And in each of those sequences, you have \gren{multiple timesteps}.
+                \note{And each vector $x_t$ can have multiple elements! We'll ignore this last bit, for our sanity.}
+        \end{itemize} 
+            
+
+        We'll need to distinguish between these two: difference sequences, versus different timesteps, within a sequence.
 
         \begin{itemize}
-            \item We'll re-use data point notation $\ex{x}{i}$ that we used in earlier chapters, Regression and Classification.\\
+            \item For this purpose, we re-use data point notation $\ex{x}{i}$ that we developed in earlier chapters, Regression and Classification.\\
         \end{itemize}
+
+            
             
 
         \begin{notation}
@@ -2005,6 +2102,12 @@
 
             We'll use $\ex{x}{i}$ to distinguish between \purp{different sequences}.
         \end{notation}
+
+        \begin{itemize}
+            \item \miniex $x_3^{(2)}$ is the 3rd timestep, of the 2nd sequence ("data point").
+        \end{itemize}
+
+    \phantom{}
 
     \subsection{Sequence length}
     
@@ -2100,9 +2203,35 @@
             \end{itemize}
         \end{definition}
 
+
+        One important note: Now, we're using $y$ to represent the \purp{desired} output, which is not necessarily the same as what our RNN actually gives us.
+
+        \begin{itemize}
+            \item We'll need separate notation for this.\\
+        \end{itemize}
+
+        \begin{notation}
+            From this point on, we'll use \purp{$y$} to indicate the \purp{desired, correct} output, and \gren{$g$} to represent the \gren{current RNN} output.
+
+            \begin{itemize}
+                \item So, our goal is to make $g$ and $y$ as \orgg{similar} as possible.
+            \end{itemize}
+        \end{notation}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=100mm]{images/rnn_images/rnn_simple_g_notation.png}
+            \caption*{Very little changes: we just replace $y$ with $g$.}
+        \end{figure}
+
+
+
+
+    \phantom{}
+
     \subsection{Training and Evaluation}
 
-        The desired training output is $\ex{y}{i}$: our RNN will attempt to \gren{predict} it with its own output, $\ex{g}{i}$.
+        The desired training output is $\ex{y}{i}$: we will \gren{predict} it using the RNN output, $\ex{g}{i}$.
 
         \begin{itemize}
             \item For training and evaluation, we'll need a \purp{loss function} to indicate how wrong our guess $\ex{g}{i}$ is.
@@ -2189,7 +2318,7 @@
             These are the \gren{parameters} of our RNN -- they're used for computing $\ex{g}{i}$. Meanwhile, $\ex{x}{i}$ is the \brow{input}, so we find:
 
             \begin{equation*}
-                \ex{g}{i} = RNN \Big( \bro{\ex{x}{i}}, \grn{W}  \Big)
+                \ex{g}{i} = RNN \Big( \bro{\ex{x}{i}}; \grn{W}  \Big)
             \end{equation*}
         \end{notation}
 
@@ -2212,6 +2341,10 @@
                 \;\Big) 
             \end{equation*}
         \end{definition}
+
+
+
+    \phantom{}
 
     \subsection{Activation Functions}
 
@@ -2257,9 +2390,9 @@
 
 \section{RNN as a language model}
 
-    Human language is written/spoken \purp{sequentially}, with each character/word/syllable coming in a particular order.
+    Human language is written/spoken \gren{sequentially}, with each character/word/syllable coming in a particular \purp{order}.
 
-    Thus, we could expect RNNs, a "sequential" model, to be suited for this task.
+    Thus, we might expect RNNs, a "sequential" model, to be suited for this task.
         \note{Not nearly as well as transformers, but we'll discuss that in the Transformers chapter.}
 
     The task in question is \redd{predictive text}:\\
@@ -2271,6 +2404,10 @@
     \miniex Autocorrect is a common application: based on the words you've typed so far, your phone will predict the most likely next word.
 
     RNNs can be trained to accomplish this type of task.
+
+
+
+    \phantom{}
 
     \subsection{Tokens}
 
@@ -2308,58 +2445,96 @@
             \end{bmatrix}
         \end{equation}
 
+
+
+    \phantom{}
+
     \subsection{Predicting tokens}
 
-        We want our RNN to predict \purp{future} tokens in the sentence, based on \gren{prior} tokens.  
+        We want our RNN to predict \purp{future} tokens in the sentence, based on \gren{past} tokens.  
 
-        Let's start by feeding in our first token:
-
-        \begin{equation}
-            RNN\Bigg(\begin{bmatrix}
-                c_1
-            \end{bmatrix}\Bigg)
-            =
-            \begin{bmatrix}
-                g_2
-            \end{bmatrix}
-        \end{equation}
-
-        We want our RNN to predict the \gren{next} character, so the output will be our guess for $c_2$: named $g_2$.
-
-        Let's try our second token:
-
-        \begin{equation}
-            RNN\Bigg(\begin{bmatrix}
-                c_1 & c_2
-            \end{bmatrix}\Bigg)
-            =
-            \begin{bmatrix}
-                g_2 & g_3
-            \end{bmatrix}
-        \end{equation}
-
-        Note that $g_2$ is \gren{the same} as it was before: our RNN gives one output after each input.
 
         \begin{itemize}
-            \item That means that our RNN has only seen \bro{$c_1$} when it predicts \pur{$g_2$}: it doesn't know what the correct character, \pur{$c_2$}, is yet.
+            \item Let's start by feeding in our first token:
 
-            \item Meanwhile, \pur{$g_3$} is generated with knowledge of \bro{$c_1$ and $c_2$}: the RNN knows what the first two characters are.\\
+            \begin{equation}
+            RNN\Bigg(\begin{bmatrix}
+                \red{c_1}
+            \end{bmatrix}\Bigg)
+            =
+            \begin{bmatrix}
+                \blu{G_2}
+            \end{bmatrix}
+        \end{equation}
+
+        We want our RNN to predict the \gren{next} character, so the \purp{output} will be our prediction for $c_2$: we'll call it $G_2$.\\
+
+        \begin{notation}
+            Our \vocab{prediction} for the $\nth{n}$ token, $c_n$, is $G_n$.
+
+            \begin{itemize}
+                \item Thus, $G_n$ is the token we consider \gren{most likely}for $c_n$.
+            \end{itemize}
+        \end{notation}
+
+            \note{Alternatively, $G_n$ could be a vector, giving the \purp{probability} for each possible token that $c_n$ could be.
+            
+            \phantom{}
+            
+            This would be useful for evaluating our model: how sure was it of the right answer?}
+
+        
+
+
+        \phantom{}
+
+        \phantom{}
+
+        \item Let's try our second token:
+
+        \begin{equation}
+            RNN\Bigg(\begin{bmatrix}
+                \red{c_1} & \blu{c_2}
+            \end{bmatrix}\Bigg)
+            =
+            \begin{bmatrix}
+                \blu{G_2} & \grn{G_3}
+            \end{bmatrix}
+        \end{equation}
+        \end{itemize}
+
+        
+
+        
+
+        \phantom{}
+
+        Note that our model gets to see the correct $c_2$, \gren{after} making its prediction, $G_2$.
+
+        \begin{itemize}
+            \item That means that our RNN has only seen \red{$c_1$} when it predicts \blu{$G_2$}: it doesn't know what the correct character, \blu{$c_2$}, is yet.
+
+            \item Meanwhile, \grn{$G_3$} is generated with knowledge of \red{$c_1$} and \blu{$c_2$}: the RNN knows what the first two characters are.\\
         \end{itemize}
 
         
 
         \begin{concept}
-            When our RNN \purp{guesses} the $\nth{t}$ token, $g_t$, it can only see the \gren{first $t-1$ inputs}:
+            When our RNN \purp{guesses} the $\nth{t}$ token, $G_t$, it can only see the \gren{first $t-1$ inputs}:
 
             \begin{equation*}
                 \begin{bmatrix}
-                    c_1 & c_2 & \cdots & c_{t-1}
+                    \red{c_1} & \blu{c_2} & \cdots & \org{c_{t-1}}
                 \end{bmatrix}
                 \quad \xRightarrow[]{RNN} \quad
-                g_{t}
+                \grn{G_{t}}
             \end{equation*}
 
-            Information stored in $c_t$ or $c_{t+1}$, for example, has no effect on $g_t$.
+            Information stored in $c_t$ or $c_{t+1}$, for example, has \orgg{no effect} on $G_t$.
+
+            \begin{itemize}
+                \item Otherwise, our model could cheat, and predict by looking at the answer!
+            \end{itemize}
         \end{concept}
 
         In this way, we can supply our entire input, and get a full vector of predictions:
@@ -2368,15 +2543,41 @@
             RNN 
             \Bigg(
             \begin{bmatrix}
-                c_1 & c_2 & \cdots & c_{k-1} & c_{k}
+                \red{c_1} & \blu{c_2} & \cdots & \org{c_{k-1}} & \grn{c_{k}}
             \end{bmatrix}
             \Bigg)
             \quad=\quad 
             \begin{bmatrix}
-                g_2 & g_3 & \cdots & g_{k-1} & ?
+                \blu{G_2} & \cdots & \org{G_{k-1}} & \grn{G_{k}} & ?
             \end{bmatrix}
         \end{equation}
 
+        Let's show this in our simplified RNN diagram.
+            \note{Remember, the arrows left-to-right are states: they represent all of the previous words in the sentence.}
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=90mm]{images/rnn_images/rnn_predict_text.png}
+        \end{figure}
+
+        Here's an example sentence we could try to predict:
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=90mm]{images/rnn_images/rnn_predict_example.png}
+        \end{figure}
+
+        And now, here's an ideal case, where our RNN performs perfectly (we'll call it RNN$^*$):
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=90mm]{images/rnn_images/rnn_predict_soln.png}
+            \caption*{Our RNN predicts the right word, right before it appears.}
+        \end{figure}
+
+        
+
+    \phantom{}
 
     \subsection{Start token and end token}
 
@@ -2384,10 +2585,14 @@
 
         \begin{itemize}
             \item We'd like to try predicting the first character, $c_1$, rather than \orgg{skipping} it.
-            \item If we start with $c_2$, there are only \red{$k-1$} characters to predict, but we have \blu{$k$} distinct outputs: we have an \gren{extra} output.
+            \item If we start with $c_2$, there are only \red{$k-1$} characters we need to predict.
+            
+                \begin{itemize}
+                    \item We have $k$ inputs, and therefore $k$ outputs: we have \gren{one more output} than we need.
+                \end{itemize}
         \end{itemize}
 
-        \subsecdiv
+        \phantom{}
 
         Our first solution is to add a special "\purp{START}" token to the beginning of our input:
 
@@ -2400,7 +2605,7 @@
         What does this do for us?
 
         \begin{itemize}
-            \item During our first timestep, our RNN has nothing other than the START token, so it's able to spent that timestep \gren{predicting $c_1$}.
+            \item During our first timestep, our RNN has nothing other than the \purp{START} token, so it's able to spent that timestep \gren{predicting $c_1$}.
         \end{itemize}
 
         \begin{equation}
@@ -2413,20 +2618,20 @@
             \end{bmatrix}
         \end{equation}
 
-        Now, our output starts with $g_1$.
+        Now, our output starts with $G_1$.
 
-        \begin{equation}
+        \begin{equation*}
             RNN 
             \Bigg(
             \begin{bmatrix}
-                \purp{START} & c_1 & c_2 & \cdots & c_{k-1} & c_{k}
+                \purp{START} & \red{c_1} & \blu{c_2} & \cdots & \org{c_{k-1}} & \grn{c_{k}}
             \end{bmatrix}
             \Bigg)
             \quad=\quad 
             \begin{bmatrix}
-                g_1 & g_2 & \cdots & g_{k-1} & ?
+                \red{G_1} & \blu{G_2} & \cdots & \org{G_{k-1}} & \grn{G_{k}} & ?
             \end{bmatrix}
-        \end{equation}
+        \end{equation*}
 
         \begin{definition}
             The \brow{input} to our \vocab{sentence-prediction RNN} starts with the special \purp{START} token, followed by all of the tokens in our sentence $c$.
@@ -2436,9 +2641,13 @@
                     \purp{START} & c_1 & c_2 & \cdots & c_k
                 \end{bmatrix}
             \end{equation*}
+
+            \phantom{}
+
+            When our RNN receives this \purp{START} token, it has an opportunity to predict the \orgg{first word} in the sentence, with no context.
         \end{definition}
 
-    \subsecdiv
+        \phantom{}
 
         This hasn't fixed our other problem, though: now we have $k+1$ slots, but only $k$ outputs we need to predict.
 
@@ -2446,19 +2655,19 @@
 
         \begin{equation}
             y = \begin{bmatrix}
-                c_1 & c_2 & \cdots & c_k & \red{END}
+                c_1 & c_2 & \cdots & c_k & \redd{END}
             \end{bmatrix}
         \end{equation}
 
         \begin{itemize}
-            \item Now, we have a desired final output: we want our RNN to predict that the sentence has ended, and return \redd{END}.\\
+            \item Now, we have a desired final output: we want our RNN to predict when the sentence ends, and return \redd{END}.\\
         \end{itemize}
 
         \begin{definition}
-            The \purp{output} of our \vocab{sentence-prediction RNN} starts with all the tokens in our sentence $c$, followed by the special \redd{END} token.
+            The \purp{optimal output} of our \vocab{sentence-prediction RNN} starts with all the tokens in our sentence $c$, followed by the special \redd{END} token.
             \begin{equation*}
                 y = \begin{bmatrix}
-                    c_1 & c_2 & \cdots & c_k & \red{END}
+                    c_1 & c_2 & \cdots & c_k & \redd{END}
                 \end{bmatrix}
             \end{equation*}
         
@@ -2474,6 +2683,108 @@
                 \item The output should terminate with the special \redd{END} token: your model should \orgg{predict when the sentence ends}.
             \end{itemize}
         \end{concept}
+
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=100mm]{images/rnn_images/rnn_predict_startend.png}
+            \caption*{Here's what our system looks like, now that we've added the START and END tokens.}
+        \end{figure}
+
+        Let's review what happens at each timestep.
+
+        \begin{itemize}
+            \item On the bottom, we \gren{input} one word in the sentence.
+
+            \item On the top, we \purp{output} the predicted next word.
+
+            \item After an input, we update our \redd{state}, to include new info. This is \purp{used} by the RNN in the next timestep (left-to-right).
+        \end{itemize}
+
+
+
+
+
+
+
+
+
+    \pagebreak
+
+    \subsection{Why we might use RNNs for language}
+
+        The general reason we decided to try using RNNs for language is pretty basic:
+        
+        \begin{itemize}
+            \item "RNNs \purp{output sequences}. Text is a \gren{sequence of tokens}".
+        \end{itemize}
+
+        \phantom{}
+
+        But there's a bit more to it than that: RNNs allow our model to remember the \orgg{structure} of our sentence, using our \redd{state $s_t$}.
+
+        \begin{itemize}
+            \item The newest token $c_t$ might be related to one that we saw \purp{earlier}: for example, 5 tokens ago. 
+
+            \item Our state can treat words that are \gren{closer}, differently from words which are \purp{further away}.
+        \end{itemize}
+
+        This way, our \redd{state} allows us to keep track of sentence structure: grammar, the meaning of each word, tone, etc.\\
+
+        \begin{concept}
+            When we use an RNN as a \vocab{language model}, we're hoping that it can distinguish between "\gren{nearby}" words, and "\purp{farther away}" words.
+
+            \begin{itemize}
+                \item Words which are closer/further can contribute differently to the sentence: this gives us \orgg{context}.
+            \end{itemize}
+        \end{concept}
+
+        Convolution has a similar effect, but in a more \gren{discrete} way: in convolution, we have a window of a \purp{fixed size}. 
+        
+        \begin{itemize}
+            \item If $n$ is our window size, but two tokens are $n+1$ units apart, then they won't show up together in convolution.
+        \end{itemize}
+
+        Meanwhile, RNNs are more flexible:\\
+
+        \begin{concept}
+            Depending on how your \redd{RNN state} works, it could preserve/accumulate data over \gren{longer, non-fixed} distances than \purp{convolution}.
+        \end{concept}
+
+        \begin{itemize}
+            \item \miniex A \gren{running average} could factor in newer information, with older information, without completely "forgetting" that old information.
+        \end{itemize}
+
+
+    \phantom{}
+
+    \subsection{Why RNNs don't work (well) for language}
+
+        Unfortunately, RNNs tend not to work well enough.
+        
+        \begin{itemize}
+            \item Their state $s_t$ can only store a \gren{limited} amount of data.
+
+            \item So, the longer the RNN runs, the more it forgets.\\
+        \end{itemize}
+
+        \begin{concept}
+            Over time, an RNN will "\purp{forget}" information it learned in \gren{earlier} timesteps.
+
+            \begin{itemize}
+                \item It's replaced by \gren{newer} data.
+            \end{itemize}
+        \end{concept}
+
+        Language requires this sort of longer-term memory.
+        
+        \begin{itemize}
+            \item The longer the text prompt becomes, the worse the RNN performs.
+        \end{itemize}
+
+        In the next chapter, we'll design a model to overcome this problem: the \vocab{transformer}.
+
+
 
 
 \pagebreak
@@ -2520,7 +2831,7 @@
 
         
 
-        
+\iffalse
 
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2835,6 +3146,8 @@ architecture is shown below:
 \begin{center}
 \includegraphics[scale = 0.7]{figures/lstm.png}
 \end{center}
+
+\fi
 
 
 %%% Local Variables:
