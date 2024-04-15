@@ -22,7 +22,7 @@
 \tableofcontents
 
 %%First section of course: base concepts
-% \include{chapters/prerequisites}
+ \include{chapters/prerequisites}
  \include{chapters/intro}
  \include{chapters/regression}
  \include{chapters/gradient_descent}
@@ -30,48 +30,59 @@
 
  \include{chapters/classification}
  \include{chapters/feature_representation}
- \include{chapters/clustering}
+
 
 %Second section of the course: neural networks
 
  \include{chapters/neural_networks_1}
- \include{chapters/neural_networks_1_5}
  \include{chapters/neural_networks_2}
 
 
- \include{chapters/autoencoders}
 
  \include{chapters/convolutional_neural_networks}
+ \include{chapters/transformers}
 
-
-
+ \include{chapters/non_parametric}
 
 
 %%Third section of the course: state machines and MDPs
 
 
- \include{chapters/rnn}
- \include{chapters/transformers}
 
+
+
+ \include{chapters/mdp_0}
  \include{chapters/mdp_1}
  \include{chapters/mdp_2}
  \include{chapters/reinforcement_learning}
 
+ \include{chapters/clustering}
+ \include{chapters/autoencoders}
 
- \include{chapters/non_parametric}
+
 
 
  \begin{appendices}
+    \renewcommand{\thechapter}{A}
     \include{chapters/matrix_derivatives}
-\end{appendices} 
+
+    \renewcommand{\thechapter}{B}
+    \include{chapters/neural_network_training}
+    
+    \renewcommand{\thechapter}{C}
+    \include{chapters/rnn}
+
+    \renewcommand{\thechapter}{D}
+    \include{chapters/word2vec_skipgram}
+
+ \end{appendices}
 
 
-%%Misc additional
-%\include{appendices}
 
 %%Potential things to add:
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%Add matrix derivative identities
+%Add matrix derivative identities
+
 
 %Diffusion
 %Recommender Systems

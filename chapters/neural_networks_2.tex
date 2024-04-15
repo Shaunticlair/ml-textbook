@@ -1,8 +1,1786 @@
 \setcounter{chapter}{7-1}
 
-\chapter{Neural Networks 2 - Training Techniques, Regularization}
+\chapter{Neural Networks 2 - Back-Propagation and Training}
 
-\setcounter{section}{6}
+
+\setcounter{section}{4}
+%\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+\section{Error back-propagation }
+
+    We have a complete neural network: a \textbf{model} we can use to make predictions or calculations.
+    
+    Now, our mission is to \textbf{improve} this neural network: even if our hypothesis class is good, we still have to \textbf{find} the hypotheses that are useful for our problem.
+    
+    As usual, we will start out with \textbf{randomized} values for our weights and biases: this \textbf{initial} neural network will not be useful for anything in particular, but that's why we need to improve it.
+        \note{We randomize them because otherwise, if our initialization is \\$w_i=0$, we get $$w^T x+w_0=0$$ no matter what input $x$ we have.}
+    
+    For such a complex problem, we definitely can't find an explicit solution, like we did for ridge regression. Instead, we will have to rely on \textbf{gradient descent}.\\
+    
+    \begin{concept}
+        \vocab{Neural networks} are typically optimized using \purp{gradient descent}.
+    \end{concept}
+    
+    \phantom{}
+    
+    \subsection{Review: Gradient Descent}
+    
+        What does it really mean to do gradient descent on our \textbf{network}? Let's remind ourselves of how gradient descent works, and then \textbf{build} up to a network.
+        
+        \begin{concept}
+            \vocab{Gradient descent} works based on the following reasoning:
+        
+            \begin{itemize}
+                \item We have a function we want to \purp{minimize}: our loss function $\loss$, which tells us how \gren{badly} we're doing.
+                    
+                \item We want to perform "less badly". Our main tool for \purp{improving} $\loss$ is to alter $\theta$ and $\theta_0$.
+                    \begin{itemize}
+                        \item These are our \gren{parameters}: we're adjusting our model.
+                    \end{itemize}
+
+                    
+                \phantom{}
+                
+                    
+                \item The \purp{gradient} is our main tool: $\pderiv{B}{A}$ tells you the direction to \gren{change} $A$ in order to \redd{increase} $B$.
+                
+                \item We want to \gren{change} $\theta$ to \redd{decrease} $\loss$. Thus, we move in the direction of 
+                    
+                    \begin{equation*}
+                        \Delta \theta = -\eta \pderiv{\loss}{\theta}
+                    \end{equation*}
+                    
+                \item We take steps $\Delta \theta$ (and $\Delta \theta_0$) until we are satisfied with $\loss$, or it \gren{stops} improving.
+            \end{itemize}
+            
+        \end{concept}
+
+            \note{Remember that $\eta$ is our \vocab{step size}: we can take bigger or smaller steps in each direction.}
+        
+    \phantom{}  
+        
+    \subsection{Review: Gradient Descent with LLCs}
+    
+        Let's start with a familiar example: \textbf{LLCs}.
+        
+        Our LLC model uses the following equations:
+            \note{We'll use $w$ instead of $\theta$.}
+        
+        \begin{equation}
+            \red{
+                z(x) = w^T x + w_0  
+            }
+            \qquad \qquad
+            \blu{
+                g(z) = \sigma(z) = \frac{1}{1+e^{-z}}
+            }
+        \end{equation}
+        
+        \begin{equation}
+            \pur{
+                \loss(g,y) = y\log(g) + (1-y)\log(1-g)
+            }
+        \end{equation}
+        
+        Our goal is to minimize $\loss$ by adjusting $\theta$ and $\theta_0$.
+        
+        So, we want 
+        
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w} 
+            \qquad \text{and} \qquad 
+            \pderiv {\pur{\loss}} {w_0}
+        \end{equation}
+        
+        We did this by using the \textbf{chain rule}:
+            \note{We'll focus on $w$, but the same goes for $w_0$.}
+        
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w} 
+            =
+                \overbrace{
+                \pderiv {\pur{\loss}} {\blu{g}} 
+                    \cmul
+                \pderiv {\blu{g}}     {w}
+            }^{\loss(g)}
+        \end{equation}
+        
+        We can break it up further using \textbf{repeated} chain rules:
+        
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w} 
+            =%Goal: overlapping braces.
+            \mathrlap{ %\mathrlap allows brace to overlap with the next section
+                \overbrace{ %Create brace
+                    \phantom{ %Create phantom text so our brace is the right size
+                        \pderiv {\pur{\loss}} {\blu{g}} 
+                            \cmul
+                        \pderiv {\blu{g}}     {\red{z}}
+                    }
+                }^{\loss(g)} %Brace superscript
+            }
+            \pderiv {\pur{\loss}} {\blu{g}} 
+                \cmul
+            \underbrace{
+                \pderiv {\blu{g}}     {\red{z}}
+                    \cmul
+                \pderiv {\red{z}}     {w}
+            }_{g(z)}
+        \end{equation}
+        
+        Plugging in our derivatives, we get:
+        
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w}
+            =
+            \overbrace{
+                -
+                \Big(
+                    \frac{ \org{y} } { \blu{\sigma} } 
+                    -
+                    \frac{ 1-\org{y} } { 1 - \blu{\sigma} }
+                \Big)
+            }^{ \pderivslash{\loss}{g} }
+            \cdot
+            \overbrace{
+                \blu{\sigma} (1-\blu{\sigma})
+            }^{ \pderivslash{g}{z} }
+            \cdot 
+            \overbrace{
+            x
+            }^{ \pderivslash{z}{w} }
+        \end{equation}
+
+        \begin{concept}
+            The \vocab{chain rule} allows us to take the gradient of \purp{nested functions}, where each function is the \gren{input} to the next one.
+            
+            Another way to say this is that one function \vocab{feeds into} the next.
+        \end{concept}
+            
+            \note{If you aren't familiar with "nested" functions, consider this example:\\
+            \phantom{ }\\
+            If you have functions $f(x)$ and $g(x)$, then $g(f(x))$ is the \textbf{nested} combination, where the output of $f$ is the input of $g$.}
+    
+    \phantom{}
+    
+    \subsection{Review: LLC as Neuron}
+    
+        Remember that we can represent our LLC as a \textbf{neuron}: this could give us the first idea for how to train our \textbf{neural network}!
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=80mm,scale=0.4]{images/nn_2_images/llc_as_neuron.png}
+        \end{figure}
+        
+        As usual, our first unit $\sum$ is our \textbf{linear} component. The output is $z$, nothing different from before with LLC.
+            \note{Remember that $x$ is a whole vector of values, which we've condensed into one variable.}
+        
+        The \textbf{output} of $\sigma$, which we wrote before as $g$, is now $a$.
+        
+        Something we neglected before: this diagram is \textbf{missing} the \textbf{loss function}. Let's create a small unit for that. 
+        
+        $\loss(a,y)$ has \textbf{two} inputs: our predicted value $a$, and the correct value $y$. 
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=60mm,scale=0.4]{images/nn_2_images/loss_unit.png}
+            \caption*{We have two inputs to our loss function.}
+        \end{figure}
+        
+        We \textbf{combine} these into a single unit to get:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=90mm,scale=0.4]{images/nn_2_images/llc_as_neuron_loss.png}
+        \end{figure}
+        
+        Our full unit!
+        
+    \phantom{}
+    
+    \subsection{LLC Forward-Pass}
+    
+        Now, we can do gradient descent like before. We want to get the effect our \textbf{weight} has on our \textbf{loss}.
+        
+        But, this time, we'll pair it with a \textbf{visual} that is helpful for understanding how we \textbf{train} neural networks. 
+        
+        First, one important consideration:
+        
+        As we saw above, the \textbf{gradient} we get might rely on $z$, $a$, or $\loss(a,y)$. So, before we do anything, we have to \textbf{compute} these values.
+        
+        Each step \textbf{depends} on the last: this is what the \textbf{forward} arrows represent. We call this a \textbf{forward pass} on our neural network.\\
+        
+        \begin{definition}
+            A \vocab{forward pass} of a neural network is the process of sending information "\gren{forward}" through the neural network, starting from the \purp{input}.
+            
+            This means the \purp{input} is fed into the \gren{first} layer, and that output is fed into the \gren{next} layer, and so on, until we reach our \purp{final} result and \purp{loss}.
+        \end{definition}
+        
+        \miniex If we had 
+        
+        \begin{itemize}
+            \item $\blu{f}(\red{x}) = \red{x}+2$
+            
+            \item $\org{g}(\blu{f}) = 3\blu{f}$
+            
+            \item $h(\org{g}) = \sin(\org{g})$
+        \end{itemize}
+        
+        Then, a forward pass with the input $x=10$ would have us go function-by-function:
+        
+        \begin{itemize}
+            \item $\blu{f}(\red{10}) = \red{10}+2$
+            
+            \item $\org{g}(\blu{f}) = 3 \cdot \blu{12}$
+            
+            \item $h(\org{g}) = \sin(\org{36})$
+        \end{itemize}
+        
+        So, by "forward", we mean that we apply each function, one after another.
+        
+        In our case, this means computing $z$, $a$, and $\loss(a,y)$.
+        
+    \phantom{}
+    
+    \subsection{LLC Back-propagation}
+    
+        Now that we have all of our values, we can get our gradient. Let's \textbf{visualize} this process.
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=90mm,scale=0.4]{images/nn_2_images/llc_as_neuron_loss.png}
+        \end{figure}
+        
+        We want to link $\loss$ to $w$. In order to do that, we need to \textbf{connect} each thing in between.
+
+        \begin{itemize}
+            \item This lets us \textbf{combine} lots of simple \textbf{links} to get our more complicated result.
+            \note{We can also call this "chaining together" lots of derivatives.}
+        \end{itemize}
+
+        \phantom{}
+        
+        Loss \org{$\loss$} is what we really care about. So, what is the loss directly \textbf{connected} to? The \textbf{activation}, \purp{$a$}.
+
+        \begin{itemize}
+            \item Our loss function $\loss(a,y)$ contains information about how $\loss$ is linked to $a$.
+        \end{itemize}
+        
+        
+        
+        \begin{equation}
+            \overbrace{
+                \pderiv {\org{\loss}} {\pur{a}} 
+            }^{\text{Loss unit}} 
+        \end{equation}
+
+        We send this information backwards, so it can be used later.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=90mm,scale=0.4]{images/nn_2_images/llc_backprop_1.png}
+        \end{figure}
+
+        Now, we're on the $\sigma(z)$ unit.
+
+        \begin{itemize}
+            \item The $\sigma(z)$ unit contains information about how \pur{$a$} is linked to \red{$z$}.
+
+            \item We've connected \org{$\loss$} to \pur{$a$}, and \pur{$a$} to \red{$z$}. We chain them together, connecting \org{$\loss$} to \red{$z$}.
+
+                \begin{equation}
+                    \overbrace{
+                        \pderiv {\org{\loss}} {\pur{a}} 
+                    }^{\text{Loss unit}}
+                    \cmul
+                    \overbrace{
+                        \pderiv {\pur{a}}     {\red{z}}
+                    }^{\text{Activation function}}
+                \end{equation}
+        \end{itemize}
+        
+        We haven't reached $w$ yet, so we send this information further back.
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=100mm,scale=0.4]{images/nn_2_images/llc_backprop_2.png}
+        \end{figure}
+
+        
+        
+        Finally, we reach $\sum$.
+
+        \begin{itemize}
+            \item The $\sum$ unit contains information about how $z$ is linked to $w$.
+            \item Finally, we have a chain of links, that allows us to connect \org{$\loss$} to $w$.
+        \end{itemize}
+
+        This last derivative uses $x$, because $w^Tx +w_0 = z$.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=110mm,scale=0.4]{images/nn_2_images/llc_backprop_3.png}
+        \end{figure}
+        
+        And, we built our chain rule! This contains the \textbf{information} of the derivatives from \textbf{every} unit.
+        
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w} 
+            =
+            \overbrace{
+                \pderiv {\pur{\loss}} {\blu{a}} 
+            }^{\text{Loss unit}}
+            \cmul
+            \overbrace{
+                \pderiv {\blu{a}}     {\red{z}}
+            }^{\text{Activation}}
+                \cmul
+            \overbrace{
+                \pderiv {\red{z}}     {w}
+            }^{\text{Linear subunit}}
+        \end{equation}
+        
+        Moving backwards like this is called \textbf{back-propagation}.\\
+        
+        \begin{definition}
+            \vocab{Back-propagation} is the process of moving "\gren{backwards}" through your network, starting at the \purp{loss} and moving back layer-by-layer, and gathering terms in your \purp{chain rule}.
+            
+            We call it "\purp{propagation}" because we send backwards the \gren{terms} of our chain rule about later derivatives.
+            
+            An \gren{earlier} unit (closer to the "left") has all of the \purp{derivatives} that come after (to the "right" of) it, along with its own term.
+        \end{definition}
+        
+    \phantom{}
+    
+    \subsection{Summary of neural network gradient descent: a high-level view}
+    
+        So, with just this, we have built up the basic idea of how we \textbf{train} our model: now that we have the gradient, we can do \textbf{gradient descent} like we normally do!
+            \note{This summary covers some things we haven't fully discussed. We'll continue digging into the topic!}\\
+        
+        \begin{concept}
+            We can do \vocab{gradient descent} on a \vocab{neural network} using the ideas we've built up:
+            
+            \begin{itemize}
+                \item Do a \vocab{forward pass}, where we compute the value of each \gren{unit} in our model, passing the information \purp{forward} - each layer's \textbf{output} is the next layer's \textbf{input}.
+                    \begin{itemize}
+                        \item We finish by getting the \purp{loss}.
+                    \end{itemize}
+                    
+            \phantom{}
+                    
+                \item Do \vocab{back-propagation}: build up a \purp{chain rule}, starting at the \purp{loss} function, and get each unit's \gren{derivative} in \purp{reverse order}.
+                    \begin{itemize}
+                        \item \purp{Reverse} order: if you have 3 layers, you want to get the 3rd layer's \gren{derivatives}, then the 2nd layer, then the 1st.
+                        
+                        \item \purp{Each weight} vector has its own \gren{gradient}: we'll deal with this later, but we need to calculate one for each of them.
+                    \end{itemize}
+                    
+            \phantom{}
+                
+                \item Use your chain rule to get the \purp{gradient} $\pderiv{\loss}{w}$ for your \gren{weight} vector(s). Take a \vocab{gradient descent} step.
+                
+                \item \vocab{Repeat} until satisfied, or your model \purp{converges}.
+            \end{itemize}
+        \end{concept}
+        
+    \phantom{}
+    
+    \subsection{A two-neuron network: starting backprop}
+        
+        Above, we mention "\textbf{each} layer": we'll now transition to a \textbf{two-neuron} system, so we have "two layers". Then, we'll build up to many layers.
+        
+        Remember, though, that the \textbf{ideas} represented here are just extensions of what we did \textbf{above}.
+        
+        Let's get a look at our \textbf{two-neuron} system, now with our \textbf{loss} unit:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=140mm,scale=0.4]{images/nn_2_images/two_neurons_bp.png}
+        \end{figure}
+        
+        And unpack it:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=140mm,scale=0.4]{images/nn_2_images/two_neurons_inside_bp.png}
+        \end{figure}
+        
+        We want to do \textbf{back-propagation} like we did before. This time, we have \textbf{two} different layers of weights: $w^1$ and $w^2$. Does this cause any problems?
+        
+        It turns out, it doesn't! We mentioned in the first part of chapter 7 that we can treat the \textbf{output} of the \textbf{first} layer $a^1$ as the same as if it were an \textbf{input} $x$.
+            \note{This is one of the biggest benefits of neural network layers!}
+            
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=90mm,scale=0.4]{images/nn_2_images/layer2_bp.png}
+        \end{figure}
+        
+        Now, we can do backprop safely.
+            \note{"Backprop" is a common shortening of "back-propagation".}
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=120mm,scale=0.4]{images/nn_2_images/layer2_bp1.png}
+        \end{figure}
+        
+        We can get:
+        
+        \begin{equation}
+            \pderiv {\org{\loss}} {w^2} 
+            =
+            \overbrace{
+                \pderiv {\org{\loss}} {\pur{a^2}} 
+            }^{\text{Loss unit}}
+            \cmul
+            \overbrace{
+                \pderiv {\pur{a^2}}     {\red{z^2}}
+            }^{\text{Activation}}
+                \cmul
+            \overbrace{
+                \pderiv {\red{z^2}}     {w^2}
+            }^{\text{Linear}}
+        \end{equation}
+        
+        The same format as for our \textbf{one-neuron} system! We now have a gradient we can update for our \textbf{second} weight vector.
+        
+        But what about our \textbf{first} weight vector?
+        
+    \phantom{}
+    
+    \subsection{Continuing backprop: One more problem}
+    
+        We need to continue further to reach our \textbf{earlier} weights: this is why we have to work \textbf{backward}.\\
+        
+        \begin{concept}
+            We work \purp{backward} in \vocab{back-propagation} because every layer after the \gren{current} one \purp{affects} the gradient.
+            
+            Our current layer \gren{feeds} into the next layer, which feeds into the layer after that, and so on. So this layer affects \purp{every} later layer, which then affect the loss.
+            
+            So, to see the effect on the \purp{output}, we have to \gren{start} from the \purp{loss}, and get every layer \purp{between} it and our weight vector.
+        \end{concept}
+            
+            \note{Remember that when we say "$f$ feeds into $g$", we mean that the output of $f$ is the input to $g$.}
+            
+        \phantom{ }
+            
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=120mm,scale=0.4]{images/nn_2_images/two_neurons_inside_bp2.png}
+        \end{figure}
+            
+        We have one problem, though: 
+        
+        We just gathered the derivative $\pderivslash {\pur{\loss}} {w^2} $. If we wanted to continue the chain rule, we would expect to add more terms, like:
+            \note{Since our current derivative includes $w^2$, we would continue it with a $w^2$ in the 
+            "top" of a derivative, 
+            $$\pderiv{\pur{\loss}}{w^2} \pderiv{w^2}{r}$$
+            We're not sure what "$r$" is yet.}
+        
+        \begin{equation}
+            \pderiv{w^2}{a^1}
+        \end{equation}
+        
+        The problem is, what is $w^2$? It's a vector of constants.
+        
+        \begin{equation}
+            w^2 = 
+            \begin{bmatrix}
+                    w_1^2 \\ w_2^2 \\ \vdots \\ w_n^2
+            \end{bmatrix}
+            ,
+            \qquad
+            \qquad
+            \text{Not a function of $a^1$!}
+        \end{equation}
+        
+        That derivative above is going to be \textbf{zero}! In other words, $w^2$ isn't really the \textbf{input} to $z^2$: it's a \textbf{parameter}.
+            \note{We were building our chain rule by combining inputs with outputs: that's what links two layers together.\\
+            \phantom{ }\\
+            So, it should make sense that using something like $w$ (that doesn't link two layers) prevents us from making a longer chain rule.}
+            
+        So, we can't end our derivative with $w^2$. Instead, we have to use something else. $z^2$'s real input is $a^1$, so let's go directly to that!
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=120mm,scale=0.4]{images/nn_2_images/two_neurons_inside_bp3.png}
+            \caption*{Using this allows us to move from layer 2 to layer 1.}
+        \end{figure}
+        
+        Now, we have our new chain rule:
+        
+        \begin{equation}
+            \pderiv {\org{\loss}} {a^1} 
+            =
+            \overbrace{
+                \pderiv {\org{\loss}} {\pur{a^2}} 
+                    \cmul
+                \pderiv {\pur{a^2}}   {\red{z^2}}
+            }^{\text{Other terms} } 
+                \cmul
+            \overbrace{
+                \pderiv {\red{z^2}}   {a^1}
+            }^{\text{Link Layers}}
+        \end{equation}
+        
+        \begin{concept}
+            For our \vocab{weight gradient} in layer $l$, we have to end our \purp{chain rule} with
+            
+            \begin{equation*}
+                \pderiv {\red{z^\ell}}   {w^\ell}
+            \end{equation*}
+            
+            So we can get 
+            
+            \begin{equation*}
+                \pderiv {\org{\loss}} {w^\ell} 
+                =
+                \overbrace{
+                    \pderiv {\org{\loss}} {\red{z^\ell}} 
+                }^{\text{Other terms} }
+                \cmul  
+                \overbrace{
+                    \pderiv {\red{z^\ell}}   {w^\ell}
+                }^{\text{Get weight grad}}
+            \end{equation*}
+            
+            However, because $w^l$ is not the \textbf{input} of layer $l$, we can't use it to find the gradient of \gren{earlier layers}.
+            
+            Instead, we use 
+            
+            \begin{equation}
+                \pderiv {\red{z^\ell}}   {a^{\ell-1}}
+            \end{equation}
+            
+            To "\purp{link together}" two different layers $\ell$ and $\ell-1$ in a \gren{chain rule}.
+        \end{concept}
+        
+            \note{In this section, we compressed lots of derivatives into 
+            $$\pderiv {\pur{\loss}} {\red{z^\ell}}$$
+            Don't let this alarm you, this just hides our long chain of derivatives!}
+            
+    \phantom{}
+    
+    \subsection{Finishing two-neuron backprop}
+    
+        Now that we have safely connected our layers, we can do the rest of our gradient. First, let's lump together everything we did before:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=120mm,scale=0.4]{images/nn_2_images/two_neurons_inside_bp4.png}
+            \caption*{All the info we need is stored in this derivative: it can be written out using our friendly chain rule from earlier.}
+        \end{figure}
+        
+        Now, we can add our remaining terms. It's the same as before: we want to look at the pre-activation
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=120mm,scale=0.4]{images/nn_2_images/two_neurons_inside_bp5.png}
+        \end{figure}
+        
+        And finally, our input:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=120mm,scale=0.4]{images/nn_2_images/two_neurons_inside_bp6.png}
+        \end{figure}
+        
+        We can get our second chain rule
+        
+        \begin{equation}
+            \pderiv {\org{\loss}} {w^1} 
+            =
+            \overbrace{
+                \pderiv {\org{\loss}} {\pur{a^1}} 
+            }^{\text{Other layers}}
+            \cmul
+            \overbrace{
+                \pderiv {\pur{a^1}}   {\red{z^1}}
+                \cmul
+                \pderiv {\red{z^1}}   {w^1}
+            }^{\text{Layer 1}}
+        \end{equation}
+        
+        Which, in reality, looks much bigger:
+        
+        \begin{equation}
+            \pderiv {\org{\loss}} {w^1} 
+            =
+            \overbrace{
+                \Bigg(
+                    \pderiv {\org{\loss}} {\pur{a^2}} 
+                \Bigg)
+            }^{\text{Loss unit}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    \pderiv {\pur{a^2}}   {\red{z^2}}
+                        \cmul
+                    \pderiv {\red{z^2}}   {\blu{a^1}}
+                \Bigg) 
+            }^{\text{Layer 2}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    \pderiv {\blu{a^1}}   {\grn{z^1}}
+                        \cmul
+                    \pderiv {\grn{z^1}}   {w^1}
+                \Bigg)
+            }^{\text{Layer 1}}
+        \end{equation}
+        
+        We see a clear \textbf{pattern} here! In fact, this is the procedure we'll use for a neural network with \textbf{any} number of layers.\\
+        
+        \begin{concept}
+            We can get all of our \vocab{weight gradients} by repeatedly appending to the \purp{chain rule}.
+            
+            If we want to get the \orgg{weight gradient} of layer $\ell$, we \gren{terminate} with
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\blu{a^\ell}} {\red{z^\ell}}
+                }^{\text{Within layer}}
+                    \cmul
+                \overbrace{
+                    \pderiv {\red{z^\ell}} {w^\ell}
+                }^{\text{Get weight grad}}
+            \end{equation*}
+            
+            If we want to \gren{extend} to the previous layer, we \redd{instead} multiply by
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\blu{a^\ell}} {\red{z^\ell}}
+                }^{\text{Within layer}}
+                    \cmul
+                \overbrace{
+                    \pderiv {\red{z^\ell}} {a^{\ell-1}}
+                }^{\text{Link layers}}
+            \end{equation*}
+            
+        \end{concept}
+        
+    \phantom{}
+    
+    \subsection{Many layers: Doing back-propagation}
+    
+        Now, we'll consider the case of many possible layers.
+            \note{To make it more readable, we'll use boxes instead of circles for units.}
+            
+        \phantom{ }
+            
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=180mm,scale=0.4]{images/nn_2_images/network_bp.png}
+        \end{figure}
+        
+        This may look intimidating, but we already have all the tools we need to handle this problem.
+        
+        Our goal is to get a \textbf{gradient} for each of our \textbf{weight} vectors $w^\ell$, so we can do gradient descent and \textbf{improve} our model.
+        
+        According to our above analysis in Concept 9, we need only a few steps to get all of our gradients.
+        
+        \begin{concept}
+            In order to do \vocab{back-propagation}, we have to build up our \vocab{chain rule} for each weight gradient.
+            
+            \begin{itemize}
+                \item We start our chain rule with one term shared by every gradient: 
+                    \begin{equation*}
+                        \overbrace{
+                            \pderiv {\pur{\loss}} {\blu{a^L}} 
+                        }^{\text{Loss unit}}
+                    \end{equation*}
+            \end{itemize}
+            
+            Then, we follow these two steps until we run out of layers:
+            \begin{itemize}
+                \item We're at layer $\ell$. We want to get the \purp{weight gradient} for this layer. We get this by \gren{multiplying} our chain rule by
+                
+                    \begin{equation*}
+                        \overbrace{
+                            \pderiv {\blu{a^\ell}} {\red{z^\ell}}
+                        }^{\text{Within layer}}
+                            \cmul
+                        \overbrace{
+                            \pderiv {\red{z^\ell}} {w^\ell}
+                        }^{\text{Get weight grad}}
+                    \end{equation*}
+                    
+                    We \redd{exclude} this term for any other gradients we want.
+                
+                \item If we aren't at layer 1, there's a previous layer we want to get the weight for. We reach layer $\ell-1$ by multiplying our chain rule by 
+                
+                    \begin{equation*}
+                        \overbrace{
+                            \pderiv {\blu{a^\ell}} {\red{z^\ell}}
+                        }^{\text{Within layer}}
+                            \cmul
+                        \overbrace{
+                            \pderiv {\red{z^\ell}} {a^{\ell-1}}
+                        }^{\text{Link layers}}
+                    \end{equation*}
+            \end{itemize}
+            
+            Once we reach layer 1, we have \gren{every single} weight vector we need! Repeat the process for $w_0$ gradients and then do \purp{gradient descent}.
+        \end{concept}
+        
+        Let's get an idea of what this looks like in general:
+        
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w^\ell} 
+            =
+            \overbrace{
+                \Bigg(
+                    \pderiv {\pur{\loss}} {\blu{a^L}} 
+                \Bigg)
+            }^{\text{Loss unit}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    \pderiv {\blu{a^L}}   {\red{z^L}}
+                        \cmul
+                    \pderiv {\red{z^L}}   {\grn{a^{L-1}}}
+                \Bigg) 
+            }^{\text{Layer $L$}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    \pderiv {\blu{a^{L-1}}}   {\red{z^{L-1}}}
+                        \cmul
+                    \pderiv {\red{z^{L-1}}}   {\grn{a^{L-2}}}
+                \Bigg) 
+            }^{\text{Layer $L-1$}}
+            \cmul
+            \Bigg(
+                \cdots 
+            \Bigg)
+            \cmul
+            \overbrace{
+                \Bigg(
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
+                        \cmul
+                    \pderiv {\red{z^\ell}}   {\org{w^{\ell}}}
+                \Bigg) 
+            }^{\text{Layer $\ell$}}
+        \end{equation}
+        
+        That's pretty ugly. If we need to hide the complexity, we can:\\
+        
+        \begin{notation}
+            If you need to do so for \purp{ease}, you can \orgg{compress}  your derivatives. For example, if we want to only have the last weight term \gren{separate}, we can do:
+            
+            \begin{equation*}
+                \pderiv {\pur{\loss}} {w^\ell} 
+                =
+                \overbrace{
+                    \pderiv {\pur{\loss}} {\red{z^\ell}} 
+                }^{\text{Other}}
+                \cmul
+                \overbrace{
+                    \pderiv {\red{z^\ell}}   {w^\ell}
+                }^{\text{Weight term}}
+            \end{equation*}
+        \end{notation}
+        
+        But we should also explore what each of these terms \textit{are}.
+        
+    \phantom{}
+    
+    \subsection{What do these derivatives equal?}
+    
+        Let's look at each of these derivatives and see if we can't simplify them a bit.
+        
+        First, every gradient needs
+        
+        \begin{itemize}
+            \item The \vocab{loss derivative}:
+            
+                \begin{equation}
+                    \pderiv {\pur{\loss}} {\blu{a^L}}
+                \end{equation}
+                
+                This \textbf{depends} on on our loss function, so we're \textbf{stuck} with that one.
+            
+        \end{itemize}
+            
+        Next, within each layer, we have
+        
+        \begin{itemize}
+            \item The \vocab{activation function} - between our activation $a$ and preactivation $z$:
+            
+                \begin{equation}
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
+                \end{equation}
+                
+                What does the function between these \textbf{look} like?
+                
+                \begin{equation}
+                    \blu{a} = f(\red{z})
+                \end{equation}
+                
+                Well, that's not super interesting: we \textbf{don't know }our function. But, at least we can \textbf{write} it using $f$: that way, we know that this term only depends on our \textbf{activation} function.
+                
+                \begin{equation}
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}} 
+                    = 
+                    \overbrace{
+                    \Big(
+                        f^\ell 
+                    \Big)'
+                    }^{\text{deriv of func for layer $\ell$}}
+                    \overbrace{
+                    (
+                        \red{z^\ell}
+                    )
+                    }^{\text{Deriv input}}
+                \end{equation}
+                
+                This expression is a bit visually clunky, but it works. Without the annotation:
+                    \note{$z^\ell$ is not being multiplied by $(f^\ell)'$, it's the input to that derivative.}
+
+                \begin{equation}
+                    \pderiv {\blu{a^\ell}}   {\red{z^\ell}} 
+                    = 
+                    \Big(
+                        f^\ell 
+                    \Big)'
+                    (
+                        \red{z^\ell}
+                    )
+                \end{equation}
+                
+        \end{itemize}
+        
+    Between layers, we have
+        
+        \begin{itemize}
+            
+            \item We can also think about the derivative of the \vocab{linear function} that \textbf{connects two layers}:
+                \note{Be careful not to get this mixed up with the last one!\\
+                They look similar, but one is within the layer, and the other is between layers.}
+            
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {\blu{a^{\ell-1}}}
+                \end{equation}
+                
+                So, we want the function of these two:
+                
+                \begin{equation}
+                    \red{z^\ell} = w^\ell \blu{ a^{\ell-1} } + w_0^\ell
+                \end{equation}
+                
+                This one is pretty simple! We just take the derivative manually:
+                
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {\blu{a^{\ell-1}}}
+                    =
+                    w^{\ell}
+                \end{equation}
+                
+        \end{itemize}
+        
+    Finally, every gradient will end with...
+        
+        \begin{itemize}
+                
+            \item The derivative that directly connects to a \textbf{weight}, again using the \vocab{linear function}:
+            
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {w^{\ell}}
+                \end{equation}
+                
+                The linear function is the same:
+            
+                \begin{equation}
+                    \red{z^\ell} = w^\ell \blu{ a^{\ell-1} } + w_0^\ell
+                \end{equation}
+                
+                But with a different \textbf{variable}, the \textbf{derivative} comes out different:
+                
+                \begin{equation}
+                    \pderiv {\red{z^\ell}}   {w^{\ell}}
+                    =
+                    a^{\ell-1} 
+                \end{equation}
+                
+        \end{itemize}
+        
+    \begin{notation}
+        Our \vocab{derivatives} for the \purp{chain rule} in a \vocab{1-D neural network} take the form:
+        
+        \begin{equation*}
+            \pderiv {\pur{\loss}} {\blu{a^L}}
+        \end{equation*}
+        
+        \begin{equation*}
+            \pderiv {\blu{a^\ell}}   {\red{z^\ell}} = (f^\ell)'(\red{z^\ell})
+        \end{equation*}
+        
+        \begin{equation*}
+            \pderiv {\red{z^\ell}}   {\blu{a^{\ell-1}}}
+            =
+            w^{\ell}
+        \end{equation*}
+        
+        \begin{equation*}
+            \pderiv {\red{z^\ell}}   {w^{\ell}}
+            =
+            a^{\ell-1} 
+        \end{equation*}
+    \end{notation}
+
+    Now, we can rewrite our generalized expression for gradient:
+    
+    
+        \begin{equation}
+            \pderiv {\pur{\loss}} {w^\ell} 
+            =
+            \overbrace{
+                \Bigg(
+                    \pderiv {\pur{\loss}} {\blu{a^L}} 
+                \Bigg)
+            }^{\text{Loss unit}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    (f^L)'(\red{z^L})
+                        \cmul
+                    w^L
+                \Bigg) 
+            }^{\text{Layer $L$}}
+            \cmul
+            \overbrace{
+                \Bigg(
+                    (f^{L-1})'(\red{z^{L-1}})
+                        \cmul
+                    w^{L-1}
+                \Bigg) 
+            }^{\text{Layer $L-1$}}
+            \cmul
+            \Bigg(
+                \cdots 
+            \Bigg)
+            \cmul
+            \overbrace{
+                \Bigg(
+                    (f^\ell)'(\red{z^\ell})
+                        \cmul
+                    a^{\ell-1}
+                \Bigg) 
+            }^{\text{Layer $\ell$}}
+        \end{equation}
+        
+        Our expressions are more concrete now. It's still pretty visually messy, though.
+        
+    \phantom{}
+    
+    \subsection{Activation Derivatives}
+    
+        We weren't able to \textbf{simplify} our expressions above, partly because we didn't know which \textbf{loss} or \textbf{activation} function we were going to use.
+        
+        So, here, we will look at the \textbf{common} choices for these functions, and \textbf{catalog} what their derivatives look like.
+        
+        \begin{itemize}
+            \item \vocab{Step function} step$(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z} \text{step}(z) = 0
+                \end{equation}
+                
+                This is part of why we don't use this function: it has no gradient. We can show this by looking piecewise:
+                
+                \begin{equation}
+                    \text{step}(z) 
+                    =
+                    \begin{cases}
+                      \blu{1} & \text{if $z \geq 0$}\\
+                      \blu{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+                And take the derivative of each piece:
+                
+                \begin{equation}
+                    \deriv{}{z} \text{ReLU}(z)
+                    =
+                    0
+                    =
+                    \begin{cases}
+                      \red{0} & \text{if $z \geq 0$}\\
+                      \red{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+        
+            \item \vocab{Rectified Linear Unit} ReLU$(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z} \text{ReLU}(z) = \text{step}(z)
+                \end{equation}
+                
+                This one might be a bit surprising at first, but it makes sense if you \textbf{also} break it up into cases:
+                
+                \begin{equation}
+                    \text{ReLU}(z) 
+                    =
+                    \max(0,z)
+                    =
+                    \begin{cases}
+                      \blu{z} & \text{if $z \geq 0$}\\
+                      \blu{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+                And take the derivative of each piece:
+                
+                \begin{equation}
+                    \deriv{}{z} \text{ReLU}(z)
+                    =
+                    \text{step}(z) 
+                    =
+                    \begin{cases}
+                      \red{1} & \text{if $z \geq 0$}\\
+                      \red{0} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+               
+                
+            \item \vocab{Sigmoid} function $\sigma(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z}\sigma(z) 
+                    =
+                    \sigma(z)(1-\sigma(z))
+                    =
+                    \frac{e^{-z}}{(1+e^{-z})^2}
+                \end{equation}
+                
+                This derivative is useful for simplifying NLL, and has a nice form.
+                    \note{We can just compute the derivative with the single-variable chain rule.}
+                    
+                As a reminder, the function looks like:
+                
+                \begin{equation}
+                    \sigma(z) 
+                    =
+                    \frac{1}{1+e^{-z}}
+                \end{equation}
+                
+            \item \vocab{Identity} ("linear") function $f(z)=z$:
+            
+                \begin{equation}
+                    \deriv{}{z} z
+                    =
+                    1
+                \end{equation}
+                
+                This one follows from the definition of the derivative.
+                
+                We cannot rely on a linear activation function for our \textbf{hidden} layers, because a linear neural network is no more \textbf{expressive} than one layer.
+                
+                But, we use it as the output activation for \textbf{regression}.
+                
+            \item \vocab{Softmax} function softmax$(z)$:
+            
+                This function has a difficult derivative we won't go over here. 
+                    \note{If you're curious, here's a \href{https://towardsdatascience.com/derivative-of-the-softmax-function-and-the-categorical-cross-entropy-loss-ffceefc081d1}{link}. }
+                
+            \item \vocab{Hyperbolic tangent} function $\tanh(z)$:
+            
+                \begin{equation}
+                    \deriv{}{z}\tanh(z)
+                    =
+                    1 - \tanh(z)^2
+                \end{equation}
+                
+                This strange little expression is 1 minus the "hyperbolic secant" squared. We won't bother further with it.\\
+        \end{itemize}
+        
+        
+        \begin{notation}
+            For our various \vocab{activation} functions, we have the \vocab{derivatives}:
+            
+            Step:
+            
+            \begin{equation*}
+                \deriv{}{z} \text{step}(z) = 0
+            \end{equation*}
+            
+            ReLU:
+            
+            \begin{equation*}
+                \deriv{}{z} \text{ReLU}(z) = \text{step}(z)
+            \end{equation*}
+            
+            Sigmoid:
+            
+            \begin{equation*}
+                \deriv{}{z}\sigma(z) 
+                =
+                \sigma(z)(1-\sigma(z))
+            \end{equation*}
+            
+            Identity/Linear:
+            
+            \begin{equation*}
+                \deriv{}{z} z 
+                =
+                1
+            \end{equation*}
+        \end{notation}
+        
+    \phantom{}
+    
+    \subsection{Loss derivatives}
+    
+        Now, we look at the loss derivatives.
+        
+        \begin{itemize}
+            \item \vocab{Square loss} function $\loss_{sq} = (a-y)^2$:
+            
+                \begin{equation}
+                    \deriv{}{a} \loss_{sq} = 2(a-y)
+                \end{equation}
+                
+                Follows from chain rule+power rule, used for regression.
+                
+            \item \vocab{Linear loss} function $\loss_{sq} = |a-y|$:
+            
+                \begin{equation}
+                    \deriv{}{a} \loss_{lin} = \text{sign}(a-y)
+                \end{equation}
+                
+                This one can also be handled piecewise, like step$(z)$ and ReLU$(z)$:
+                
+                \begin{equation}
+                    |u| 
+                    =
+                    \begin{cases}
+                      \blu{u} & \text{if $z \geq 0$}\\
+                      \blu{-u} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+                We take the piecewise derivative:
+                
+                \begin{equation}
+                    \deriv{}{u}
+                    |u|
+                    =
+                    \text{sign}(u) 
+                    =
+                    \begin{cases}
+                      \red{1} & \text{if $z \geq 0$}\\
+                      \red{-1} & \text{if $z < 0$}
+                    \end{cases}
+                \end{equation}
+                
+            \item \vocab{NLL} (Negative-Log Likelihood) function $\loss_{NLL} = -( y \log(a) + (1-y) \log(1-a) )$
+            
+                \begin{equation}
+                    \deriv{}{a} \loss_{NLL} = - \Bigg( \frac{y}{a} - \frac{1-y}{1-a} \Bigg)
+                \end{equation}
+            
+            \item \vocab{NLLM} (Negative-Log Likelihood Multiclass) function $\loss_{NLL} = - \sum_j y_jlog(a_j)$
+            
+                Similar to softmax, we will omit this derivative.\\
+        \end{itemize}
+        
+        \begin{notation}
+            For our various \vocab{loss} functions, we have the \vocab{derivatives}:
+            
+            Square:
+            
+            \begin{equation*}
+                \deriv{}{a} \loss_{sq} = 2(a-y)
+            \end{equation*}
+            
+            Linear (Absolute):
+            
+            \begin{equation*}
+                \deriv{}{a} \loss_{lin} = \text{sign}(a-y)
+            \end{equation*}
+            
+            NLL (Negative-Log Likelihood):
+            
+            \begin{equation*}
+                \deriv{}{a} \loss_{NLL} = - \Bigg( \frac{y}{a} - \frac{1-y}{1-a} \Bigg)
+            \end{equation*}
+        \end{notation}
+        
+    \phantom{}
+    
+    \subsection{Many neurons per layer}
+    
+        Now, we just have left the elephant in the room: what do we do about the case where we have \textit{big} layers? That is, what if we have \textbf{multiple} neurons per layer? This makes this more complex.
+        
+        Well, the solution is the same as earlier in the course: we introduce \textbf{matrices}.
+        
+        But this time, with a twist: we have to do serious \textbf{matrix} calculus: a difficult topic indeed.
+        
+        To handle this, we will go in somewhat \textbf{reversed} order, but one that better fits our needs.
+        
+        \begin{itemize}
+            \item We begin by considering how the chain rule looks when we switch to matrix form.
+            \item We give a general idea of what matrix derivatives look like.
+            \item We list some of the results that matrix calculus gives us, for particular derivatives.
+            \item We actually reason about how matrix calculus \textit{works}.
+        \end{itemize}
+        
+        The last of these is by far the \textbf{hardest}, and warrants its own section. Nevertheless, even without it, you can more or less get the idea of what we need - hence why we're going in reversed order.
+
+    \phantom{}
+    
+    \subsection{The chain rule: Matrix form}
+    
+        Let's start with the first: the punchline, how does the chain rule and our gradient descent \textbf{change} when we add \vocab{matrices}?
+        
+        It turns out, not much: by using \textbf{layers} in the last section, we were able to create a pretty powerful and mathematically \textbf{tidy} object.
+
+        \begin{itemize}
+            \item With layers, each layer feeds into the \textbf{next}, with no other interaction. And neurons \purp{within} the same layer do \gren{not} directly \gren{interact} with each other, which simplifies our math greatly.
+
+            \begin{itemize}
+                \item Basically, we have a bunch of functions (neurons) that, within a layer, have \gren{nothing} to do with each other, and only \textbf{output} to the \textbf{next} layer of similar functions. 
+            \end{itemize}
+
+            
+            
+            \item So, we can often \textbf{oversimplify} our model by thinking of each \purp{layer} as like a "big" function, taking in a vector of size \blu{$m^\ell$} and outputting a vector of size \red{$n^\ell$}. 
+        \end{itemize}
+        
+        
+        
+        
+        
+        
+        
+        Our main concern is making sure we have agreement of \textbf{dimensions}!
+            \note{In fact, if you just rearranging your matrices and transposing them can be a helpful way to debug. Be careful, though!}
+    
+        So, here's how our model looks now:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=180mm,scale=0.4]{images/nn_2_images/network_bp_full.png}
+            \caption*{Pretty much the same! Only major difference: swapped scalars for vectors, and vectors for matrices (represented by switching to uppercase)}
+        \end{figure}
+        
+        And, we do backprop the same way, too.
+        
+        Here, we're not going to explain much as we go: all we're doing is getting the \textbf{derivatives} we need for our \textbf{chain rule}! 
+        
+        As we go \textbf{backwards}, we can build the gradient for each \textbf{weight} we come across, in the way we described above.
+        
+        As always, we start from the loss function:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=180mm,scale=0.4]{images/nn_2_images/network_bp_full1.png}
+        \end{figure}
+        
+        Take another step:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=180mm,scale=0.4]{images/nn_2_images/network_bp_full2.png}
+        \end{figure}
+        
+        We'll pick up the pace: we'll jump to layer 2 and get its gradient.
+            \note{The term $\pderivslash{\red{Z^L}}{\pur{A^2}}$ contains lots of derivatives from every layer between $L$ and 2. \\
+            
+            But, all we're omitting is the same kinds of steps we're doing in layers 1, 2, and L.}
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=180mm,scale=0.4]{images/nn_2_images/network_bp_full3.png}
+        \end{figure}
+        
+        Now, we finally get to layer 1!
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=180mm,scale=0.4]{images/nn_2_images/network_bp_full4.png}
+        \end{figure}
+        
+        We finish off by getting what we're after: the gradient for $W^1$.\\
+        
+        \begin{notation}
+            We depict neural network gradient descent using the below diagram (outside the box):
+            
+            The \gren{right}-facing \gren{straight} arrows come \purp{first}: they're part of the \vocab{forward pass}, where we get all of our values.
+            
+            The \gren{left}-facing \gren{curved} arrows come \purp{after}: they represent the \vocab{back-propagation} of the gradient.
+        \end{notation}
+        
+        \begin{figure}[H]
+            \includegraphics[width=180mm,scale=0.4]{images/nn_2_images/network_bp_full5.png}
+        \end{figure}
+        
+        And, with this, we can rewrite our general equation for neural network gradients.
+        
+    \phantom{}
+    
+    \subsection{How the Chain Rule changes in Matrix form}
+        
+        As we discussed before, we can't just add onto our weight gradient to reach another layer: the final term
+        
+        \begin{equation}
+            \pderiv{Z^\ell}{W^\ell}
+        \end{equation}
+        
+        Ends our chain rule when we add it: $W^\ell$ isn't part of the input or output, so it doesn't connect to the previous layer.
+        
+        So, for this section, we'll add it \textbf{separately} at the end of our chain rule:
+        
+        \begin{equation*}
+            \pderiv {\pur{\loss}} {W^\ell} 
+            =
+            \overbrace{
+                \pderiv {\red{Z^\ell}}   {W^{\ell}}
+            }^{\text{Weight link}} 
+                \cmul
+            \overbrace{
+                \Bigg(
+                    \pderiv {\pur{\loss}} {\red{Z^\ell}}
+                \Bigg)^T
+            }^{\text{Other layers}}
+        \end{equation*}
+        
+        That way, we can add onto $\pderivslash {\pur{\loss}} {\red{Z^\ell}}$ without worrying about the weight derivative.
+            
+        Notice two minor changes caused by the switch to matrices:
+        
+        \begin{itemize}
+            \item The order has to be \textbf{reversed}.
+            \item We also have to do some weird \textbf{transposing}.
+        \end{itemize}
+        
+        Both of these mostly boil down to trying to be careful about \textbf{shape}/dimension agreement.
+            \note{There are also deeper interpretations, but they aren't worth digging into for now.}\\
+        
+        \begin{notation}
+            The \vocab{gradient} $\nabla_{W^\ell} \loss$ for a neural network is given as:
+            
+            \begin{equation*}
+                \pderiv {\pur{\loss}} {W^\ell} 
+                =
+                \overbrace{
+                    \pderiv {\red{Z^\ell}}   {W^{\ell}}
+                }^{\text{Weight link}} 
+                    \cmul
+                \overbrace{
+                    \Bigg(
+                        \pderiv {\pur{\loss}} {\red{Z^\ell}}
+                    \Bigg)^T
+                }^{\text{Other layers}}
+            \end{equation*}
+            
+            We get our remaining terms $\pderivslash {\pur{\loss}} {\red{Z^\ell}}$ by our usual chain rule:
+            
+            \begin{equation*}
+                \pderiv {\pur{\loss}} {Z^\ell}
+                =
+                \overbrace{
+                    \Bigg(
+                        \pderiv {\blu{A^\ell}}   {\red{Z^\ell}}
+                    \Bigg) 
+                }^{\text{Layer $\ell$}}
+                \cdot
+                \Bigg(
+                    \cdots 
+                \Bigg)
+                \cdot
+                \overbrace{
+                    \Bigg(
+                        \pderiv {\red{Z^{L-1}}}   {A^{L-2}}
+                            \cmul
+                        \pderiv {\blu{A^{L-1}}}   {\red{Z^{L-1}}}
+                    \Bigg) 
+                }^{\text{Layer $L-1$}}
+                \cdot
+                \overbrace{
+                    \Bigg(
+                        \pderiv {\red{Z^L}}   {A^{L-1}}
+                            \cmul
+                        \pderiv {\blu{A^L}}   {\red{Z^L}}
+                    \Bigg) 
+                }^{\text{Layer $L$}}
+                \cdot
+                \overbrace{
+                    \Bigg(
+                        \pderiv {\pur{\loss}} {\blu{A^L}} 
+                    \Bigg)
+                }^{\text{Loss unit}}
+            \end{equation*}
+        \end{notation}
+        
+        This is likely our most important equation in this chapter!
+        
+    \phantom{}
+    
+    \subsection{Relevant Derivatives}
+    
+        If you aren't interesting in understanding matrix derivatives, here we provide the general format of each of the derivatives we care about.\\
+        
+        \begin{notation}
+            Here, we give useful \vocab{derivatives} for \vocab{neural network gradient descent}.
+        
+            \phantom{}
+            
+            Loss is not given, so we can't compute it, as before:
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\pur{\loss}}{\blu{A^L}}
+                }^{(n^{L} \times 1)}
+            \end{equation*}
+            
+            \phantom{}
+            
+            We get the same result for each of these terms as we did before, except in matrix form.
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\red{Z^\ell}}   {W^{\ell}} 
+                }^{ (m^{\ell} \times 1) }
+                = 
+                \blu{A^{\ell-1}}
+            \end{equation*}
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv{\red{Z^\ell}} {\blu{A^{\ell-1}}}
+                }^{ (m^{\ell} \times n^{\ell}) }
+                =
+                W^\ell
+            \end{equation*}
+            
+            \phantom{}
+            
+            The last one is actually pretty different from before:
+            
+            \begin{equation*}
+                \overbrace{
+                    \pderiv {\blu{A^\ell}}   {\red{Z^\ell}}
+                }^{ (n^{\ell} \times n^{\ell}) }
+                =
+                \begin{bmatrix}
+                    f'({\red{z_1^\ell}})&0                   &0                   &\cdots  & 0 \\
+                    0                   &f'({\red{z_2^\ell}})&0                   &\cdots  & 0 \\
+                    0                   &0                   &f'({\red{z_3^\ell}})&\cdots  & 0 \\
+                    \vdots              &\vdots              &\vdots              &\ddots  & 0 \\
+                    0                   &0                   &0                   &0   &f'({\red{z_r^\ell}})
+                \end{bmatrix}
+            \end{equation*}
+            
+            Where $r$ is the length of $Z^\ell$.
+
+            \begin{itemize}
+                \item In short, we only have the $\red{z_i}$ derivative on the $\nth{i}$ diagonal
+                \item Why? Check the \orgg{matrix derivative explanatory notes}.
+            \end{itemize}
+        \end{notation}
+
+        \note{For $\pderivslash {\red{Z^\ell}}   {W^{\ell}} $, check section        A.9.2.
+        
+              \phantom{}
+              
+              For $\pderivslash{\red{Z^\ell}} {\blu{A^{\ell-1}}}$, check section A.9.3.
+              
+              \phantom{}
+              
+              For $\pderivslash {\blu{a^\ell}}   {\red{z^\ell}}$, check section A.9.4.}
+        
+        
+        \miniex Suppose you have the activation $f(\red{z}) = \red{z}^2$.
+        
+        Your pre-activation might be 
+        
+        \begin{equation}
+            \red{z^\ell} = 
+            \begin{bmatrix}
+                1 \\ 2 \\ 3
+            \end{bmatrix}
+        \end{equation}
+        
+        The output would be 
+        
+        \begin{equation}
+            \blu{a^\ell} 
+            = 
+            f(\red{z^\ell})
+            = 
+            \begin{bmatrix}
+                1 \\ 2^2 \\ 3^2
+            \end{bmatrix}
+        \end{equation}
+        
+        But the derivative would be:
+        
+        \begin{equation}
+            f(\red{z}) = 2z
+        \end{equation}
+        
+        Which, gives our matrix derivative as:
+        
+        \begin{equation*}
+            \pderiv {\blu{a^\ell}}   {\red{z^\ell}}
+            =
+            \begin{bmatrix}
+                f'(1) & 0         & 0         \\
+                0        & f'(2) & 0         \\
+                0        & 0         & f'(3) \\
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+                2\cdot 1 & 0         & 0         \\
+                0        & 2 \cdot 2 & 0         \\
+                0        & 0         & 2 \cdot 3 \\
+            \end{bmatrix}
+            =
+            \begin{bmatrix}
+                2 & 0 & 0  \\
+                0 & 4 & 0  \\
+                0 & 0 & 6  \\
+            \end{bmatrix}
+        \end{equation*}
+        
+        If you want to be able to \textbf{derive} some of the derivatives, without reading the matrix derivative section, just use this formula for vector derivatives:
+            \note{If you have time, do read -- you won't understand what you're doing otherwise!}
+        
+        \begin{equation}
+                \pderiv{ \pur{w} }{ \org{v} } 
+                =
+                \overbrace{
+                    \begin{bmatrix}
+                        \begin{matrix}
+                            \bigpderiv{ \pur{w_1} }   { \org{v_1} }\\ 
+                            \\
+                            \bigpderiv{ \pur{w_1} }   { \org{v_2} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \pur{w_1} }   { \org{v_m} }
+                        \end{matrix} &
+                        \begin{matrix}
+                            \bigpderiv{ \pur{w_2} }   { \org{v_1} }\\ 
+                            \\
+                            \bigpderiv{ \pur{w_2} }   { \org{v_2} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \pur{w_2} }   { \org{v_m} }
+                        \end{matrix} &
+                        \begin{matrix}
+                            \cdots\\\\ \cdots \\\\ \ddots \\\\ \cdots
+                        \end{matrix} &
+                        \begin{matrix}
+                            \bigpderiv{ \pur{w_n} }   { \org{v_1} }\\ 
+                            \\
+                            \bigpderiv{ \pur{w_n} }   { \org{v_2} }\\ 
+                            \\
+                            \vdots \\ 
+                            \\
+                            \bigpderiv{ \pur{w_n} }   { \org{v_m} }
+                        \end{matrix}
+                    \end{bmatrix}
+                }^{ \text{\small Column $j$ matches $\pur{w_j}$} }
+                \bigggrB{125pt} \text{\small Row $i$ matches $\org{v_i}$} 
+            \end{equation}
+            
+            We can use this for scalars as well: we just treat them as a vector of length 1.
+            
+            With some cleverness, you can derive the Scalar/Matrix and Matrix/Scalar derivatives as well.  
+                \note{This is contained in the matrix derivatives chapter.}\\
+
+
+            \begin{clarification}
+                Note that we have chosen a \gren{convention} for how our matrices work: plenty of other resources use a transposed version of matrix derivatives.
+
+                This alternate version means the exact \gren{same} thing as our version. Our choice is called the \vocab{denominator layout notation} for matrix derivatives.
+            \end{clarification}
+            \phantom{}
+
+\pagebreak
+        
+
+
+        
+        
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+\section{Training}
+    \label{training}
+    
+    \subsection{Comments}
+    
+        A few important side notes on training. First, on derivatives:\\
+        
+        \begin{concept}
+            Sometimes, depending on your \purp{loss} and \purp{activation} function, it may be easier to directly compute
+            
+            \begin{equation*}
+                \pderiv{ \pur{\loss} }{ \red{Z}^{L} }
+            \end{equation*}
+            
+            Than it is to find 
+            
+            \begin{equation*}
+                \pderivslash{ \pur{\loss} }{ \org{A}^L } 
+                \;\;
+                \text{and}
+                \;\;
+                \pderivslash{ \org{A}^L } { \red{Z}^{L} }
+            \end{equation*}
+            
+            So, our algorithm may change slightly.
+        \end{concept}
+        
+        Another thought: intialization.\\
+        
+        \begin{concept}
+            We typically try to pick a \vocab{random initalization}. This does two things:
+            
+            \begin{itemize}
+                \item Allows us to avoid weird \gren{numerical} and \gren{symmetry} issues that happen when we start with $\blu{W}_{ij}=0$.
+                
+                \item We can hopefully find different \gren{local minima} if we run our algorithm multiple times.
+                    \begin{itemize}
+                        \item This is also helped by picking \purp{random data points} in \vocab{SGD} (our typical algorithm).
+                    \end{itemize}
+            \end{itemize}
+            
+            Here, we choose our \purp{initialization} from a \gren{Gaussian} distribution, if you know what that is.
+        \end{concept}
+        
+            \note{If you do not know a gaussian distribution, that shouldn't be a problem. It is also known as a "normal" distribution.}
+
+        
+    
+    \subsection{Pseudocode}
+    
+        Our training algorithm for backprop can follow smoothly from what we've laid out.
+
+        Here, we'll use the $@$ symbol to indicate matrix multiplication, following numpy conventions.
+     
+        \begin{codebox}
+            \Procname{$\proc{SGD-Neural-Net}(\dataTrain, T, L, (m^1, \ldots,
+                        m^L), (f^1, \ldots, f^L), \text{Loss})$}
+            
+            \li \For every \textbf{layer}:
+                \Do
+                \li \textit{Randomly} initialize
+                    \Do
+                    \li the \gren{weights} in every layer
+                    \li the \gren{biases} in every layer
+                    \End
+                \End
+                \li
+            
+            \li While \gren{termination condition} not met:
+                \Do
+                    \li Get random data point \org{$i$}
+                    \li Keep track of time $t$
+                    \li
+                    \li Do forward pass
+                        \Do
+                            \li \For every \textbf{layer}:
+                                \Do
+                                    \li Use previous \textbf{layer}'s \orgg{output}: get \redd{pre-activation}
+                                    \li Use \redd{pre-activation}: get new output, \orgg{activation}
+                                \End
+                                \li
+                            
+                            \li Get \purp{loss}: forward pass complete
+                        \End
+                        \li
+                    
+                    \li Do back-propagation
+                        \Do
+                            \li \For every \textbf{layer} in \underline{reversed order}:
+                            
+                            \Do
+                                \li If \textbf{final} layer:
+                                \gre{\#Loss function}
+                                    \Do
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \org{A}^L }$
+                                    \End
+                                    \li
+                                
+                                \li Else: 
+                                    \Do
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \org{A^\ell} }$:
+                                        \gre{\#Link two layers}
+                                            \Do
+                                                \li 
+                                                $( \pderivslash{ \red{Z}^{\ell+1} }{ \org{A}^\ell } )$ 
+                                                \;@\; 
+                                                $( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell+1} } )$ 
+                                            \End
+                                            \li 
+                                             
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \red{Z}^{\ell} }$:
+                                        \gre{\#Within layer}
+                                            \Do
+                                                \li
+                                                $( \pderivslash{ \org{A}^\ell }{ \red{Z}^{\ell} } )$ 
+                                                \;@\;
+                                                $( \pderivslash{ \pur{\loss} }{ \org{A}^\ell } )$ 
+                                            \End
+                                            \li
+                                    \End
+                                    
+                                    
+                                \li Compute weight gradients:
+                                    \Do
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \blu{W}^{\ell} }$:
+                                        \gre{\#Weights}
+                                            \Do
+                                                \li $\pderivslash{\red{Z}^{\ell}}{ \blu{W}^\ell }
+                                                = \red{A}^{\ell-1}$
+                                                \li
+                                                $( \pderivslash{\red{Z}^{\ell}}{ \blu{W}^\ell } )$ 
+                                                \;@\;
+                                                $( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell}} )$ 
+                                            \End
+                                            \li
+                                        
+                                        \li Get $\pderivslash{ \pur{\loss} }{ \blu{W_0}^{\ell} }$:
+                                        \gre{\#Biases}
+                                            \Do
+                                                \li
+                                                $\pderivslash{ \pur{\loss} }{ \blu{W_0}^{\ell} }
+                                                =
+                                                ( \pderivslash{ \pur{\loss} }{ \red{Z}^{\ell}} )$ 
+                                            \End
+                                            \li
+                                    \End
+                                    
+                                \li Follow Stochastic Gradient Descend (SGD): \gre{\#Take step}
+                                    \Do   
+                                        \li Update \gren{weights}:
+                                        \Do
+                                            \li $\blu{W}^\ell = \blu{W}^\ell - 
+                                            \Big( \eta(t) * (\pderivslash{ \pur{\loss} }{ \blu{W}^{\ell} }) \Big)$
+                                        \End
+                                        \li
+                                        
+                                        \li Update \gren{biases}:
+                                        \Do
+                                            \li $\blu{W_0}^{\ell} = \blu{W_0}^{\ell} - 
+                                            \Big( \eta(t) * (\pderivslash{ \pur{\loss} }{ \blu{W_0}^{\ell} }) \Big)$
+                                        \End
+                                        
+                                        \li
+                                        
+                                    \End
+                            \End
+                        \End
+
+                \End
+            \li Return final neural network with weights and biases
+    
+        \end{codebox}
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 
 \section{Optimizing neural network parameters}
 
@@ -10,7 +1788,6 @@
     
     But, we can do \textbf{better} than a simple SGD approach with step size $\eta(t)$. We'll try out some \textbf{modifications} that can speed up our training, and make better models.
 
-    \pagebreak
     \subsection{Mini-batch}
     
         \subsubsection{Review: Gradient Descent Notation}
@@ -92,7 +1869,7 @@
                 )
             \end{equation}
     
-        \subsecdiv
+        \phantom{}
     
         \subsubsection{Review: BGD vs. SGD}
         
@@ -169,7 +1946,7 @@
                             \item \purp{SGD} could improve a lot with only a \orgg{small subset} of a data.
                         \end{itemize}
 
-                        \subsecdiv
+                        \phantom{}
                         
                     \item Because \gren{BGD} uses all our data, its gradient is much more \gren{accurate}.
                         \begin{itemize}
@@ -177,7 +1954,7 @@
                             \item This is worse if the data is \orgg{noisy}: each SGD step becomes less effective.
                         \end{itemize}
 
-                        \subsecdiv
+                        \phantom{}
                         
                     \item \purp{SGD} \purp{randomly} chooses data points: this random noise makes it harder to overfit.
                         \begin{itemize}
@@ -186,7 +1963,7 @@
                 \end{itemize}
             \end{concept}
         
-        \subsecdiv
+        \phantom{}
         
         \subsubsection{Mini-batch}
         
@@ -236,7 +2013,7 @@
                     \item Our batches are \purp{random}, like SGD: we reduce overfitting and escape local minima.
                 \end{itemize}
 
-                \subsecdiv
+                \phantom{}
                 
                 One more important benefit:
                 
@@ -248,7 +2025,7 @@
                 \end{itemize}
             \end{concept}
         
-    \secdiv
+    \phantom{}
     \pagebreak
     \subsection{Adaptive Step Size - Challenges}
     
@@ -271,9 +2048,15 @@
                 \note{Check chapter 3 for the exact requirements of the theorem.}
         \end{itemize}
 
-        We'll spend the following sections coming up with solutions.
+        In Appendix B, we discuss some common techniques:
+
+        \begin{itemize}
+            \item Momentum
+            \item Adadelta
+            \item Adam
+        \end{itemize}
     
-    \secdiv
+    \phantom{}
 
     
     \pagebreak
@@ -371,929 +2154,12 @@
             
             This allows us to \purp{adjust} the step size for some weights more than others: if our gradient is too large or small, we can fix it.
         \end{concept}
-    \secdiv
-    
-    \secdiv
+
 
     \pagebreak
     
-    \subsection{Momentum}
     
-        \subsubsection{Solving Oscillation}
-    
-            Let's look at one common problem we have with gradient descent: \textbf{oscillation}. 
-            
-            \begin{figure}[H]
-                \centering
-                    \includegraphics[width=70mm,scale=0.5]{images/gradient_descent_images/oscillate.png}
-            \end{figure}
-            
-            We overshoot our target, and then have to take another step that \textbf{undoes} most of what happened in the previous step. So, we waste a lot of time correcting the last step.
-                \note{For example, our first two steps land us in almost the same place we started!}
-                
-            This can significantly \textbf{slow} down how quickly we converge.
-                
-            \begin{figure}[H]
-                \centering
-                    \includegraphics[width=70mm,scale=0.5]{images/nn_2_images/oscillate_zoom.png}
-                
-                \caption*{The black arrow shows the combined effect of our first two steps: almost nothing!}
-            \end{figure}
-            
-            We don't want to waste time, so we want to remove the "part" of the gradient that is likely to \textbf{cancel} out. 
-            
-            The \textbf{next} gradient cancels out some of the previous. Our first two steps add up, or "\textbf{average} out" to a small improvement.
-            
-            If our steps are effectively "averaging", we'll speed up that process: we'll average together the gradients \textit{before} taking our step!
-                \note{This means we can take a bigger step in a direction we won't have to cancel!}\\
-                
-            \begin{concept}
-                Since our gradient descent steps \gren{combine} to give us our new model, we can think of them as adding, or "\purp{averaging}" to a more accurate improvement.
-            \end{concept}
-            
-                \note{The only real difference between adding and averaging is whether we divide by the number of terms.}
-            
-            When our function \textbf{oscillates}, we get the same pattern \textbf{multiple} times: past steps indicate the sort of pattern we'll see in \textbf{future} steps. 
-            
-            So, we'll average our current gradient with past gradients: that way, the \textbf{component} that gets cancelled out is \textbf{removed}, and we won't have to undo our mistake over and over.\\
-            
-            \begin{concept}
-                \vocab{Oscillation} causes us to move back and forth over the same region \purp{multiple} times, where each step mostly \gren{cancels} out the last.
-                
-                One solution is to \purp{average out} multiple of our gradients: the part that is "\gren{cancelled} out" should be eliminated by the average.
-                
-                So, we average our \gren{past} gradients (past oscillation) with our \gren{current} gradient, so we move in a more \purp{efficient} direction, speeding up our algorithm.
-            \end{concept}
-            
-            Another way to think about it: when we \textbf{average} out our current and previous gradient, we're cancelling out what they "\textbf{disagree}" on, and keeping what they \textbf{agree} on.
-            
-            So, we're taking a step in the direction that multiple gradients agree will \textbf{improve} our model!
-            
         
-        \subsecdiv
-            
-        \subsubsection{Weighted averages}
-        
-            We could naively average all of our gradients \gren{equally}. But, this would be a bad idea:
-            
-            \begin{itemize}
-                \item It doesn't give you as much control of the algorithm: what if we care more about the \textbf{present} gradient, than the previous one?
-                \item Gradients further in the \purp{past} are \textbf{less likely} to matter: we've moved further away from those positions.
-                    \begin{itemize}
-                        \item We also need to \textbf{scale} down past terms, so they don't take up most of the average.
-                            \note{If you're averaging 100 terms, and you add one more... it's not going to change much.}
-                    \end{itemize}
-            \end{itemize}
-            
-            The first problem is easy to solve: we'll \textbf{weigh} each of our terms differently.\\
-            
-            \begin{concept}
-                A \vocab{weighted average} is used when we want some terms to affect our \purp{average} more than others.
-                
-                We represent this with \gren{weights}: each weight represents the \purp{proportion} of our average from that term.
-                
-                \begin{equation*}
-                    \text{Weighted Average} =
-                    x_1w_1 + x_2w_2 + \dots + x_nw_n
-                \end{equation*}
-            \end{concept}
-
-                \note{These weights are \orgg{separate} from the weights inside our neural network.
-
-                \phantom{}
-                
-                They do, however, represent the same type of concept: the NN weights scale the \gren{input}, while these weights scale the \purp{gradients}.}
-            
-            \miniex If $w_1=\red{.6}$, that means \red{60\%} of the average comes from $x_1$.
-            
-            Note that, since we're talking about \textbf{proportions}, they need to \orgg{sum to 1}: it wouldn't make sense to have more than 100\% of the average.
-            
-            At each time step, we're adding one new gradient: the \textbf{present} one.
-            
-            We'll simplify our average to those two terms: the \textbf{present} gradient, versus all the \textbf{past} gradients.
-            
-            \begin{itemize}
-                \item We represent the importance (\textbf{weight}) of our \redd{past} gradients using the variable $\red{\gamma}$.
-                
-                \item We want the two terms to add to 1: so, the importance of \vocab{current} gradient is $\blu{1-\gamma}$.
-            \end{itemize}
-            
-            \begin{equation}
-                \overbrace{
-                    A_t 
-                }^{\text{Average}}
-                =
-                \overbrace{
-                    \red{\gamma} G_{t-1}
-                }^{\text{Old gradients}}
-                + \;\;
-                \overbrace{
-                    \blu{(1-\gamma)} g_{t}
-                }^{\text{New gradient}}
-            \end{equation}
-            
-            Now, we have \textbf{control} over how much the present or past gradient matters: we just have to adjust $\gamma$. 
-            
-        \subsecdiv
-        
-        \subsubsection{Running Average}
-        
-            We still have some work to do: first, we haven't made it clear how we're incorporating our old gradients: we lumped them into one term.
-            
-            Let's try building up from $t=1$. We'll assume our previous gradients are 0, for simplicity.
-            
-            \begin{equation}
-                A_0=g_0=0
-            \end{equation}
-            
-            Our first step will average this with our \textbf{first} gradient:
-            
-            \begin{equation}
-                A_1 
-                =  
-                \red{\gamma} g_0 \;\;+\;\; \blu{(1-\gamma)} g_1
-            \end{equation}
-            
-            Simplifying to:
-            
-            \begin{equation}
-                A_1 =  \blu{(1-\gamma)} g_1
-            \end{equation}
-            
-            What about our second step? 
-            
-            \begin{equation}
-                A_2
-                =
-                \overbrace{
-                    \red{\gamma} G_{t-1}
-                }^{\text{Old gradients}}
-                + \;\;
-                \blu{(1-\gamma)} g_2
-            \end{equation}
-            
-            We \textit{could} just plug in $g_1$. But, $A_1$ contains the information about our first gradient $g_1$, \textbf{and} the gradient before it, $g_0$.
-            
-            \begin{equation}
-                A_2
-                =
-                \overbrace{
-                    \red{\gamma} A_1
-                }^{\text{Contains $g_1$, $g_0$}}
-                + \;\;
-                \blu{(1-\gamma)} g_2
-            \end{equation}
-            
-            We can repeat this process:
-            
-            \begin{equation}
-                A_3 = 
-                \overbrace{
-                    \red{\gamma} A_{2}
-                }^{\text{Contains $g_2$,$g_1$, $g_0$}}
-                + \;\;
-                \overbrace{
-                    \blu{(1-\gamma)} g_3
-                }^{\text{New gradient}}
-            \end{equation}
-
-            And so, we've created a general way to \textbf{average} as our program \textbf{runs} through different gradients.
-
-            \begin{equation}
-                A_t \;\;=\;\; 
-                \gamma A_{t-1} \;\;+\;\; 
-                (1-\gamma) g_t
-            \end{equation}
-
-            To allow more flexibility, we'll allow $\gamma$ to \orgg{vary in time}, as $\gamma_t$.
-            
-            \begin{equation}
-                A_t \;\;=\;\; 
-                \org{\gamma_t} A_{t-1} \;\;+\;\; 
-                (1-\org{\gamma_t}) a_t
-            \end{equation}
-
-            \begin{itemize}
-                \item We call this a \textbf{running average}.\\
-            \end{itemize}
-
-            \begin{definition}
-                A \vocab{running average} is a way to average past data with present data \purp{smoothly}.
-
-                Our \gren{initial} value for the average is typically zero:
-
-                \begin{equation*}
-                    A_0=0
-                \end{equation*}
-
-                Then, we begin introducing \orgg{new} data points.
-                
-                \begin{itemize}
-                    \item You use the parameter $\gamma_t$ to indicate how much you want to prioritize \gren{past data}.
-                    \item Thus, $1-\gamma_t$ indicates the value of \purp{new data}.
-                \end{itemize}
-
-                \begin{equation*}
-                    \overbrace{
-                        A_t 
-                    }^{\text{Average}}
-                    \;\;=\;\;
-                    \overbrace{
-                        \red{\gamma_t} A_{t-1}
-                    }^{\text{Old gradients}}
-                    \;\;+\;\; 
-                    \overbrace{
-                        \blu{(1-\gamma_t)} g_{t}
-                    }^{\text{New gradient}}
-                \end{equation*}
-
-                \subsecdiv
-
-                \begin{itemize}
-                    \item Note that instead of $\gamma$, we write $\gamma_t$: this "discount factor" can vary with time.
-
-                \end{itemize}
-
-                
-            \end{definition}
-
-            \phantom{}
-
-            \begin{clarification}
-                This is technically only one kind of \orgg{running average}: here, we use an "\vocab{exponential moving average}". 
-
-                There are different ways to average past data points, with different \purp{weighting} schemes.
-                    
-                    \begin{itemize}
-                        \item For example, you could do a "\gren{simple moving average}", where you average equally over the last $n$ data points.
-                    \end{itemize}
-            \end{clarification}
-
-        \subsubsection{Running Averages: The Distant Past}
-
-            So, how does this "running average" approach affect our different data points, further in the past? Let's find out.
-
-            \subsecdiv
-
-            For simplicity, let's assume $\gamma_t=\gamma$: it's a \gren{constant}.
-
-            \begin{equation}
-                A_t 
-                =
-                \red{\gamma} \grn{A_{t-1}}
-                + 
-                \blu{(1-\gamma)} g_{t}
-            \end{equation}
-
-            We can expand $A_{t-1}$ to see further in the past:
-
-            \begin{equation}
-                A_t 
-                =
-                \red{\gamma} 
-                    \Big(\red{\gamma} \grn{A_{t-2}}
-                    + 
-                    \blu{(1-\gamma)} g_{t-1}
-                \Big)
-                + 
-                \blu{(1-\gamma)} g_{t}
-            \end{equation}
-
-            And even further: 
-                \note{This is starting to get messy: don't worry if it's hard to read.}
-            
-
-            \begin{equation}
-                A_t 
-                =
-                \red{\gamma} 
-                \Bigg(\red{\gamma} 
-                    \Big(
-                        \red{\gamma} \grn{A_{t-3}}
-                        + 
-                        \blu{(1-\gamma)} g_{t-2}
-                    \Big)
-                    + 
-                    \blu{(1-\gamma)} g_{t-1}
-                \Bigg)
-                + 
-                \blu{(1-\gamma)} g_{t}
-            \end{equation}
-
-            Let's rewrite this.
-
-            \begin{equation}
-                \red{\gamma}^3 \grn{A_{t-3}}  \;\;+\;\; 
-                \red{\gamma}^2\blu{(1-\gamma)} g_{t-2} \;\;+\;\;
-                \red{\gamma}\blu{(1-\gamma)} g_{t-1} \;\;+\;\; 
-                \blu{(1-\gamma)} g_{t}
-            \end{equation}
-
-            \subsecdiv
-
-            We see a "stacking" effect for $\gamma$: 
-            
-            \begin{itemize}
-                \item We only partly include our newest data point: we scale it by $1-\gamma$, to make room for the past.
-
-                \begin{equation}
-                    \blu{(1-\gamma)} g_{t}
-                \end{equation}
-                
-                \item But if your gradient is 1 time unit in the past, we apply $\gamma$ \orgg{once}, "forgetting" some more of that gradient.
-
-                \begin{equation}
-                    \red{\gamma}\blu{(1-\gamma)} g_{t-1}
-                \end{equation}
-
-                \item But if your gradient is 2 units in the past, we apply $\gamma$ \orgg{twice}: we've "forgotten" some of it twice.
-
-                \begin{equation}
-                    \red{\gamma}^2\blu{(1-\gamma)} g_{t-2}
-                \end{equation}
-            \end{itemize}
-
-            Each time we do an average, we scale down our older data points by $\gamma$. So, the further in the past, the less effect they have.
-
-            \begin{itemize}
-                \item This is exactly the kind of design we wanted!\\
-            \end{itemize}
-
-            \begin{concept}
-                A \purp{running average} tends to pay less attention to data further in the \gren{past}.
-
-                \begin{itemize}
-                    \item In general, if you are $k$ time units in the past, we apply a factor of \red{$\gamma^k$}.
-                \end{itemize}
-
-                Because $\gamma<1$, this \orgg{exponentially} decays to 0.
-
-                \subsecdiv
-
-                If we want to fully expand $A_t$, it's easiest to use a sum:
-
-                \begin{equation*}
-                    A_T = \sum_{t=0}^T \red{\gamma^{(T-t)}} \cdot \blu{(1-\gamma)} \cdot g_t
-                \end{equation*}
-            \end{concept}
-            You can compare this formulation against what we computed above.
-
-            \subsecdiv
-            
-        \subsubsection{Momentum}
-
-            Applying a running average to our gradients gives us \purp{momentum}.
-
-            \begin{itemize}
-                \item This analogy to \textbf{physics} represents how our point "moves" through the \purp{weight space}, to optimize $J$.
-                    \note{Gradient descent adjusts our weights: we go from one list of weights, to another. That's why we say we're moving through the "weight space".
-
-                    \phantom{}
-                    
-                    Because our hypothesis is determined by our weights, this is also a "hypothesis space".}
-                    
-                \item The gradient gives us a "direction" of motion. So, our \gren{momentum} represents the direction we were "already moving": the \gren{previous} averaged gradient.
-            \end{itemize}
-
-            We use $M$ to represent the "averaged gradient" that we use to move. Our initial momentum is 0:
-
-            \begin{equation}
-                M_0=0
-            \end{equation}
-
-            And we want to average our current gradient with past gradients:
-
-            \begin{equation}
-                M_t 
-                \;\;=\;\;
-                \red{\gamma} \grn{M_{t-1}}
-                \;\;+\;\; 
-                \blu{(1-\gamma)} g_{t}
-            \end{equation}
-
-            What is our \purp{past} gradient $g_t$? Well, we want to use $W$ to modify $J$: $\pderiv{J}{W}$, or $\nabla_W J$.
-
-            And we're moving through the \gren{weight space}, so our input to the gradient is the previous set of weights, $W_{t-1}$.
-
-            \begin{equation}
-                g_{t} = \nabla_W J (W_{t-1})
-            \end{equation}
-
-            And finally, $M_t$, our "averaged gradient", determines how we move.
-
-            \begin{equation}
-                W_t \;\;=\;\; W_{t-1} \;\;-\;\; \eta M_t
-            \end{equation}
-
-            \begin{definition}
-                \vocab{Momentum} is a technique for gradient descent where we do a \gren{running average} between our current gradient, and our older gradients.
-
-                This approach reduces \purp{oscillation}, and thus aims to improve the speed of convergence for our models.
-
-                \begin{itemize}
-                    \item Our initial "momentum" (averaged gradient) is \orgg{0}.
-                    \item The amount we value new data is given by $\red{\gamma_t}$.
-                    \item Old data is scaled by $\blu{1-\gamma_t}$.
-                \end{itemize}
-
-                \begin{equation*}
-                    \begin{gathered}
-                        M_0=0 \\
-                        M_t 
-                        \;\;=\;\;
-                        \overbrace{
-                            \red{\gamma_t} M_{t-1}
-                        }^{\text{Old gradients}}
-                        \;\;+\;\; 
-                        \overbrace{
-                            \blu{(1-\gamma_t)} \nabla_W J (W_{t-1})
-                        }^{\text{New gradient}}
-                    \end{gathered}
-                \end{equation*}
-
-                We use this momentum to take our step:
-
-                \begin{equation*}
-                    W_t \;\;=\;\; W_{t-1} \;\;-\;\; \eta \grn{M_t}
-                \end{equation*}
-                
-                \subsecdiv
-
-                This approach puts more emphasis on newer data points, and less on older ones.
-            \end{definition}
-
-            \miniex We can see this "dampened oscillation" in action below:
-
-            \begin{figure}[H]
-                \centering
-                    \includegraphics[width=70mm,scale=0.5]{images/nn_2_images/momentum.png}
-                
-                \caption*{The blue lines indicate the more "severe" path that we would've taken with normal gradient descent. the orange line is the line we take with momentum. }
-            \end{figure}
-
-            Notice that generally, the orange path is closer to correct! We still oscillate somewhat, but much less than we would have otherwise.
-
-            \pagebreak
-
-            
-            
-
-            
-
-    \subsection{Adadelta}    
-
-        \subsubsection{Per-weight step sizes}
-
-            Earlier, we discussed creating \textbf{separate} step sizes for different weights in our network:
-    
-            \begin{itemize}
-                \item Different weights could have different \gren{sensitivities}: one weight could have a much larger/smaller impact on $J$, based on \textbf{structure}.
-    
-                \item We already have the challenge of figuring out what \textbf{step sizes} cause \purp{slow convergence/divergence}: it would be even harder to find a step size that fit \textbf{all} of our weights, at the same time.
-            \end{itemize}
-    
-            So, instead, we decided that each weight gets its \textbf{own step size}. 
-
-            \begin{itemize}
-                \item But, we never elaborated on \textbf{how} we compute that (adjustable) step size.\\
-            \end{itemize}
-
-            \begin{notation}
-                Our base step size is indicated as $\eta$. 
-                
-                We'll call the \orgg{modified} step size for weight $j$, $\eta_j$.
-            \end{notation}
-            
-
-        \subsubsection{Scaling}
-
-            Our goal now, is to come up with a \orgg{systematic} way to \orgg{assign step sizes}. This allows us to \textbf{adjust}, rather than run our whole gradient descent with a "bad" step size.
-                \note{So, we have less of a problem if we choose $\eta$ poorly.}
-
-            Why do we adjust our step size? To avoid slow convergence, oscillation, or divergence.
-
-            \begin{itemize}
-                \item We might expect \purp{slow convergence} if the derivative is too \purp{small}: we carefully take small steps, but we aren't having much of an impact on $J$.
-
-                    \begin{itemize}
-                        \item Across this "flatter" region of the surface, in one direction, we might expect it to be safer to move further.
-                    \end{itemize}
-
-                \item We might expect \gren{divergence} or \gren{oscillation} if the derivative is too \gren{large}.
-                    \begin{itemize}
-                        \item We might end up "missing" possible solutions/local minima by \textbf{overshooting} them.
-                        \item So, "steeper" regions might be riskier.
-                    \end{itemize}
-            \end{itemize}
-
-            \begin{concept}
-                Our goal is to \orgg{scale} our step size, so that it \textbf{adapts} to the situation:
-
-                \begin{itemize}
-                    \item We want to \purp{shrink} our step for \purp{large} gradients
-                    \item We want to \gren{increase} our step for \gren{small} gradients
-                \end{itemize}
-
-                And we're interested in the \orgg{magnitude} of these gradients.
-            \end{concept}
-
-
-            This sort of behavior is easily captured by including a factor of $1/\norm{g_t}$. However, this has a smoothness problem: so, we'll use $1/\norm{g_t}^2$ instead.
-
-            Though, we need to keep it separate for each of our data points.\\
-
-            \begin{notation}
-                The gradient for \vocab{weight $j$} at \redd{time $t$} is given as 
-
-                \begin{equation*}
-                    g_{\red{t},\blu{j}} = \nabla_W J(W_{\red{t-1}})_{\blu{j}}
-                \end{equation*}
-
-                Note the double-subscript.
-
-                \subsecdiv
-
-                \begin{itemize}
-                    \item By isolating weight $j$, we have a constant, not a vector.
-                \end{itemize}
-            \end{notation}
-
-            We can now write our gradient update rule:
-
-            \begin{equation}
-                W_{\red{t},\blu{j}} \;\;=\;\; 
-                W_{\red{t-1},\blu{j}} \;\;-\;\; 
-                \eta_{\blu{j}} \cdot g_{\red{t},\blu{j}}
-            \end{equation}
-
-            And we're currently using the step size
-                \note{Don't save this equation! It isn't our final formula.}
-
-            \begin{equation}
-                \eta_{\blu{j}} = \frac{\eta}{g_{\red{t},\blu{j}}^2}
-            \end{equation}
-
-        \subsubsection{Averaging}
-
-            But, we don't necessarily know how "steep" our region \textbf{generally} is, based on the current gradient $g_t$. $g_t$ only gives us \textbf{one point} in space.
-            
-            It would be helpful to include information from the \textbf{past}: we'll be re-using the \textbf{weighted average}, once again.
-                \note{Once again, it's helpful that the weighted average gradually "forgets" older information: we care less about gradients which are "further" from the present.}
-
-            \begin{equation*}
-                G_t \;\;=\;\; 
-                \gamma G_{t-1} \;\;+\;\; 
-                (1-\gamma) g_t^2 
-                \qquad \qquad \text{(Maybe?)}
-            \end{equation*}
-
-            \begin{itemize}
-                \item Note that we're averaging the \textbf{squared} magnitude.
-            \end{itemize}
-            
-            Technically this is still \textbf{incorrect}: we need the $j$ notation.
-                \note{It's incorrect because $g_t$ is a vector: we can't square it directly, we have to square its magnitude.}
-
-            \begin{equation*}
-                G_{\red{t},\blu{j}} \;\;=\;\; 
-                \gamma G_{\red{t-1},\blu{j}} \;\;+\;\; 
-                (1-\gamma) g_{\red{t},\blu{j}}^2 \qquad \qquad 
-                \text{(Fixed!)}
-            \end{equation*}
-
-        \subsubsection{Division by zero}
-
-            There's a problem with our weight adjustment:
-
-            \begin{equation}
-                \eta_j = \frac{\eta}{G_{\red{t},\blu{j}}}
-            \end{equation}
-
-            What happens if the denominator is near zero? It'll explode to a huge number! And at zero, it's undefined.
-
-            To solve this, we'll add a very small constant, $\epsilon$.
-                \note{We won't prescribe any particular choice of $\epsilon$ here.}
-
-                \begin{equation}
-                    \eta_j = \frac{\eta}{G_{\red{t},\blu{j}}+\epsilon}
-                \end{equation}
-
-            Now, our scaling factor will never be bigger than $1/\epsilon$.
-
-        \subsubsection{Square root}
-
-            One last concern, to wrap up: currently, we're diving by the \textbf{squared} gradient. This is actually somewhat overkill. 
-            
-            Remember that our goal is to do the following operation:
-
-            \begin{equation}
-                W_{\red{t},\blu{j}} = W_{\red{t-1},\blu{j}}  \;\;-\;\; 
-                \underbrace{
-                    \eta_{\blu{j}} \cdot g_{\red{t},\blu{j}}
-                }_{\text{Update}}
-            \end{equation}
-
-            With our current formula, our update has 
-            
-            \begin{itemize}
-                \item a factor of $g_{t,j}$ in the \textbf{numerator}
-                \item from $\eta_j$, a factor proportional to $g_{t,j}^2$ in the \textbf{denominator} 
-            \end{itemize}
-
-            This is "scaling" our gradient by more than we want to. So, we'll take the \textbf{square root} of the denominator.
-                \note{Our goal is to make the scales of different axes more similar, not to neglect dimensions with high gradient (high effect on loss)}
-
-            \begin{equation}
-                \eta_j = \frac{\eta}{ \sqrt{G_{\red{t},\blu{j}}+\epsilon} }
-            \end{equation}
-
-            This is the completed form of our \textbf{adadelta step size rule!}
-
-            \begin{definition}
-                \vocab{Adadelta} is a technique for \redd{adaptive step size}, which:
-
-                \begin{itemize}
-                    \item \purp{Decreases} step size in dimensions with a history of \purp{high-magnitude} gradients
-                    \item \gren{Increases} step size in dimensions with a history of \gren{low-magnitude} gradients
-                \end{itemize}
-
-                Suppose our gradient for weight $W_j$ at time $t$ is represented by
-
-                \begin{equation*}
-                    g_{t,j} = \nabla_{W}J(W_{t-1})_j
-                \end{equation*}
-
-                    \subsecdiv
-
-                This is accomplished by \orgg{scaling} the step size $\eta$ to create $\eta_j$:
-
-                \begin{equation*}
-                    \eta_j = \frac{\eta}{ \sqrt{G_{\red{t},\blu{j}}+\epsilon} }
-                \end{equation*}
-
-                Where $G_{t,j}$ is a "\redd{running average}" of the previous gradients for weight $W_j$.
-
-                \begin{equation*}  
-                    \begin{gathered}
-                        G_{\red{0},\blu{j}} = 0 \\
-                        G_{\red{t},\blu{j}} \;\;=\;\; 
-                        \gamma G_{\red{t-1},\blu{j}} \;\;+\;\;
-                        (1-\gamma) g_{\red{t},\blu{j}}^2
-                    \end{gathered}
-                \end{equation*}
-
-                So, our completed gradient descent rule takes the form:
-
-                \begin{equation*}
-                    W_{\red{t},\blu{j}} \;\;=\;\; 
-                    W_{\red{t-1},\blu{j}}  \;\;-\;\; 
-                    \frac{\eta}{ \sqrt{G_{\red{t},\blu{j}}+\epsilon} } \cdot g_{\red{t},\blu{j}}
-                \end{equation*}
-                
-            \end{definition}
-
-        \subsubsection{Sparse Data}
-
-            One major advantage of adadelta is its use for \orgg{sparse datasets}, where many variables only show up in a small percentage of the data.
-
-            \begin{itemize}
-                \item If a variable is much less frequent, then the weighted average $G_t$ will be much smaller.
-                \item So, when those data points \textbf{do} appear, the step size is much larger.
-            \end{itemize}
-
-            This allows our model to learn more from variables that don't show up as frequently.\\
-
-            \begin{concept}
-                \vocab{Adadelta} often works well with \purp{sparse data}: datasets where many variables rarely show up as non-zero.
-
-                The step sizes for these variables become much larger, so our model can learn more from less-common information.
-            \end{concept}
-
-            However, this can run the risk of paying attention to variables that are sparse, but \textbf{not} especially meaningful. 
-            
-            \begin{itemize}
-                \item It's important to choose your variables carefully, so the model doesn't "learn" from noise.
-            \end{itemize}
-
-        \subsubsection{Adagrad}
-
-            Originally, adadelta derives from a \textbf{simpler} method, known as \vocab{adagrad}, or "adaptive gradient".
-
-            \begin{itemize}
-                \item The main difference with this approach is, rather than find the \textbf{weighted average} $G_t$, we simply \textbf{sum} the previous gradients.
-            \end{itemize}
-
-            The main problem with this approach is that, over time, $G_t$ becomes too \textbf{large}. So, our step size becomes too small, and our algorithm slows down.
-
-            By averaging, we don't run into this problem of $G_t$ "accumulating": older data is gradually \textbf{forgotten}.
-
-    \pagebreak
-    \subsection{Adam}
-
-        Momentum and Adadelta both bring some benefits:
-
-        \begin{itemize}
-            \item \purp{Momentum} averages our current gradient with \purp{previous gradients}, to reduce \textbf{oscillation} and make a more direct path to the solution.
-            
-            \item \gren{Adadelta} modifies our \gren{step sizes}: it takes smaller steps in directions of high gradient (reduce overshooting) and takes bigger steps in directions of low gradient (converge faster).
-        \end{itemize}
-
-        There's nothing structurally incompatible between them. So, why not incorporate both?
-
-        \begin{itemize}
-            \item This combination is called \vocab{Adam}: it has become the most popular way to handle step sizes in neural networks.\\
-        \end{itemize}
-
-        \begin{concept}
-            \vocab{Adam} integrates the techniques of both \purp{momentum} and \gren{adadelta}.
-        \end{concept}
-
-        \subsecdiv
-
-        \subsubsection{Momentum and Adadelta}
-
-            We used two different \textbf{running averages}, both using $\gamma$ for their "\textbf{discount factor}": how much we discount the effect of older data.
-                \note{It's "discounting", or reducing the effect of older data, because $\gamma<1$.}
-    
-            \begin{itemize}
-                \item We'll replace $\gamma$ with $B_1$ (momentum) and $B_2$ (adadelta).\\
-            \end{itemize}
-
-            \begin{notation}
-                In the adam algorithm, $B_1$ and $B_2$ are \redd{discount factors} replacing $\gamma$ from momentum and adadelta.
-            \end{notation}
-    
-            We use the same notation for gradients:
-    
-            \begin{equation}
-                g_{t,j} = \nabla_W J(W_{t-1})_j
-            \end{equation}
-    
-            First, we'll keep track of our\textbf{ averaged gradient}, $m_{t,j}$. This will be the \textbf{direction} we plan to move.
-
-            \begin{equation}
-                \blu{m_{t,j}} \;\;=\;\; 
-                B_1 \blu{m_{t-1,j}} \;\;+\;\; 
-                (1-B_1) \blu{ g_{t,j} }
-            \end{equation}
-
-            Then, we'll keep track of the \textbf{average squared gradient}, $v_{t,j}$. This will tell us whether to scale up/down our \textbf{step size} on each variable.
-
-            \begin{equation}
-                \red{v_{t,j}} \;\;=\;\; 
-                B_2 \red{v_{t-1,j}} \;\;+\;\; 
-                (1-B_2) \red{ g_{t,j}^2 }
-            \end{equation}
-
-            We can combine these into our equation, the way you use momentum and adadelta:
-
-            \begin{equation}
-                W_{t,j} \;\;=\;\; 
-                W_{t-1,j}  \;\;-\;\; 
-                \frac{\eta}{ \sqrt{\red{v_{t,j}}+\epsilon} } \cdot \blu{m_{t,j}}
-            \end{equation}
-
-            We're not quite done yet, though.
-
-        \subsubsection{Normalization}
-
-            There's one issue with our running average, that we should address.
-
-            Suppose we have a sequence of numbers:
-
-            \begin{equation}
-                [1,1,1]
-            \end{equation}
-
-            What's the running average of this sequence of numbers, with $\gamma=.1$? You'd expect it to be 1 for all elements, right?
-
-            \begin{itemize}
-                \item We start with $a_0=0$.
-            \end{itemize}
-
-            \begin{equation}
-                \begin{gathered}
-                    a_1 = .1*0 + .9*1 = \org{.9} \\
-                    a_2 = .1*.9+ .9*1 = \org{.99} \\
-                    a_3 = .1*.99+ .9*1 = \org{.999}
-                \end{gathered}
-            \end{equation}
-
-            It turns out not to be true! Why is that?
-
-            Because of our initial term, $a_0$: it has nothing to do with the data. Because it'll always be 0, it \textbf{deflates} the value of all the remaining averages.
-
-            How much does it deflate the average? Well, let's consider the general equation:
-
-            \begin{equation}
-                A_T = \sum_{t=0}^T \red{\gamma^{(T-t)}} \blu{(1-\gamma)^t} g_t
-            \end{equation}
-
-            What "fraction" of the total is missing, thanks to $A_0=0$? 
-            
-            \begin{itemize}
-                \item Well, all of our weighted terms $\red{\gamma^{(T-t)}} \blu{(1-\gamma)^t}$ should add up to 1: each one represents the "percent/fraction" of the average which comes from that $g_t$ term.
-            \end{itemize}
-
-            $A_0$ matches $t=0$, so we find:
-
-            \begin{equation}
-                A_T = \overbrace{ A_0 \red{\gamma^T}}^{A_0=0} + 
-                \sum_{t=1}^T \red{\gamma^{(T-t)}} \blu{(1-\gamma)^t} g_t
-            \end{equation}
-
-            So, out of our total $1$, or 100\%, we're missing $\gamma^T$.
-
-            \begin{itemize}
-                \item Our new total is $1-\gamma^T$.
-
-                \item In order to correct for the "zeroed out" part of our average, we multiply by
-
-                \begin{equation}
-                    \frac{\text{Desired total}}{\text{Real total}}=\frac{1}{1-\gamma^T}
-                \end{equation}
-            \end{itemize}
-
-            \begin{concept}
-                We've chosen $A_0=0$: this is \orgg{unrelated} to our real data. 
-                
-                As a result, $A_t$ doesn't accurately reflect our weighted average: it's slightly \gren{smaller}.
-
-                \begin{itemize}
-                    \item $A_0$ is "included" as a 0, even though it's not a \redd{real} data point.
-                    \item So, whatever \purp{percent} of our data is represented by $A_0$, is "falsely empty".
-                \end{itemize}
-
-                $A_0$ is scaled by $\red{\gamma^t}$, so that's the amount \purp{removed} from our "true" weighted average.
-
-                The "real" weighted average, that ignores $A_0$, has to un-do the deflation caused by including fake, starting data:
-
-                \begin{equation*}
-                    \widehat{A}_t = A_t \cdot \frac{1}{1-\gamma^t}
-                \end{equation*}
-            \end{concept}
-
-            We'll make this correction for our running averages:
-
-            \begin{equation}
-                \begin{gathered}
-                    \widehat{m}_{t,j} = \frac{m_{t,j}}{1-B_1^t} \\
-                    \widehat{v}_{t,j} = \frac{v_{t,j}}{1-B_2^t}
-                \end{gathered}
-            \end{equation}
-
-        \subsubsection{Adam}
-
-            Now, we have our complete equation for adam:\\
-
-            \begin{definition}
-                \vocab{Adam} is a technique for improving \orgg{gradient descent} that integrates two other techniques. Our computed gradient is given as 
-
-                \begin{equation*}
-                    g_{t,j} = \nabla_{W}J(W_{t-1})_j
-                \end{equation*}
-
-                \begin{itemize}
-                    \item \purp{Momentum} averages our previous gradients with our current one, to reduce oscillation and get a "averaged" view of data. $B_1$ gives the weight of old data.
-
-                        \begin{equation*}
-                            \begin{gathered}
-                                m_{0,j} = 0 \qquad \qquad
-                            \blu{m_{t,j}} \;=\; B_1 \blu{m_{t-1,j}} \;+\; (1-B_1) \blu{ g_{t,j} }
-                            \end{gathered}
-                        \end{equation*}
-
-                    \item \gren{Adadelta} estimates how "steep" our gradient has been recently, and uses it to adjust our step size, for better convergence. $B_2$ gives the weight of old data.
-
-                            \begin{equation*}
-                                \begin{gathered}
-                                    v_{0,j} = 0 \qquad \qquad
-                                    \red{v_{t,j}} \;=\; B_2 \red{m_{t-1,j}} \;+\; (1-B_2) \red{ g_{t,j}^2 }
-                                \end{gathered}
-                            \end{equation*}
-                        \end{itemize}
-
-                We include a \textbf{correction} factor for the zeroed initial conditions: $m_0=v_0=0$.
-
-                \begin{equation*}
-                    \widehat{\blu{m}}_{t,j} = \frac{\blu{m}_{t,j}}{1-B_1^t}
-                    \qquad \qquad 
-                    \widehat{\red{v}}_{t,j} = \frac{\red{v}_{t,j}}{1-B_2^t}
-                \end{equation*}
-
-                Finally, our update rule takes the form:
-
-                \begin{equation*}
-                    W_{t,j} = W_{t-1,j}  
-                        \;\;-\;\; 
-                    \frac{\eta}{ \sqrt{\red{\widehat{v}_{t,j}}+\epsilon} } \cdot \blu{\widehat{m}_{t,j}}
-                \end{equation*}
-            \end{definition}
-
-            Impressively, adam is not very sensitive to the initial conditions for $\epsilon$, $B_1$ and $B_2$.
-                \note{It's able to "self-correct" its step sizes and gradient based on data.}
-
-            To implement this for NNs, we just need to keep track of each value, for each weight. If you do it systematically, this is easier than it sounds.
             
 
 
@@ -1329,7 +2195,7 @@
 
             We would typically either measure the size of the \gren{gradient}, or the change in the \purp{loss}. If either was small, then we might be in a local minimum: we've finished training.
 
-            \subsecdiv
+            \phantom{}
 
             So, we do the same here: after a period of training (over the whole dataset, called an \vocab{epoch}), we measure the \textbf{loss} on a validation set.
 
@@ -1342,8 +2208,15 @@
             \begin{definition}
                 An \vocab{epoch} is the time frame during which your model sees your whole \purp{training data} set, \orgg{once}.
 
-                \subsecdiv
+                \begin{itemize}
+                    \item Note that sometimes, "epoch" just refers to how long you train before you check your loss.
+                    \item In this case, it might be smaller than the whole dataset.
+                \end{itemize}
+            \end{definition}
 
+            \phantom{}
+
+            \begin{definition}
                 With \vocab{early stopping}, you evaluate your model using your \purp{validation data}, computing the loss.
 
                 \begin{itemize}
@@ -1352,13 +2225,6 @@
                 \end{itemize}
 
                 This continues until you've either run out of \textbf{epochs}, or you've met your \textbf{termination} condition, and stopped early.
-
-                \subsecdiv
-
-                \begin{itemize}
-                    \item Note that sometimes, "epoch" just refers to how long you train before you check your loss.
-                    \item In this case, it might be smaller than the whole dataset.
-                \end{itemize}
             \end{definition}
 
 
@@ -1477,7 +2343,7 @@
 
         Because our model keeps changing slightly, it's harder to exactly \textbf{overfit} to the data.
 
-        \subsecdiv
+        \phantom{}
 
         This particular approach also addresses a \textbf{different} kind of overfitting:
 
@@ -1500,26 +2366,25 @@
 
             This process is designed to reduce \purp{overfitting}. As the network randomly changes, it's harder for it to perfectly match the data structure.
 
-            \subsecdiv
-
-            \begin{itemize}
-                \item When the network is finished training, we multiply all the weights by $p$. Why?
-            
-                \item Because during training, only $p$ fraction of the neurons were active. We want to replicate that average activity level, even when we use all of our neurons.
-            \end{itemize}
-
-            
-
-            \subsecdiv
-
             This process is also designed to create "collective responsibility" for your neurons. It prevents your network from relying on a small number of neurons to solve problems.
 
             It generally improves \orgg{robustness} against random variations in the data.
         \end{definition}
 
+        \phantom{}
+
+        \begin{clarification}
+            When a network using dropout is finished training, we multiply all the weights by $p$. Why?
+
+            \begin{itemize}
+                \item Because during training, only $p$ fraction of the neurons were active. 
+                \item We want to replicate that average activity level, even when we use all of our neurons.
+            \end{itemize}
+        \end{clarification}
+
         
 
-        \subsecdiv
+        \phantom{}
 
         This approach has, in recent years, become somewhat less popular, for a couple reasons:
 
@@ -1611,36 +2476,35 @@
 
             \phantom{}
 
+            \begin{kequation}
+                *Here, we focus on a single element: dimension $i$ of the $\nth{j}$ data point in our batch, $z_{ij}$.
+            
+                When we \vocab{standardize}, we first compute the \gren{mean} and \purp{standard deviation}:
+
+                \begin{equation*}
+                        \blu{\mu_i} =\frac{1}{K} \sum_{j=1}^K \red{Z_{ij}}
+                        \qquad
+                        \sigma^2_i = \frac{1}{K} \sum_{j=1}^K (\red{Z_{ij}}-\blu{\mu_i})^2 
+                    \end{equation*}
+
+                Once we've done that, we can properly standardize, creating data with mean 0, and sd 1.
+
+                \begin{itemize}
+                    \item We include a very small $\epsilon$ term to avoid dividing by zero.
+                \end{itemize}
+
+                \begin{equation*}
+                        \red{ \overline{Z}_{ij} } =  \frac{ \red{Z_{ij}}  -\blu{\mu_i}}{\sigma_i+\epsilon}
+                    \end{equation*}
+                
+            \end{kequation}
+
             \begin{concept}
                 In order to deal with \vocab{internal covariate shift}, we'll take each mini-batch of $k$ \gren{pre-activations} to each \gren{layer} of our neural network, and \purp{standardize}/normalize it.
 
                 \begin{itemize}
                     \item Each \orgg{dimension} of the input is standardized \orgg{separately}.
                 \end{itemize}
-
-                \subsecdiv
-
-                Here, we focus on a single element: dimension $i$ of the $\nth{j}$ data point in our batch, $z_{ij}$.
-
-                \begin{itemize}
-                    \item We \gren{compute} the mean $\mu$ and standard deviation $\sigma$, for batch size $k$.
-
-                    \begin{equation*}
-                        \blu{\mu_i} =\frac{1}{K} \sum_{j=1}^K \red{Z_{ij}}
-                        \qquad
-                        \sigma^2_i = \frac{1}{K} \sum_{j=1}^K (\red{Z_{ij}}-\blu{\mu_i})^2 
-                    \end{equation*}
-                    
-                    \item We \gren{subtract} the mean, divide by the standard deviation (include $\epsilon$ term to avoid dividing by zero)
-
-                    \begin{equation*}
-                        \red{ \overline{Z}_{ij} } =  \frac{ \red{Z_{ij}}  -\blu{\mu_i}}{\sigma_i+\epsilon}
-                    \end{equation*}
-
-                    
-                \end{itemize}
-
-                \subsecdiv
 
                 After \purp{standardizing}, this data is sent forward through the network.
 
@@ -1661,7 +2525,7 @@
                 \caption*{Normalization/standardization can be treated just like any other module.}
             \end{figure}
 
-            \subsecdiv
+            \phantom{}
 
             Note that this preserves the \orgg{information} in our input data:
             
@@ -1788,10 +2652,13 @@
                         \red{\widehat{Z}_{ik}} = \pur{G_i} * \red{\overline{Z}_{ij}} + \grn{B_i}
                     \end{equation*}
                 \end{itemize}
+                
+            \end{definition}
 
-                \subsecdiv
+            \phantom{}
 
-                This process is meant to accomplish the following:
+            \begin{concept}
+                \vocab{Batch Normalization} is meant to accomplish the following:
 
                 \begin{itemize}
                     \item Remove possible \purp{internal covariance shift}: training earlier layers may change the scale of inputs to later layers.
@@ -1802,7 +2669,7 @@
                 \end{itemize}
 
                 It also tends to have a regularizing effect, and, in some learning algorithms, has replaced dropout.
-            \end{definition}
+            \end{concept}
 
         \subsubsection{Effectively Perturbs Data}
 
@@ -1814,383 +2681,12 @@
                 \item Since each batch is likely to have a slightly different mean/standard deviation, each one ends up differently "perturbed" by normalization.
             \end{itemize}
 
+        \subsubsection{Applying batch normalization to backprop}
+
+            We defer discussion of backprop to Appendix B.
+
     \pagebreak
-    \subsection{Applying batch normalization to backprop} 
 
-            \phantom{}
-
-            \begin{remark*}
-                The following section mostly deals with the details of computing batch normalization derivatives.
-            \end{remark*}
-
-            As we showed with our figure,
-
-            \begin{figure}[H]
-                \centering
-                    \includegraphics[width=120mm,scale=0.5]{images/nn_2_images/batch_normalization.png}
-            \end{figure}
-
-            Batch normalization adds two units that \textbf{interrupt} our chain of nested functions.
-
-            That means we need to figure out how to do backprop, bridging across the new gap between \blu{$Z$} and \red{$\widehat{Z}$}.
-
-
-            So, that only leaves a couple problems:
-
-            \begin{itemize}
-                \item "Bridging the gap" between derivatives before and after BN, with $\pderivslash{\red{\widehat{Z}^\ell}}{\blu{Z^\ell}}$.
-                
-                \item Gradients for \gren{$G$} and \purp{$B$}: they're parameters now, too, so we need to train them.\\
-                
-            \end{itemize}
-
-            \begin{concept}
-                Introducing batch normalization add new functions \purp{in between} our old ones. 
-
-                \begin{itemize}
-                    \item Our input data has to travel through those additional layers.
-                    \item This \orgg{changes} the relationship between our current value, and the output loss.
-                \end{itemize}
-
-                So, in order to do backprop correctly, we have to figure out the \gren{derivatives} of those functions.
-            \end{concept}
-
-
-        \subsubsection{Bridging the gap}
-
-            We want to connect the start and end of batch normalization:\\
-
-            \begin{equation}
-                \pderiv{\red{\widehat{Z}}}{\blu{Z}}
-            \end{equation}
-
-            As usual, with the chain rule, we'll connect them by considering any values/function \textbf{between} them.
-
-            In this case, $Z$ is normalized ($\overline{Z}$), and \textbf{then} we apply $G$ and $B$ ($\widehat{Z}$). We're missing the "normalized" step.
-
-            \begin{equation}
-                \pderiv{\red{\widehat{Z}}}{\blu{Z}} = 
-                \pderiv{\red{\widehat{Z}}}{\grn{\overline{Z}}} \cdot \pderiv{\grn{\overline{Z}}}{\blu{Z}}
-            \end{equation}
-
-            Let's compare any two of these : $\red{\widehat{Z}}$ and $\grn{\overline{Z}}$, for example.
-
-            \begin{itemize}
-                \item These are both $(n \times k)$ matrices.
-                \item That means that each has two dimensions of variables. If we were to take the derivative between them, we would need $2*2$ axes: a \purp{4-tensor}.
-            \end{itemize}
-
-            That sounds terrible. Instead, we'll compute these derivatives \textbf{element-wise}.
-
-            \begin{equation}
-                \pderiv{ \red{\widehat{Z}_{ab}} }{ \blu{Z_{ef}} } = 
-                \pderiv{ \red{\widehat{Z}_{ab}} }{ \grn{\overline{Z}_{cd} } } \cdot 
-                \pderiv{ \grn{\overline{Z}_{cd}} }{ \blu{Z_{ef}} }
-            \end{equation}
-
-            \subsecdiv
-
-        \subsubsection{Indexing}
-
-            First, let's simplify these indices: only some pairs of elements matter.
-
-            \begin{equation}
-                \red{\widehat{Z}_{ik}} = G_i * \grn{\overline{Z}_{ik}} + B_i
-            \end{equation}
-
-            It seems that $\red{\widehat{Z}_{ik}}$ is only affected by the element with the same indices: $\grn{\overline{Z}_{ik}}$.\\
-
-            \begin{concept}
-                $\red{\widehat{Z}_{ik}}$  is only a function of the same index element $\grn{\overline{Z}_{ik}}$.
-
-                \begin{itemize}
-                    \item Any other elements from $\grn{\overline{Z}}$ has no effect.
-                \end{itemize}
-
-                \begin{equation*}
-                    (\red{a} \neq \grn{c} \text{ or } \red{b} \neq \grn{d}) \implies 
-                    \pderiv{ \red{\widehat{Z}_{ab}} }{ \grn{\overline{Z}_{cd} } }=0
-                \end{equation*}
-
-                So, we write our remaining derivatives as $\pderivslash{ \red{\widehat{Z}_{ik}} }{ \grn{\overline{Z}_{ik} } }$.
-            \end{concept}
-        
-
-            What about the other derivative?
-
-            \begin{equation*}
-                \grn{ \overline{Z}_{ik} } =  \frac{ \blu{Z_{ik}}  -\blu{\mu_i}}{ \blu{\sigma_i}+\epsilon}
-            \end{equation*}
-
-            $\mu_i$ and $\sigma_i$ include various different data points $\blu{Z_{ik}}$, but only the $\nth{i}$ dimension. $\blu{Z_{ik}}$ requires the exact same indices.\\
-
-            \begin{concept}
-                $\grn{\overline{Z}_{ik}}$ is only a function of elements in the same dimension $i$, $\blu{Z_{ij}}$.
-
-                \begin{equation*}
-                    \grn{c} \neq \blu{e} \implies \pderiv{ \grn{\overline{Z}_{cd}} }{ \blu{Z_{ef}} } = 0
-                \end{equation*}
-
-                Our remaining derivatives take the form $\pderivslash{ \grn{\overline{Z}_{ik}} }{ \blu{Z_{ij}} }$.
-            \end{concept}
-
-            If we boil this down, we get all of our non-zero derivatives:
-
-            \begin{equation}
-                \pderiv{ \red{\widehat{Z}_{ik}} }{ \blu{Z_{ij}} } = 
-                \pderiv{ \red{\widehat{Z}_{ik}} }{ \grn{\overline{Z}_{ik} } } \cdot 
-                \pderiv{ \grn{\overline{Z}_{ik}} }{ \blu{Z_{ij}} }
-            \end{equation}
-
-        \subsubsection{Computing $\pderivslash{ \red{\widehat{Z}_{ik}} }{ \grn{\overline{Z}_{ik} } }$}
-
-            We return to our previous equation:
-
-            \begin{equation}
-                \red{\widehat{Z}_{ik}} = G_i * \grn{\overline{Z}_{ik}} + B_i
-                \quad \implies \quad
-                \pderiv{ \red{\widehat{Z}_{ik}} }{ \grn{\overline{Z}_{ik} } } = G_i
-            \end{equation}
-
-        \subsubsection{Computing $\pderivslash{\grn{\overline{Z}_{ik}}}{\blu{Z_{ij}}}$}
-
-            For the other derivative:
-
-            \begin{equation}
-                \grn{\overline{Z}_{ik}}  =  \frac{ \org{Z_{ik} }  - \org{\mu_i}}{\org{\sigma_i}+\epsilon}
-            \end{equation}
-
-            This gets a bit complicated, because $\blu{Z_{ij}}$ can affect three different terms: $\org{Z_{ik}}$, $\org{\mu_i}$, and $\org{\sigma_i}$. 
-
-            We'll solve this by using the multi-variable chain rule.
-                \note{We're linearly adding the effect due to each of these three variables, separately.}
-
-            \begin{equation}
-                \pderiv{\grn{\overline{Z}_{ik}}}{\blu{Z_{ij}}} 
-                \;\;=\;\;
-                \overbrace{
-                    \pderiv{\grn{\overline{Z}}_{ik}}{\org{Z_{ik}}} \cdot 
-                    \deriv{\org{Z_{ik}}}{\blu{Z_{ij}}}
-                }^{\text{$\org{Z_{ik}}$'s effect}}
-                \;\;+\;\;
-                \overbrace{
-                    \pderiv{\grn{\overline{Z}}_{ik}}{\org{\mu_i}} \cdot 
-                    \deriv{\org{\mu_i}}{\blu{Z_{ij}}}
-                }^{\text{$\org{\mu_i}$'s effect}}
-                \;\;+\;\;
-                \overbrace{
-                    \pderiv{\grn{\overline{Z}}_{ik}}{\org{\sigma_i}} \cdot 
-                    \deriv{\org{\sigma_i}}{\blu{Z_{ij}}}
-                }^{\text{$\org{\sigma_i}$'s effect}}
-            \end{equation}
-
-            In each of these terms, we treat the other two variables as "constant".
-
-        \subsubsection{Lots of mini-derivatives}
-
-            Let's compute the $\grn{\overline{Z}}$ derivatives.
-
-            \begin{equation}
-                \grn{\overline{Z}_{ik}}  =  \frac{ Z_{ik}   - \mu_i}{\sigma_i+\epsilon}
-            \end{equation}
-
-            gives us
-
-            \begin{equation}
-                \pderiv{\grn{\overline{Z}}_{ik}}{\org{Z_{ik}}} = 
-                \frac{1}{\sigma_i+\epsilon}
-                    \qquad \qquad
-                \pderiv{\grn{\overline{Z}}_{ik}}{\org{\mu_i}} = 
-                \frac{-1}{\sigma_i+\epsilon}
-                    \qquad \qquad
-                \pderiv{\grn{\overline{Z}}_{ik}}{\org{\sigma_i}} = 
-                -\Big( 
-                    \frac{ Z_{ik}-\mu_i  }{(\sigma_i+\epsilon)^2}
-                \Big)
-            \end{equation}
-
-            Now, let's compute the $\blu{Z_{ij}}$ derivatives.
-
-            \begin{equation}
-                \boxed{\pderiv{\org{Z_{ik}}}{\blu{Z_{ij}}} = \delta_{jk}} 
-                =
-                \mathbf{1}(j=k) = 
-                \begin{cases}
-                    1 & j=k \\
-                    0 & j \neq k
-                \end{cases}
-            \end{equation}
-
-            \begin{equation}
-                \org{\mu_i} =\frac{1}{K} \sum_{j=1}^K \blu{Z_{ij}} 
-                    \implies 
-                \boxed{\pderiv{ \org{\mu_i} }{ \blu{Z_{ij}} } = \frac{1}{K}}
-            \end{equation}
-
-            \begin{equation}
-                \org{\sigma^2_i} = \frac{1}{K} \sum_{j=1}^K (\blu{Z_{ij}}-\mu_i)^2  
-                    \implies 
-                \boxed{\pderiv{ \org{\sigma_i} }{ \blu{Z_{ij}} } = \frac{\blu{Z_{ij}}-\mu_i}{K\sigma_i}}
-            \end{equation}
-
-            
-
-            
-        \subsubsection{Assembling our derivatives}
-
-            Now, we plug them in.
-
-            \begin{equation}
-                \pderiv{\grn{\overline{Z}_{ik}}}{\blu{Z_{ij}}} =
-                \pderiv{\grn{\overline{Z}}_{ik}}{\org{Z_{ik}}} \cdot 
-                \deriv{\org{Z_{ik}}}{\blu{Z_{ij}}}
-                +
-                \pderiv{\grn{\overline{Z}}_{ik}}{\org{\mu_i}} \cdot 
-                \deriv{\org{\mu_i}}{\blu{Z_{ij}}}
-                +
-                \pderiv{\grn{\overline{Z}}_{ik}}{\org{\sigma_i}} \cdot 
-                \deriv{\org{\sigma_i}}{\blu{Z_{ij}}}
-            \end{equation}
-
-            First, the $\grn{\overline{Z}}$ derivatives.
-
-            \begin{equation}
-                \pderiv{\grn{\overline{Z}_{ik}}}{\blu{Z_{ij}}} =
-                \Big( \frac{1}{\sigma_i+\epsilon} \Big) \cdot 
-                \deriv{\org{Z_{ik}}}{\blu{Z_{ij}}}
-                -
-                \Big( \frac{1}{\sigma_i+\epsilon} \Big) \cdot 
-                \deriv{\org{\mu_i}}{\blu{Z_{ij}}}
-                -
-                \Big( 
-                    \frac{ Z_{ik}-\mu_i  }{(\sigma_i+\epsilon)^2}
-                \Big) \cdot 
-                \deriv{\org{\sigma_i}}{\blu{Z_{ij}}}
-            \end{equation}
-
-            And now the $\blu{Z_{ij}}$ derivatives.
-
-            \begin{equation}
-                \pderiv{\grn{\overline{Z}_{ik}}}{\blu{Z_{ij}}} =
-                \Big( \frac{1}{\sigma_i+\epsilon} \Big) \cdot 
-                \delta_{jk}
-                -
-                \Big( \frac{1}{\sigma_i+\epsilon} \Big) \cdot 
-                \Big( \frac{1}{K} \Big)
-                -
-                \Big( 
-                    \frac{ Z_{ik}-\mu_i  }{(\sigma_i+\epsilon)^2}
-                \Big) \cdot 
-                \Big( \frac{\blu{Z_{ij}}-\mu_i}{K\sigma_i} \Big)
-            \end{equation}
-
-            \begin{kequation}
-                We have found the batch normalization derivatives
-
-                \begin{equation*}
-                    \pderiv{ \red{\widehat{Z}_{ik}} }{ \grn{\overline{Z}_{ik} } } = G_i
-                \end{equation*}
-
-                \begin{equation*}
-                    \pderiv{\grn{\overline{Z}_{ik}}}{\blu{Z_{ij}}} =
-                    \frac{1}{K(\sigma_i+\epsilon)}
-                    \Big( K \delta_{jk} - 1 - \frac{(Z_{ik}-\mu_i)(Z_{ij}-\mu_i)}{\sigma_i(\sigma_i+\epsilon)} \Big)
-                \end{equation*}
-
-                Which we multiply together to find $\pderivslash{ \red{\widehat{Z}_{ik}} }{ \blu{Z_{ij}} }$.
-            \end{kequation}
-
-            Once we've computed these derivatives, we can use them to extend the chain of $\pderivslash{L}{\red{\widehat{Z}_{ik}} }$. 
-
-            We're aiming to handle both of the batch normalization functions, with $\pderivslash{L}{\blu{Z_{ij}}}$. 
-                \note{We're going from $\red{\widehat{Z}_{ik}}$, which is post-BN, to $\blu{Z_{ij}}$, which is pre-BN. }
-
-            \begin{itemize}
-                \item $\blu{Z_{ij}}$ affects every data point $\red{\widehat{Z}_{ik}}$, and every data point affects $L$.
-                \item So, we'll have to consider every data point $k$ using the multi-variable chain rule:
-            \end{itemize}
-            
-
-            \begin{equation}
-                \pderiv{L}{\blu{Z_{ij}}} = 
-                \underbrace{ \sum_{k=1}^K }_{\text{MV Chain Rule}}
-                \overbrace{
-                    \pderiv{L}{\red{\widehat{Z}_{ik}} } \cdot 
-                    \pderiv{ \red{\widehat{Z}_{ik}} }{ \blu{Z_{ij}} }
-                }^{\text{Data point $k$'s effect}}
-            \end{equation}
-
-            We can use this to go further back in our layers: as far as we want, as long as we don't forget this derivative!
-            
-
-        \subsubsection{Gradients for $B$ and $G$}
-
-            We want $\pderivslash{L}{\org{B}}$ and $\pderivslash{L}{\pur{G}}$. Thanks to the work we did just now, we can travel backwards through numberous layers, to reach any $B^\ell$ and $G^\ell$. 
-
-            So, we'll assume we have $\pderivslash{L}{\widehat{Z^\ell}}$. Once again, we'll omit the layer notation.
-
-            \begin{itemize}
-                \item We'll focus on a single bias, $B_i$: this biases one dimension of $\red{\widehat{Z}_{ik}}$.
-
-                \begin{equation}
-                    \red{\widehat{Z}_{ik}} = \pur{G_i} * \grn{\overline{Z}_{ik}} + \org{B_i}
-                    \quad \implies \quad
-                    \pderiv{ \red{\widehat{Z}_{ik}} }{ \org{B_i} }  = 1
-                \end{equation}
-                
-                \item This bias is applied to every of our $K$ data points: every data point affects the loss $L$. So, we'll have to sum them with the multi-variable chain rule.
-            \end{itemize}
-
-            This is exactly the same as how we did $\pderivslash{L}{\blu{Z_{ij}}}$.
-
-            \begin{equation}
-                \pderiv{L}{\org{B_i}} = 
-                \sum_{k=1}^K 
-                \pderiv{L}{ \red{\widehat{Z}_{ik}} } \cdot \pderiv{\red{\widehat{Z}_{ik}}}{\org{B_i}} =
-                \boxed{
-                \sum_{k=1}^K 
-                \pderiv{L}{ \red{\widehat{Z}_{ik}} }
-                }
-            \end{equation}
-
-            Now, we focus on a single scaling factor $G_i$: 
-
-            \begin{equation}
-                \red{\widehat{Z}_{ik}} = \pur{G_i} * \grn{\overline{Z}_{ik}} + \org{B_i}
-                \quad \implies \quad
-                \pderiv{ \red{\widehat{Z}_{ik}} }{ \pur{G_i}  }  = \grn{\overline{Z}_{ik}}
-            \end{equation}
-
-            And once again, we add across different data points:
-
-            \begin{equation}
-                \pderiv{ L }{ \pur{G_i}  } = 
-                \sum_{k=1}^K 
-                \pderiv{L}{ \red{\widehat{Z}_{ik}} } \cdot \pderiv{\red{\widehat{Z}_{ik}}}{\pur{G_i}} =
-                \boxed{
-                    \sum_{k=1}^K 
-                    \pderiv{L}{ \red{\widehat{Z}_{ik}} } \grn{\overline{Z}_{ik}}
-                }
-            \end{equation}
-
-
-        We're finished.
-
-        \begin{kequation}
-            Here, we have the gradients for the batch scaling coefficients, $B$ and $G$.
-
-            \begin{equation*}
-                \pderiv{L}{\org{B_i}} =
-                \sum_{k=1}^K 
-                \pderiv{L}{ \red{\widehat{Z}_{ik}} }
-            \end{equation*}
-
-            \begin{equation*}
-                \pderiv{ L }{ \pur{G_i}  } =
-                \sum_{k=1}^K 
-                \pderiv{L}{ \red{\widehat{Z}_{ik}} } \grn{\overline{Z}_{ik}}
-            \end{equation*}
-        \end{kequation}
 
 \pagebreak
 \section{Terms}
@@ -2223,7 +2719,7 @@
         \item Softmax function
     \end{itemize}
 
-    \subsection*{Section 7-1.5}
+    \subsection*{Section 7-2}
 
     
     \begin{itemize}
@@ -2240,22 +2736,12 @@
         \item Vector/scalar derivative
         \item Scalar/vector derivative
         \item Vector/vector derivative
-        
-    \end{itemize}
-
-    \subsection*{Section 7-2}
-
-    \begin{itemize}
         \item Mini-batch
         \item Vanishing/Exploding Gradient
-        \item Weighted Average
-        \item Running Average
-        \item Exponential Moving Average
-        \item Discount Factor
-        \item Momentum
-        \item Adadelta
+        \item Momentum (Optional)
+        \item Adadelta (Optional)
         \item Adagrad (Optional)
-        \item Adam
+        \item Adam (Optional)
         \item Normalization
         \item Early stopping (Review)
         \item Weight Decay
@@ -2266,18 +2752,4 @@
         \item Batch Normalization
         \item Multivariable Chain Rule (Review)
     \end{itemize}
-            
 
-            
-        
-        
-        
-        
-        
-
-
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: "top"
-%%% End:

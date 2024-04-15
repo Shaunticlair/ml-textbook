@@ -4,13 +4,13 @@
 
 \setcounter{section}{0}
 
-    In the RNN chapter, we introduced \vocab{state machines (SMs)}: a system for keeping track of our \textbf{current situation}, using a "state". 
+    We've developed a notion of a \vocab{state machine (SM)}: a system for keeping track of our \textit{current} situation, using a "state".
 
     \begin{itemize}
         \item This state also contains information about the \purp{past}: our \textbf{present} state is influenced by past data.
     \end{itemize}
 
-    In particular, we used \vocab{finite state machines}. \\
+    In particular, our focus is on \vocab{finite state machines}. \\
 
     \begin{clarification}
         For the rest of this chapter, we'll assume that our state machines are finite:
@@ -26,28 +26,6 @@
         
         \caption*{A reminder of what our state machine looks like.}
     \end{figure}
-
-
-
-
-    \phantom{}
-    
-    \subsection{Sequence-to-sequence perspective}
-
-        At the time, this was used in RNNs, to process \gren{sequences} of information:
-    
-        \begin{figure}[H]
-            \centering
-            \includegraphics[width=80mm,scale=0.5]{images/rnn_images/gathered_sequence.png}
-            
-            \caption*{Using our state to keep information over "time", we turned one time-sequence into another.}
-        \end{figure}
-
-        \begin{itemize}
-            \item Our state could be seen as "what we know", updated with new information $x_t$.
-    
-            \item While our output is \purp{based on} that new information.
-        \end{itemize}
     
 
 
@@ -55,7 +33,7 @@
 
     \subsection{A new perspective: the "outside world"}
 
-        This time, we want to choose a \textit{different} way to view our state machine.
+        Now, we'll build on our state machine, to create something more specialized for what we need: this will require a new perspective.
         
         \begin{itemize}
             \item Our "state" has been referred to as our "current situation". This could suggest that it's \textbf{representing} something about the \gren{world}.

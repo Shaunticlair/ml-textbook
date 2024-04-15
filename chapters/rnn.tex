@@ -4,6 +4,12 @@
 
 \chapter{Recurrent Neural Networks}
 
+    This chapter was originally placed immediately after the Convolutional Neural Networks Chapter.
+
+    \begin{itemize}
+        \item Additionally, this chapter relies on having read the State Machines section of the Markov Decision Process (MDP 0).
+    \end{itemize}
+
     \subsection{Review: Neural Networks So Far}
 
         In this class, we design \textbf{models} we can \textbf{train} to handle different tasks.
@@ -81,53 +87,16 @@
 
     \phantom{}
         
-    \subsection{Our plan going forward (\redd{Optional})}
-        
-        Our new theme is \purp{time}. There a several different ways to approach this topic, and we'll explore each over several chapters:
-        
-        \begin{itemize}
-            \item \vocab{Ch.10: State Machines}
-                \begin{itemize}
-                    \item A "state machine" stores everything we need to know about the \purp{past}, as a single "state".
-                    
-                    \item Usually, rather than keeping track of the whole history, we just store what's \gren{important} to remember.
-                \end{itemize}
 
-            \item \vocab{Ch.10: Recurrent Neural Networks (RNNs)}
-
-                \begin{itemize}
-                    \item An RNN is a \gren{model} that uses our new system of "states" to \textbf{store} the past, so we can use it in our model.
-                    
-                    \item Our RNN makes predictions based the present (input $x_t$) \purp{combined with} the past (state $s_{t-1}$).
-                \end{itemize}
-
-            \item \orgg{Ch.11: Transformers}
-                \begin{itemize}
-                    \item Transformers introduce the idea of \purp{attention}: "how much should we \textbf{pay attention} to other pieces of data, to \textbf{understand} this piece of data?"
-                    
-                    \item We represent "time" by \gren{masking}, or \textbf{hiding} the future data from our model.
-                \end{itemize}
-            
-            \item \redd{Ch.12: Markov Decision Process}
-                \begin{itemize}
-                    \item We go back to using \gren{states} to store past information.
-                    \item With MDPs, our model represents different possible \purp{decisions} it can make over time, with different possible \textbf{rewards}.
-                \end{itemize}
-
-            \item \brow{Ch.13: Reinforcement Learning}
-                \begin{itemize}
-                    \item Reinforcement learning (RL) often uses \textbf{MDPs} as a basis: using past data to make the \gren{best} possible \textbf{decision}, via states.
-                    \item In our notes, we often focus on situations where we have \purp{incomplete} information about our system, and learn by interacting with it.
-                \end{itemize}
-        \end{itemize}
-
-        We can think of chapters \vocab{10}-\redd{12}-\brow{13} as a combined sequence of \vocab{state machines}, \redd{MDPs} (which use state machines), and \brow{RL} (which uses MDPs).
-
-        Chapter 10 and 11 both introduce models which allow us to process language, and similar sequential tasks.
 
 \pagebreak
 
 \section{State Machines}
+
+    \textit{This section is identical to the notes from MDP 0. If you have already read that section, skip to C.2.}
+
+    \iffalse
+
 
     \subsection{How to Model Time}
 
@@ -1118,7 +1087,10 @@
 
         In the next section, we'll add non-linear units to this linear model, and this will create a \vocab{Recurrent Neural Network}.\\
 
+
+
 \pagebreak
+\fi
 
 \section{Recurrent Neural Networks}
 

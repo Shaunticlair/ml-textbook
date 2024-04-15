@@ -79,7 +79,7 @@
 
         Before, we used \purp{feature representation} to solve this problem. Through the polynomial basis, we found a \gren{richer} hypothesis class.
 
-        \subsecdiv
+        \phantom{}
 
         In this chapter, we present a different (but related) way of creating a richer hypothesis class. In this case, rather than transforming the input, we use a different \gren{structure} for the model.
 
@@ -493,10 +493,7 @@
                         \red{z} = w^T \blu{x} + w_0
                     \end{equation*}
                     
-                    \begin{itemize}
-                        \item The \vocab{pre-activation} $\red{z}$ is the \purp{output} of the \purp{linear} function.
-                        \item It is also the \gren{input} of the \gren{activation function} $f$.
-                    \end{itemize}
+                    
                     
                 \item A (potentially nonlinear) \vocab{activation} component that takes the pre-activation $\red{z}$ and applies an \vocab{activation function} $f$:
                 
@@ -504,9 +501,7 @@
                         \pur{a} = f(\red{z})
                     \end{equation*}
                     
-                    \begin{itemize}
-                        \item The \vocab{activation} $\pur{a}$ is the \purp{output} of this \purp{activation function}.
-                    \end{itemize}
+                    
             \end{itemize}
             
             When we \purp{compose} them together, we get
@@ -518,6 +513,27 @@
         \end{definition}
         
             \note{When we say "compose", we mean \textbf{function composition}: combining $f(x)$ and $g(x)$ into $f(g(x))$.}
+
+        \phantom{}
+
+        \begin{definition}
+            Our \vocab{neuron} has several important intermediate outputs:
+
+            \begin{itemize}
+                \item The \vocab{pre-activation} $\red{z}$ is the \purp{output} of the \purp{linear} function.
+                
+                \begin{itemize}
+                    \item It is also the \gren{input} of the \gren{activation function} $f$.
+                \end{itemize}
+
+                \item The \vocab{activation} $\pur{a}$ is the \purp{output} of the \purp{activation function}.
+
+                \begin{itemize}
+                    \item It is also the \purp{output} of the \purp{neuron}.
+                \end{itemize}
+                
+            \end{itemize}
+        \end{definition}
         
         We can also use $\sum$ notation to get:
         
@@ -2139,7 +2155,7 @@
         \item \textbf{Multiple Binary}: What are the themes in this movie?
     \end{itemize}
 
-    \subsecdiv{}
+    \phantom{}{}
 
     \subsection{Other Considerations}
     
