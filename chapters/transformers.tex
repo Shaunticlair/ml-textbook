@@ -1729,7 +1729,7 @@ We'll start by considering a few candidate models for NLP, before moving to the 
                 \item We \gren{add} together the results, gathering information from each head.
             \end{itemize}
 
-            $$u = \sum_{h=1}^{H} W_{h,c}^T \text{Attention}(\red{\ex{Q}{h}}, \grn{\ex{K}{h}}, \org{\ex{Q}{h}})$$ 
+            $$u = \sum_{h=1}^{H} W_{h,c}^T \text{Attention}(\red{\ex{Q}{h}}, \grn{\ex{K}{h}}, \org{\ex{V}{h}})$$ 
 
             $u$, the final output of our \vocab{multi-headed attention}, has shape $(d \times N)$, where the $\nth{j}$ column represents the $\nth{j}$ token.
         \end{kequation}
