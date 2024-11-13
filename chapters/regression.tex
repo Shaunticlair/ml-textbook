@@ -2761,8 +2761,10 @@ We'll start with a simple model: \purp{regression}.
             \item $A$ has linearly dependent rows and columns.
             \item $Ax=0$ has a solution other than $x=0$.
                 \note{Sometimes, you say this as, "$Ax=0$ has a non-trivial solution".}
-            \item $A$ is positive definite.
         \end{itemize}
+
+        Relevant for regularization: a positive definite matrix is nonsingular.
+            \note{The converse (a nonsingular matrix is positive definite) is not necessarily true!}
 
     \phantom{}
 

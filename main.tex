@@ -13,7 +13,13 @@
 
 \title{Explanatory Notes for 6.390}
 \author{Shaunticlair Ruiz (Current TA)}
-\date{Spring 2024}
+\date{Fall 2024}
+
+\lhead{\em MIT 6.390}
+\chead{\em Fall 2024}
+\rhead{\em \thepage} 
+\rfoot{\em Last Updated: \today\ \currenttime}
+\cfoot{}
 
 \begin{document}
 \maketitle
@@ -22,27 +28,34 @@
 \tableofcontents
 
 %%First section of course: base concepts
-% \include{chapters/prerequisites}
-% \include{chapters/intro}
-% \include{chapters/regression}
-% \include{chapters/gradient_descent}
+\iffalse
+ \include{chapters/prerequisites}
+ \include{chapters/intro}
+\fi
+ \iffalse
+ \include{chapters/regression}
 
 
-% \include{chapters/classification}
-% \include{chapters/feature_representation}
+
+ \include{chapters/gradient_descent}
+ \include{chapters/classification}
+\fi
+\iffalse
+ \include{chapters/feature_representation}
+
+
+
 
 
 %Second section of the course: neural networks
 
-% \include{chapters/neural_networks_1}
-% \include{chapters/neural_networks_2}
+ \include{chapters/neural_networks_1}
+ \include{chapters/neural_networks_2}
 
-
-
-% \include{chapters/convolutional_neural_networks}
+ \include{chapters/convolutional_neural_networks}
  \include{chapters/transformers}
 
-% \include{chapters/non_parametric}
+ \include{chapters/non_parametric}
 
 
 %%Third section of the course: state machines and MDPs
@@ -51,38 +64,43 @@
 
 
 
-% \include{chapters/mdp_0}
-% \include{chapters/mdp_1}
-% \include{chapters/mdp_2}
-% \include{chapters/reinforcement_learning}
-
-% \include{chapters/clustering}
-% \include{chapters/autoencoders}
+ \include{chapters/mdp_0}
+ \include{chapters/mdp_1}
+ \include{chapters/mdp_2}
 
 
+ \include{chapters/reinforcement_learning}
+
+\fi
+ \include{chapters/clustering}
+\iffalse
+
+ \include{chapters/autoencoders}
 
 
-% \begin{appendices}
-%    \renewcommand{\thechapter}{A}
-%    \include{chapters/matrix_derivatives}
 
-%    \renewcommand{\thechapter}{B}
-%    \include{chapters/neural_network_training}
+
+ \begin{appendices}
+    \renewcommand{\thechapter}{A}
+    \include{chapters/matrix_derivatives}
+
+    \renewcommand{\thechapter}{B}
+    \include{chapters/neural_network_training}
     
-%    \renewcommand{\thechapter}{C}
-%    \include{chapters/rnn}
+    \renewcommand{\thechapter}{C}
+    \include{chapters/rnn}
 
-%    \renewcommand{\thechapter}{D}
-%    \include{chapters/word2vec_skipgram}
+    \renewcommand{\thechapter}{D}
+    \include{chapters/word2vec_skipgram}
 
-% \end{appendices}
+ \end{appendices}
 
-
+\fi
 
 %%Potential things to add:
 
 %Add matrix derivative identities
-
+%Validation/Training/Testing
 
 %Diffusion
 %Recommender Systems
@@ -104,107 +122,6 @@
 
 
 
-
-%Single topics
-
-% \include{single topics/introduction_topics/IID}
-% \include{single topics/introduction_topics/linear_model}
-
-% \include{single topics/regression_topics/matrix_debugging}
-% \include{single topics/regression_topics/minimization_notation}
-% \include{single topics/regression_topics/regression_visualization}
-% \include{single topics/regression_topics/including_theta0_in_theta}
-% \include{single topics/regression_topics/using_multiple_data_points}
-% \include{single topics/regression_topics/ols_objective_matrix_form}
-% \include{single topics/regression_topics/solving_the_ols_problem}
-% \include{single topics/regression_topics/regularization}                    
-% \include{single topics/regression_topics/why_not_regularize_theta0}
-% \include{single topics/regression_topics/estimation_and_structural_error_lambda}
-% \include{single topics/regression_topics/learning_algorithms} 
-% \include{single topics/regression_topics/cross_validation} 
-% \include{single topics/regression_topics/hyperparameter_tuning} 
-
-% \include{single topics/gradient_descent_topics/2d_gradient_descent_visuals}
-% \include{single topics/gradient_descent_topics/computational_gradient}
-% \include{single topics/gradient_descent_topics/convergence}
-% \include{single topics/gradient_descent_topics/gradient_descent_1d}
-% \include{single topics/gradient_descent_topics/gradient_descent_short_summary}
-% \include{single topics/gradient_descent_topics/local_minima_trapping}
-% \include{single topics/gradient_descent_topics/parameter_space}
-% \include{single topics/gradient_descent_topics/regression_gradient}
-% \include{single topics/gradient_descent_topics/stochastic_gradient_descent}
-% \include{single topics/gradient_descent_topics/why_is_gradient_the_direction_of_greatest_increase}
-
-% \include{single topics/classification_topics/linear_separators}
-% \include{single topics/classification_topics/distance_from_origin_to_plane}
-% \include{single topics/classification_topics/offset_theta0}
-% \include{single topics/classification_topics/clarification_regression_versus_classification}
-% \include{single topics/classification_topics/linear_separability}
-% \include{single topics/classification_topics/logistic_regression}
-% \include{single topics/classification_topics/linear_logistic_classifier}
-% \include{single topics/classification_topics/visualizing_llc}
-% \include{single topics/classification_topics/llc_gradient}
-% \include{single topics/classification_topics/negative_log_likelihood}
-% \include{single topics/classification_topics/one_hot_encoding}
-%\include{single topics/classification_topics/softmax}
-% \include{single topics/classification_topics/nllm}
-
-% \include{single topics/clustering_topics/downstream_tasks}
-% \include{single topics/clustering_topics/evaluating_k_means}
-% \include{single topics/clustering_topics/gradient_descent_k_means}
-% \include{single topics/clustering_topics/hierarchical_clustering}
-% \include{single topics/clustering_topics/initialization_k_means}
-% \include{single topics/clustering_topics/k_hyperparameter}
-% \include{single topics/clustering_topics/k_means_algorithm}
-% \include{single topics/clustering_topics/k_means}
-% \include{single topics/clustering_topics/problems_in_k_means}
-% \include{single topics/clustering_topics/simpsons_paradox}
-% \include{single topics/clustering_topics/unclusterable_data}
-% \include{single topics/clustering_topics/visualization_and_interpretability}
-% \include{single topics/clustering_topics/what_is_clustering}
-
-% \include{single topics/feature_transformation_topics/bag_of_words}
-% \include{single topics/feature_transformation_topics/discrete_features}
-% \include{single topics/feature_transformation_topics/graphing_feature_transformations}
-% \include{single topics/feature_transformation_topics/intro_feature_transformations}
-% \include{single topics/feature_transformation_topics/normalization_standardization}
-% \include{single topics/feature_transformation_topics/overfitting_polynomial_order}
-% \include{single topics/feature_transformation_topics/polynomial_feature_transform}
-% \include{single topics/feature_transformation_topics/radial_basis}
-% \include{single topics/feature_transformation_topics/thermometer_versus_one_hot}
-
-
- 
-% \include{single topics/neural_networks_topics/motivating_neural_networks}
-% \include{single topics/neural_networks_topics/structure_of_a_neuron}
-% \include{single topics/neural_networks_topics/neuron_examples}
-% \include{single topics/neural_networks_topics/nn_made_of_layers}
-% \include{single topics/neural_networks_topics/structure_of_a_layer}
-% \include{single topics/neural_networks_topics/problem_with_linear_activation}
-% \include{single topics/neural_networks_topics/the_weakness_of_a_single_layer}
-% \include{single topics/neural_networks_topics/a_complete_neural_network}
-% \include{single topics/neural_networks_topics/two_layer_network}
-% \include{single topics/neural_networks_topics/activation_and_loss_functions}
-
-% \include{single topics/matrix_derivative_topics/intro_to_matrix_derivatives}
-% \include{single topics/matrix_derivative_topics/scalar_vector_derivative}
-% \include{single topics/matrix_derivative_topics/vector_scalar_derivative}
-% \include{single topics/matrix_derivative_topics/vector_vector_derivative}
-% \include{single topics/matrix_derivative_topics/matrix_scalar_and_scalar_matrix_derivatives}
-
-% \include{single topics/matrix_derivative_topics/advanced_matrix_derivatives_and_tensors}
-% \include{single topics/matrix_derivative_topics/clarification_types_of_dimensions}
-% \include{single topics/matrix_derivative_topics/derive_important_nn_derivatives}
-% \include{single topics/matrix_derivative_topics/hardest_derivative_weight_derivative}
-
-% \include{single topics/neural_networks_1_5_topics/one_neuron_backprop_llc}
-% \include{single topics/neural_networks_1_5_topics/two_neuron_backprop}
-% \include{single topics/neural_networks_1_5_topics/many_neurons_backprop}
-% \include{single topics/neural_networks_1_5_topics/1d_backprop_derivatives}
-% \include{single topics/neural_networks_1_5_topics/activation_and_loss_derivatives}
-% \include{single topics/neural_networks_1_5_topics/useful_matrix_derivative_shapes}
-% \include{single topics/neural_networks_1_5_topics/backprop_chain_rule}
-%  \include{single topics/neural_networks_1_5_topics/training_and_pseudocode}
 
 
 

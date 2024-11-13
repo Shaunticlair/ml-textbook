@@ -1428,17 +1428,17 @@ We'll start by considering a few candidate models for NLP, before moving to the 
 
             $$\text{Attention}(\red{Q},\grn{K},\org{V}) = \pur{A}\org{V} = \text{softmax}\Big(\frac{\red{Q}\grn{K^T}}{\sqrt{d_k}}\Big)\org{V}$$
 
-            It is a $(d_k \times N)$ matrix.
+            It is a $(N \times d_k)$ matrix.
         \end{kequation}
 
-        Column $j$ gives the \purp{averaged value vector} $\ex{y}{i}$ for the $\nth{j}$ word, based on all of the surrounding \orgg{context}. 
-            \note{We could view this as the "output" for the $\nth{j}$ word.}
+        Row $i$ gives the \purp{averaged value vector} $\ex{y}{i}$ for the $\nth{i}$ word, based on all of the surrounding \orgg{context}. 
+            \note{We could view this as the "output" for the $\nth{i}$ word.}
 
         \begin{itemize}
             \item We can write this in element-wise form:
         \end{itemize}
 
-        $$\ex{y}{i} = \sum_{i=1}^N \alpha_{ij} v_j$$
+        $$\ex{y}{i} = \sum_{j=1}^N \alpha_{ij} v_j$$
 
         One theme we'll run into, many times in this chapter, is that attention-based models benefit from being able to \purp{parallelize}:\\
 
@@ -1729,10 +1729,13 @@ We'll start by considering a few candidate models for NLP, before moving to the 
                 \item We \gren{add} together the results, gathering information from each head.
             \end{itemize}
 
-            $$u = \sum_{h=1}^{H} W_{h,c}^T \text{Attention}(\red{\ex{Q}{h}}, \grn{\ex{K}{h}}, \org{\ex{V}{h}})$$ 
+            $$u = \sum_{h=1}^{H} \text{Attention}\big(\red{\ex{Q}{h}}, \grn{\ex{K}{h}}, \org{\ex{V}{h}}\big) 
+            \;\bro{W_{h,c}}$$ 
 
-            $u$, the final output of our \vocab{multi-headed attention}, has shape $(d \times N)$, where the $\nth{j}$ column represents the $\nth{j}$ token.
+            $u$, the final output of our \vocab{multi-headed attention}, has shape $(N \times d)$, where the $\nth{j}$ column represents the $\nth{j}$ token.
         \end{kequation}
+
+        
 
         \begin{figure}[H]
             \centering
@@ -1749,6 +1752,42 @@ We'll start by considering a few candidate models for NLP, before moving to the 
         \phantom{}
         
         These are equivalent.}
+
+        \vspace{150pt}
+
+        Note that this is the same shape as our original input, $X$:
+
+        \begin{equation}
+            U= 
+            \begin{bmatrix}
+                \vertbar & \vertbar  & \     & \vertbar \\
+                \ex{u}{1} & \ex{u}{2} & \ldots & \ex{u}{N} \\
+                \vertbar & \vertbar  &        & \vertbar
+            \end{bmatrix}^\top
+        \end{equation}
+
+        In fact, we can compute this multi-headed attention, one $\ex{u}{i}$ at a time.
+            \note{Reminder that $\pur{\alpha_{ij}}$ is an attention weight from $\pur{A}$, and $\org{\ex{v}{j}}$ is a value vector of $\org{V}$.}\\
+
+        \begin{kequation}
+            We can combine our multi-attention heads as
+
+            $$\ex{u}{i} = \overbrace{\sum_{h=1}^H \bro{W_{h,c}^\top}}^{\text{Heads}} \quad
+            \overbrace{\Big( \sum_{j=1}^N \pur{\ex{\alpha_{ij}}{h}} \org{\ex{v_j}{h}} \Big)}^{\text{Attention}}$$
+        \end{kequation} 
+        
+            \note{This is a nested sum: 
+            \phantom{}
+            
+            $\sum_{h,j}(\cdot)$, 
+
+            \phantom{}
+            
+            not a product of two sums, 
+
+            \phantom{}
+            
+            $(\sum_h(\cdot)) \cdot (\sum_j (\cdot))$}
 
     \pagebreak
     
@@ -1857,7 +1896,7 @@ We'll start by considering a few candidate models for NLP, before moving to the 
             At the end of our \vocab{residual block}, we apply LayerNorm to each of our tokens separately
 
             \begin{itemize}
-                \item We take our $(d \times N)$ object $u+X$ and normalize the features of each of our $N$ tokens \purp{separately}.
+                \item We take our $(N \times d)$ object $u+X$ and normalize the features of each of our $N$ tokens (shape $(d \times 1)$) \purp{separately}.
             \end{itemize}
 
             $$\ex{u_{norm}}{i} = \text{LayerNorm}(\ex{u}{i}+ \ex{X}{i}, \gamma_1, \beta_1)$$

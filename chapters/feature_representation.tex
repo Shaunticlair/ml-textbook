@@ -949,24 +949,24 @@
                 \begin{equation*}
                     \text{Class 1} \longrightarrow
                     \begin{bmatrix}
-                        \blu{0} \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \red{1} \\ \blu{0} \\ \blu{0} \\ \blu{0}
                     \end{bmatrix}
-                    \qquad \;\;
+                    \qquad 
                     \text{Class 2} \longrightarrow
                     \begin{bmatrix}
-                        \blu{0} \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \red{1} \\ \red{1} \\ \blu{0} \\ \blu{0}
                     \end{bmatrix}
-                    \qquad \;\;
+                    \qquad 
                     \text{Class 3} \longrightarrow
                     \begin{bmatrix}
-                        \blu{0} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \red{1} \\ \red{1} \\ \red{1} \\ \blu{0}
                     \end{bmatrix}
-                    \qquad \;\;
+                    \qquad 
                     \text{Class 4} \longrightarrow
                     \begin{bmatrix}
-                        \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
                     \end{bmatrix}
-                \end{equation*}
+                    \end{equation*}
                 
                 This version allows us to avoid the problems we had before: this doesn't behave the same way as a \textbf{numerical} value.
 
@@ -976,10 +976,10 @@
                 \begin{equation}
                     \phi(x) =
                     \begin{bmatrix}
-                        \text{Class}(x)\geq 4 \\
-                        \text{Class}(x)\geq 3\\
-                        \text{Class}(x)\geq 2\\
-                        \text{Class}(x)\geq 1
+                    \text{Class}(x)\geq 1 \\
+                    \text{Class}(x)\geq 2 \\
+                    \text{Class}(x)\geq 3 \\
+                    \text{Class}(x)\geq 4
                     \end{bmatrix}
                 \end{equation}
 
@@ -1005,26 +1005,26 @@
                     \vocab{Thermometer encoding} is a \purp{feature transform} where we take each class and turn it into a feature vector $\phi(x)$ where
 
                     \begin{equation*}
-                    \text{Class 1} \longrightarrow
-                    \begin{bmatrix}
-                        \blu{0} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \red{1}
-                    \end{bmatrix},
-                    \qquad 
-                    \text{Class 2} \longrightarrow
-                    \begin{bmatrix}
-                        \blu{0} \\ \vdots \\ \blu{0} \\ \red{1} \\ \red{1}
-                    \end{bmatrix}
-                    \qquad
-                    \text{Class 3} \longrightarrow
-                    \begin{bmatrix}
-                        \blu{0} \\ \vdots \\ \red{1} \\ \red{1} \\ \red{1}
-                    \end{bmatrix}
-                    \qquad
-                    \text{Class } k \longrightarrow
-                    \begin{bmatrix}
-                        \red{1} \\ \vdots \\ \red{1} \\ \red{1} \\ \red{1}
-                    \end{bmatrix}
-                \end{equation*}
+                        \text{Class 1} \longrightarrow
+                        \begin{bmatrix}
+                        \red{1} \\ \blu{0} \\ \blu{0} \\ \vdots \\ \blu{0}
+                        \end{bmatrix},
+                        \qquad
+                        \text{Class 2} \longrightarrow
+                        \begin{bmatrix}
+                        \red{1} \\ \red{1} \\ \blu{0} \\ \vdots \\ \blu{0}
+                        \end{bmatrix}
+                        \qquad
+                        \text{Class 3} \longrightarrow
+                        \begin{bmatrix}
+                        \red{1} \\ \red{1} \\ \red{1} \\ \vdots \\ \blu{0}
+                        \end{bmatrix}
+                        \qquad
+                        \text{Class } k \longrightarrow
+                        \begin{bmatrix}
+                        \red{1} \\ \red{1} \\ \red{1} \\ \vdots \\ \red{1}
+                        \end{bmatrix}
+                    \end{equation*}
 
                     \begin{itemize}
                         \item The \purp{length of the vector} is the \gren{number of classes} $k$ we have.
@@ -1047,24 +1047,24 @@
                 \begin{equation*}
                     \phi(x_{\text{Class 1}}) =
                     \begin{bmatrix}
-                        \blu{0} \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \red{1} \\ \blu{0} \\ \blu{0} \\ \blu{0}
                     \end{bmatrix},
-                    \qquad \;\;
+                    \qquad 
                     \phi(x_{\text{Class 2}}) =
                     \begin{bmatrix}
-                        \blu{0} \\ \blu{0} \\ \red{1} \\ \red{1}
+                    \red{1} \\ \red{1} \\ \blu{0} \\ \blu{0}
                     \end{bmatrix}
-                    \qquad \;\;
+                    \qquad 
                     \phi(x_{\text{Class 3}}) =
                     \begin{bmatrix}
-                        \blu{0} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \red{1} \\ \red{1} \\ \red{1} \\ \blu{0}
                     \end{bmatrix}
-                    \qquad \;\;
+                    \qquad 
                     \phi(x_{\text{Class 4}}) =
                     \begin{bmatrix}
-                        \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
+                    \red{1} \\ \red{1} \\ \red{1} \\ \red{1}
                     \end{bmatrix}
-                \end{equation*}
+                    \end{equation*}
 
             \subsecdiv
             \subsubsection{One-hot Code}
@@ -1097,13 +1097,13 @@
                 But in this case, we don't "build up" our vector: we replace $\text{Class}(x)\geq 4$ with $\text{Class}(x)= 4$.
 
                 \begin{equation}
-                    \phi(x) =
-                    \begin{bmatrix}
-                        \text{Class}(x) = 4 \\
-                        \text{Class}(x) = 3\\
-                        \text{Class}(x) = 2\\
-                        \text{Class}(x) = 1
-                    \end{bmatrix}
+                \phi(x) =
+                \begin{bmatrix}
+                \text{Class}(x) = 1 \\
+                \text{Class}(x) = 2 \\
+                \text{Class}(x) = 3 \\
+                \text{Class}(x) = 4
+                \end{bmatrix}
                 \end{equation}
                 
             This approach is called \textbf{one-hot encoding}.\\
@@ -1121,22 +1121,22 @@
                  \begin{equation*}
                     \text{Class 1} \longrightarrow
                     \begin{bmatrix}
-                        \blu{0} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \red{1}
+                    \red{1} \\ \blu{0} \\ \blu{0} \\ \vdots \\ \blu{0}
                     \end{bmatrix},
-                    \qquad 
+                    \qquad
                     \text{Class 2} \longrightarrow
                     \begin{bmatrix}
-                        \blu{0} \\ \vdots \\ \blu{0} \\ \red{1} \\ \blu{0}
+                    \blu{0} \\ \red{1} \\ \blu{0} \\ \vdots \\ \blu{0}
                     \end{bmatrix}
                     \qquad
                     \text{Class 3} \longrightarrow
                     \begin{bmatrix}
-                        \blu{0} \\ \vdots \\ \red{1} \\ \blu{0} \\ \blu{0}
+                    \blu{0} \\ \blu{0} \\ \red{1} \\ \vdots \\ \blu{0}
                     \end{bmatrix}
                     \qquad
                     \text{Class } k \longrightarrow
                     \begin{bmatrix}
-                        \red{1} \\ \vdots \\ \blu{0} \\ \blu{0} \\ \blu{0}
+                    \blu{0} \\ \blu{0} \\ \blu{0} \\ \vdots \\ \red{1}
                     \end{bmatrix}
                 \end{equation*}
                 
@@ -1246,7 +1246,7 @@
                         \theta_1 & \theta_2 & \theta_3 & \theta_4
                     \end{bmatrix}
                     \begin{bmatrix}
-                        0\\1\\1\\1
+                        1\\1\\1\\0
                     \end{bmatrix}
                 \end{equation}
 
@@ -1256,7 +1256,7 @@
                         \theta_3 & \theta_1 & \theta_4 & \theta_2
                     \end{bmatrix}
                     \begin{bmatrix}
-                        1 \\ 0 \\ 1 \\ 1
+                        1 \\ 1 \\ 0 \\ 1
                     \end{bmatrix}
                 \end{equation}
 
