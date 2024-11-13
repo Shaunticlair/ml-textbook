@@ -16,8 +16,8 @@ The content of this class includes concepts such as:
 * Feature transformations of data
 * Clustering and non-parametric methods
 * Neural networks and back-propagation
-* Convolutional and Recurrent Neural Networks
-* State Machines
+* Convolutional
+* Transformers
 * Markov Decision Processes
 * Reinforcement Learning, Q-Learning
 * Matrix Calculus, Auto-Encoders
