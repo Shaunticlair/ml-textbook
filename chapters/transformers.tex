@@ -1679,12 +1679,20 @@ We'll start by considering a few candidate models for NLP, before moving to the 
         \end{figure}
 
         \begin{concept}
-            Once benefit of computing keys, values, and queries based on \vocab{weight matrices} is that we can \gren{train} these matrices: 
+            One benefit of computing keys, values, and queries based on \vocab{weight matrices} is that we can \gren{train} these matrices: 
 
             \begin{itemize}
                 \item Rather than manually designing the \purp{embeddings}, we can allow our model to learn whichever embedding is most useful.
             \end{itemize}
         \end{concept}
+
+    %These matrices will be trained in the same way as any other weights:
+
+    %\begin{itemize}
+    %    \item We include them in a larger model, which we want to train for some task. We use a learning algorithm to optimize the weights, to give better outputs
+
+    %    \item This is it means to "learn whichever embedding is most useful": 
+    %\end{itemize}
 
     \phantom{}
 

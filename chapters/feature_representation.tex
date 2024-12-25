@@ -768,10 +768,10 @@
                 We define the \vocab{radial basis function}
 
                 \begin{equation*}
-                    f_{ \red{p} }(x) = e^{-\beta ||\red{p}-x||^2 }
+                    f_{ \red{p} }(z) = e^{-\beta ||\red{p}-z||^2 }
                 \end{equation*}
 
-                As a \purp{feature} in the RBF feature transformation.
+                As a \purp{feature} in the RBF feature transformation. We create one feature for each $p$: each point in our reference dataset.
 
                 This transformation takes a data point $p$ and provides a feature $f_p(x)$ that represents "\gren{closeness}" of $x$ to $p$.
             \end{definition}
@@ -788,27 +788,27 @@
             \end{itemize}
 
             \begin{definition}
-                The \vocab{radial basis functions (RBF)} transform takes each of the data points in the input, and uses it to create a set of \purp{radial basis function} features. 
+                The \vocab{radial basis functions (RBF)} transform takes each of the data points $p$ in the training data, and uses it to create a set of \purp{radial basis function} features. These functions can be applied to any new data point $z$.
 
                 Collectively, they make the \gren{feature space}:
 
                 \begin{equation*}
-                    \phi(x) = 
+                    \phi(z) = 
                     \Big[
-                    f_{\red{\ex{x}{1}}}(x), \;\; 
-                    f_{\red{\ex{x}{2}}}(x), \;\; 
+                    f_{\red{\ex{x}{1}}}(z), \;\; 
+                    f_{\red{\ex{x}{2}}}(z), \;\; 
                     \cdots, \;\; 
-                    f_{\red{\ex{x}{n}}}(x)
+                    f_{\red{\ex{x}{n}}}(z)
                     \Big]^T
                 \end{equation*}
 
-                Where:
+                Where $f_p(z)$ is defined for each $p=\ex{x}{i}$ as:
 
                 \begin{equation*}
-                    f_{\red{p}}(x) = e^{-\beta ||\red{p}-x||^2 }
+                    f_{\red{p}}(z) = e^{-\beta ||\red{p}-z||^2 }
                 \end{equation*}
 
-                This transform allows us to represent "closeness" within our dataset. With it, we can compare new data points to some "reference" points $\ex{x}{i}$.
+                This transform allows us to represent "closeness" of a new point, to saved points in our dataset. In particular, we are comparing a new data point $z$ to some "reference" points $\ex{x}{i}$.
                 
                 It's often used to allow us to represent our dataset in a way that is approximate, but still useful.
             \end{definition}
